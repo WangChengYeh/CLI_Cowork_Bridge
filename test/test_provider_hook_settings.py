@@ -2,9 +2,11 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
+from types import SimpleNamespace
 
 from agents.models import AgentSpec, PermissionMode, ProviderProfileSpec, QueuePolicy, RestoreMode, RuntimeMode, WorkspaceMode
 from cli.services.provider_hooks import prepare_provider_workspace
+import provider_core.source_home as source_home_module
 from provider_hooks.settings import build_hook_command, install_workspace_completion_hooks
 from storage.paths import PathLayout
 
@@ -148,6 +150,55 @@ def test_prepare_provider_workspace_materializes_claude_settings_before_hooks(tm
     assert payload['theme'] == 'light'
     assert payload['hooks']['Stop'][0]['hooks'][0]['command']
     assert not (workspace / '.claude').exists()
+
+
+def test_prepare_provider_workspace_uses_account_home_when_current_home_is_managed_claude(
+    tmp_path: Path,
+    monkeypatch,
+) -> None:
+    project_root = tmp_path / 'repo'
+    workspace = project_root / 'workspace'
+    system_home = tmp_path / 'system-home'
+    system_credentials = system_home / '.claude' / '.credentials.json'
+    system_credentials.parent.mkdir(parents=True, exist_ok=True)
+    system_credentials.write_text(
+        json.dumps({'claudeAiOauth': {'refreshToken': 'system-refresh-token'}}, ensure_ascii=False, indent=2),
+        encoding='utf-8',
+    )
+    managed_current_home = (
+        project_root
+        / '.ccb'
+        / 'agents'
+        / 'caller'
+        / 'provider-state'
+        / 'claude'
+        / 'home'
+    )
+    monkeypatch.setenv('HOME', str(managed_current_home))
+    if source_home_module.pwd is not None:
+        monkeypatch.setattr(source_home_module.pwd, 'getpwuid', lambda _uid: SimpleNamespace(pw_dir=str(system_home)))
+
+    prepare_provider_workspace(
+        layout=PathLayout(project_root),
+        spec=_spec('agent1'),
+        workspace_path=workspace,
+        completion_dir=project_root / '.ccb' / 'agents' / 'agent1' / 'provider-runtime' / 'claude' / 'completion',
+        agent_name='agent1',
+        refresh_profile=True,
+    )
+
+    managed_credentials = (
+        project_root
+        / '.ccb'
+        / 'agents'
+        / 'agent1'
+        / 'provider-state'
+        / 'claude'
+        / 'home'
+        / '.claude'
+        / '.credentials.json'
+    )
+    assert json.loads(managed_credentials.read_text(encoding='utf-8'))['claudeAiOauth']['refreshToken'] == 'system-refresh-token'
 
 
 def test_prepare_provider_workspace_repairs_existing_claude_hook_only_settings(tmp_path: Path, monkeypatch) -> None:

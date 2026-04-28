@@ -185,3 +185,36 @@ def test_export_diagnostic_bundle_excludes_gemini_oauth_credentials(tmp_path: Pa
         for entry in manifest['entries']
     )
     assert f'{summary.bundle_id}/project/.ccb/agents/demo/provider-state/gemini/home/.gemini/oauth_creds.json' not in members
+
+
+def test_export_diagnostic_bundle_excludes_claude_credentials(tmp_path: Path) -> None:
+    project_root = tmp_path / 'repo-bundle-claude-provider-state'
+    (project_root / '.ccb').mkdir(parents=True, exist_ok=True)
+    (project_root / '.ccb' / 'ccb.config').write_text('demo:claude\n', encoding='utf-8')
+    context = CliContextBuilder().build(
+        ParsedDoctorCommand(project=None, bundle=True),
+        cwd=project_root,
+        bootstrap_if_missing=False,
+    )
+
+    provider_state_dir = context.paths.agent_provider_state_dir('demo', 'claude')
+    managed_home = provider_state_dir / 'home' / '.claude'
+    managed_home.mkdir(parents=True, exist_ok=True)
+    (managed_home / 'settings.json').write_text('{"theme":"dark"}\n', encoding='utf-8')
+    (managed_home / '.credentials.json').write_text('{"claudeAiOauth":{"refreshToken":"secret"}}\n', encoding='utf-8')
+
+    summary = export_diagnostic_bundle(context, ParsedDoctorCommand(project=None, bundle=True))
+    bundle_path = Path(summary.bundle_path)
+    manifest = _read_tar_json(bundle_path, f'{summary.bundle_id}/manifest.json')
+    members = _archive_members(bundle_path)
+
+    assert any(
+        entry['archive_path'] == 'project/.ccb/agents/demo/provider-state/claude/home/.claude/settings.json'
+        and entry['status'] == 'included'
+        for entry in manifest['entries']
+    )
+    assert all(
+        entry['archive_path'] != 'project/.ccb/agents/demo/provider-state/claude/home/.claude/.credentials.json'
+        for entry in manifest['entries']
+    )
+    assert f'{summary.bundle_id}/project/.ccb/agents/demo/provider-state/claude/home/.claude/.credentials.json' not in members

@@ -4,6 +4,7 @@ import json
 from pathlib import Path
 import shutil
 
+from provider_core.source_home import current_provider_source_home
 from provider_profiles import provider_api_env_keys
 
 from ..home_layout import ClaudeHomeLayout, claude_layout_for_home, claude_layout_from_session_data
@@ -141,11 +142,12 @@ def _materialize_trust(source_home: Path, target_layout: ClaudeHomeLayout) -> No
 def _materialize_auth(source_home: Path, target_layout: ClaudeHomeLayout, *, profile) -> None:
     if not _inherits_auth(profile):
         _remove_file(target_layout.auth_path)
+        _remove_file(target_layout.credentials_path)
         return
 
-    source_auth = _source_auth_path(source_home)
-    if source_auth.is_file():
-        _sync_file(source_auth, target_layout.auth_path)
+    for source_auth, target_auth in _source_auth_paths(source_home, target_layout):
+        if source_auth.is_file():
+            _sync_file(source_auth, target_auth)
 
 
 def _projected_settings_payload(source_settings_path: Path, *, profile) -> dict[str, object] | None:
@@ -321,8 +323,11 @@ def _remove_file(path: Path) -> None:
         pass
 
 
-def _source_auth_path(source_home: Path) -> Path:
-    return source_home / '.config' / 'claude-code' / 'auth.json'
+def _source_auth_paths(source_home: Path, target_layout: ClaudeHomeLayout) -> tuple[tuple[Path, Path], ...]:
+    return (
+        (source_home / '.claude' / '.credentials.json', target_layout.credentials_path),
+        (source_home / '.config' / 'claude-code' / 'auth.json', target_layout.auth_path),
+    )
 
 
 def _sync_tree(source: Path, target: Path) -> None:
@@ -336,7 +341,7 @@ def _sync_tree(source: Path, target: Path) -> None:
 
 
 def _system_home_root() -> Path:
-    return Path.home().expanduser()
+    return current_provider_source_home()
 
 
 __all__ = ['materialize_claude_home_config', 'prepare_claude_home_overrides', 'resolve_claude_home_layout']

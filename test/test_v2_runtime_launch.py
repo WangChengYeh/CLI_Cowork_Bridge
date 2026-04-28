@@ -2104,6 +2104,7 @@ def test_claude_launcher_build_start_cmd_refreshes_managed_home_projection(monke
 
     monkeypatch.setattr('provider_backends.claude.launcher.Path.home', lambda: home_dir)
     monkeypatch.setattr('provider_backends.claude.launcher_runtime.home.Path.home', lambda: home_dir)
+    monkeypatch.setenv('CCB_SOURCE_HOME', str(home_dir))
     monkeypatch.setattr(
         claude_launcher,
         '_resolve_claude_restore_target',
@@ -2172,6 +2173,7 @@ def test_claude_launcher_build_start_cmd_preserves_managed_auth_when_system_home
 
     monkeypatch.setattr('provider_backends.claude.launcher.Path.home', lambda: home_dir)
     monkeypatch.setattr('provider_backends.claude.launcher_runtime.home.Path.home', lambda: home_dir)
+    monkeypatch.setenv('CCB_SOURCE_HOME', str(home_dir))
     monkeypatch.setattr(
         claude_launcher,
         '_resolve_claude_restore_target',
@@ -2195,10 +2197,10 @@ def test_claude_launcher_build_start_cmd_projects_official_login_auth_into_manag
     runtime_dir = project_root / '.ccb' / 'agents' / 'reviewer' / 'provider-runtime' / 'claude'
     runtime_dir.mkdir(parents=True, exist_ok=True)
     home_dir = tmp_path / 'home'
-    source_auth = home_dir / '.config' / 'claude-code' / 'auth.json'
-    source_auth.parent.mkdir(parents=True, exist_ok=True)
-    source_auth.write_text(
-        json.dumps({'refresh_token': 'system-refresh-token'}, ensure_ascii=False, indent=2),
+    source_credentials = home_dir / '.claude' / '.credentials.json'
+    source_credentials.parent.mkdir(parents=True, exist_ok=True)
+    source_credentials.write_text(
+        json.dumps({'claudeAiOauth': {'refreshToken': 'system-refresh-token'}}, ensure_ascii=False, indent=2),
         encoding='utf-8',
     )
 
@@ -2207,6 +2209,7 @@ def test_claude_launcher_build_start_cmd_projects_official_login_auth_into_manag
 
     monkeypatch.setattr('provider_backends.claude.launcher.Path.home', lambda: home_dir)
     monkeypatch.setattr('provider_backends.claude.launcher_runtime.home.Path.home', lambda: home_dir)
+    monkeypatch.setenv('CCB_SOURCE_HOME', str(home_dir))
     monkeypatch.setattr(
         claude_launcher,
         '_resolve_claude_restore_target',
@@ -2223,11 +2226,10 @@ def test_claude_launcher_build_start_cmd_projects_official_login_auth_into_manag
         / 'provider-state'
         / 'claude'
         / 'home'
-        / '.config'
-        / 'claude-code'
-        / 'auth.json'
+        / '.claude'
+        / '.credentials.json'
     )
-    assert json.loads(managed_auth.read_text(encoding='utf-8'))['refresh_token'] == 'system-refresh-token'
+    assert json.loads(managed_auth.read_text(encoding='utf-8'))['claudeAiOauth']['refreshToken'] == 'system-refresh-token'
 
 
 def test_gemini_launcher_build_start_cmd_uses_isolated_profile_api_env(tmp_path: Path) -> None:

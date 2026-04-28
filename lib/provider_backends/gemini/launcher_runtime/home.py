@@ -4,6 +4,7 @@ import json
 from pathlib import Path
 import shutil
 
+from provider_core.source_home import current_provider_source_home
 from provider_profiles import provider_api_env_keys
 
 from ..home_layout import GeminiHomeLayout, gemini_layout_for_home, gemini_layout_from_session_data
@@ -302,7 +303,7 @@ def _remove_file(path: Path) -> None:
 
 
 def _system_home_root() -> Path:
-    return Path.home().expanduser()
+    return current_provider_source_home()
 
 
 __all__ = [

@@ -98,9 +98,18 @@ cmd; writer:codex, reviewer:claude; qa:gemini(worktree)
 历史说明：下面较旧的发布记录里仍可能出现 `askd`、旧 flag 或已移除命令。这些内容仅作为 changelog 历史保留，不代表当前 CLI 入口。
 
 <details open>
+<summary><b>v6.0.20</b> - Claude 官方登录 source home 修复</summary>
+
+- **Claude 官方登录 source home 修复**：managed Claude 启动现在会把 `.ccb/agents/*/provider-state/*/home` 识别为隔离运行时 home，而不是用户源 home，因此官方浏览器登录凭据会从真实账号 home 复制
+- **Claude 凭据路径覆盖**：managed Claude home 现在会投影 Claude Code 官方登录使用的 `.claude/.credentials.json`，并继续兼容 `.config/claude-code/auth.json`
+- **回归覆盖补充**：新增测试锁定 source-home 回退、launcher 投影、诊断脱敏以及 workspace 准备阶段的 Claude 官方登录继承
+
+</details>
+
+<details>
 <summary><b>v6.0.19</b> - Claude 官方登录继承</summary>
 
-- **Claude 官方登录凭据投影**：managed Claude home 现在会把 Claude Code 官方登录使用的 `.config/claude-code/auth.json` 投影到隔离运行时中，使浏览器登录态也能被 CCB 继承，而不再只有 API token / settings 这一路生效
+- **Claude 官方登录凭据投影**：managed Claude home 现在会把 Claude Code 官方登录使用的 `.claude/.credentials.json` 投影到隔离运行时中，使浏览器登录态也能被 CCB 继承，而不再只有 API token / settings 这一路生效
 - **Managed 登录态保留**：当全局 Claude 登录凭据消失、但 managed Claude 已经持有有效项目级登录态时，启动现在会保留这份 managed 登录凭据，不再在重启时被静默丢掉
 - **鉴权清理与回归覆盖**：关闭 auth 继承时会清理陈旧的 Claude 登录凭据副本，并新增针对投影、清理和 launcher 启动路径的回归测试
 

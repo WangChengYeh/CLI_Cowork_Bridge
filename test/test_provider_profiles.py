@@ -420,16 +420,23 @@ def test_materialize_claude_home_config_projects_system_settings_into_managed_ho
 def test_materialize_claude_home_config_projects_official_login_auth_into_managed_home(tmp_path: Path) -> None:
     source_home = tmp_path / 'system-home'
     target_home = tmp_path / 'managed-home'
-    source_auth = source_home / '.config' / 'claude-code' / 'auth.json'
-    source_auth.parent.mkdir(parents=True, exist_ok=True)
-    source_auth.write_text(
-        json.dumps({'refresh_token': 'system-refresh-token'}, ensure_ascii=False, indent=2),
+    source_credentials = source_home / '.claude' / '.credentials.json'
+    source_legacy_auth = source_home / '.config' / 'claude-code' / 'auth.json'
+    source_credentials.parent.mkdir(parents=True, exist_ok=True)
+    source_legacy_auth.parent.mkdir(parents=True, exist_ok=True)
+    source_credentials.write_text(
+        json.dumps({'claudeAiOauth': {'refreshToken': 'system-refresh-token'}}, ensure_ascii=False, indent=2),
+        encoding='utf-8',
+    )
+    source_legacy_auth.write_text(
+        json.dumps({'refresh_token': 'legacy-system-refresh-token'}, ensure_ascii=False, indent=2),
         encoding='utf-8',
     )
 
     layout = materialize_claude_home_config(target_home, source_home=source_home)
 
-    assert json.loads(layout.auth_path.read_text(encoding='utf-8'))['refresh_token'] == 'system-refresh-token'
+    assert json.loads(layout.credentials_path.read_text(encoding='utf-8'))['claudeAiOauth']['refreshToken'] == 'system-refresh-token'
+    assert json.loads(layout.auth_path.read_text(encoding='utf-8'))['refresh_token'] == 'legacy-system-refresh-token'
 
 
 def test_materialize_claude_home_config_preserves_runtime_hooks_and_permissions(tmp_path: Path) -> None:
@@ -616,6 +623,7 @@ def test_materialize_claude_home_config_clears_stale_managed_auth_when_auth_is_n
     target_home = tmp_path / 'managed-home'
     target_settings = target_home / '.claude' / 'settings.json'
     target_auth = target_home / '.config' / 'claude-code' / 'auth.json'
+    target_credentials = target_home / '.claude' / '.credentials.json'
     target_settings.parent.mkdir(parents=True, exist_ok=True)
     target_settings.write_text(
         json.dumps(
@@ -630,6 +638,7 @@ def test_materialize_claude_home_config_clears_stale_managed_auth_when_auth_is_n
     )
     target_auth.parent.mkdir(parents=True, exist_ok=True)
     target_auth.write_text('{"refresh_token":"stale-token"}\n', encoding='utf-8')
+    target_credentials.write_text('{"claudeAiOauth":{"refreshToken":"stale-token"}}\n', encoding='utf-8')
 
     layout = materialize_claude_home_config(
         target_home,
@@ -640,6 +649,7 @@ def test_materialize_claude_home_config_clears_stale_managed_auth_when_auth_is_n
     payload = json.loads(layout.settings_path.read_text(encoding='utf-8'))
     assert payload == {}
     assert not layout.auth_path.exists()
+    assert not layout.credentials_path.exists()
 
 
 def test_materialize_claude_home_config_preserves_managed_official_login_when_source_is_logged_out(tmp_path: Path) -> None:
@@ -657,13 +667,13 @@ def test_materialize_claude_home_config_preserves_managed_official_login_when_so
         ),
         encoding='utf-8',
     )
-    target_auth = target_home / '.config' / 'claude-code' / 'auth.json'
-    target_auth.parent.mkdir(parents=True, exist_ok=True)
-    target_auth.write_text('{"refresh_token":"managed-refresh-token"}\n', encoding='utf-8')
+    target_credentials = target_home / '.claude' / '.credentials.json'
+    target_credentials.parent.mkdir(parents=True, exist_ok=True)
+    target_credentials.write_text('{"claudeAiOauth":{"refreshToken":"managed-refresh-token"}}\n', encoding='utf-8')
 
     layout = materialize_claude_home_config(target_home, source_home=source_home)
 
-    assert json.loads(layout.auth_path.read_text(encoding='utf-8'))['refresh_token'] == 'managed-refresh-token'
+    assert json.loads(layout.credentials_path.read_text(encoding='utf-8'))['claudeAiOauth']['refreshToken'] == 'managed-refresh-token'
 
 
 def test_materialize_gemini_profile_keeps_runtime_home_unset_without_explicit_override(tmp_path: Path) -> None:
