@@ -5,6 +5,7 @@ from pathlib import Path
 import shutil
 
 from agents.models import AgentSpec, PermissionMode, ProviderProfileSpec, QueuePolicy, RestoreMode, RuntimeMode, WorkspaceMode
+import provider_backends.claude.launcher_runtime.home as claude_home_runtime
 from provider_backends.claude.launcher_runtime.home import materialize_claude_home_config
 from provider_backends.gemini.launcher_runtime.home import materialize_gemini_home_config
 import provider_profiles.codex_home_config as codex_home_config
@@ -437,6 +438,130 @@ def test_materialize_claude_home_config_projects_official_login_auth_into_manage
 
     assert json.loads(layout.credentials_path.read_text(encoding='utf-8'))['claudeAiOauth']['refreshToken'] == 'system-refresh-token'
     assert json.loads(layout.auth_path.read_text(encoding='utf-8'))['refresh_token'] == 'legacy-system-refresh-token'
+
+
+def test_materialize_claude_home_config_refreshes_login_metadata_without_replacing_trust(
+    tmp_path: Path,
+) -> None:
+    source_home = tmp_path / 'system-home'
+    target_home = tmp_path / 'managed-home'
+    source_trust = source_home / '.claude.json'
+    target_trust = target_home / '.claude.json'
+    source_trust.parent.mkdir(parents=True, exist_ok=True)
+    target_trust.parent.mkdir(parents=True, exist_ok=True)
+    source_trust.write_text(
+        json.dumps(
+            {
+                'oauthAccount': {
+                    'emailAddress': 'user@example.test',
+                    'organizationUuid': 'org-source',
+                },
+                'hasCompletedOnboarding': True,
+                'lastOnboardingVersion': '2.1.97',
+                '/source/workspace': {'hasTrustDialogAccepted': True},
+                'primaryApiKey': 'must-not-project',
+            },
+            ensure_ascii=False,
+            indent=2,
+        ),
+        encoding='utf-8',
+    )
+    target_trust.write_text(
+        json.dumps(
+            {
+                'oauthAccount': {'emailAddress': 'stale@example.test'},
+                'primaryApiKey': 'stale-key',
+                '/managed/workspace': {'hasTrustDialogAccepted': True},
+            },
+            ensure_ascii=False,
+            indent=2,
+        ),
+        encoding='utf-8',
+    )
+
+    layout = materialize_claude_home_config(target_home, source_home=source_home)
+
+    payload = json.loads(layout.trust_path.read_text(encoding='utf-8'))
+    assert payload['oauthAccount']['emailAddress'] == 'user@example.test'
+    assert payload['oauthAccount']['organizationUuid'] == 'org-source'
+    assert payload['hasCompletedOnboarding'] is True
+    assert payload['lastOnboardingVersion'] == '2.1.97'
+    assert payload['/managed/workspace']['hasTrustDialogAccepted'] is True
+    assert '/source/workspace' not in payload
+    assert 'primaryApiKey' not in payload
+
+
+def test_materialize_claude_home_config_strips_login_metadata_when_auth_not_inherited(
+    tmp_path: Path,
+) -> None:
+    source_home = tmp_path / 'system-home'
+    target_home = tmp_path / 'managed-home'
+    target_trust = target_home / '.claude.json'
+    target_trust.parent.mkdir(parents=True, exist_ok=True)
+    target_trust.write_text(
+        json.dumps(
+            {
+                'oauthAccount': {'emailAddress': 'stale@example.test'},
+                'primaryApiKey': 'stale-key',
+                '/managed/workspace': {'hasTrustDialogAccepted': True},
+            },
+            ensure_ascii=False,
+            indent=2,
+        ),
+        encoding='utf-8',
+    )
+    (source_home / '.claude.json').parent.mkdir(parents=True, exist_ok=True)
+    (source_home / '.claude.json').write_text('{"oauthAccount":{"emailAddress":"source@example.test"}}\n', encoding='utf-8')
+
+    layout = materialize_claude_home_config(
+        target_home,
+        profile=ProviderProfileSpec(inherit_auth=False, inherit_api=False),
+        source_home=source_home,
+    )
+
+    payload = json.loads(layout.trust_path.read_text(encoding='utf-8'))
+    assert 'oauthAccount' not in payload
+    assert 'primaryApiKey' not in payload
+    assert payload['/managed/workspace']['hasTrustDialogAccepted'] is True
+
+
+def test_materialize_claude_home_config_projects_macos_keychain_login_auth(
+    tmp_path: Path,
+    monkeypatch,
+) -> None:
+    source_home = tmp_path / 'system-home'
+    target_home = tmp_path / 'managed-home'
+    source_home.mkdir(parents=True, exist_ok=True)
+    calls: list[list[str]] = []
+
+    class Result:
+        returncode = 0
+        stdout = json.dumps({'claudeAiOauth': {'refreshToken': 'keychain-refresh-token'}})
+
+    def fake_run(argv, **kwargs):
+        calls.append([str(part) for part in argv])
+        assert kwargs['capture_output'] is True
+        assert kwargs['text'] is True
+        return Result()
+
+    monkeypatch.setattr(claude_home_runtime.platform, 'system', lambda: 'Darwin')
+    monkeypatch.setattr(claude_home_runtime.shutil, 'which', lambda name: '/usr/bin/security')
+    monkeypatch.setattr(claude_home_runtime.subprocess, 'run', fake_run)
+    monkeypatch.setenv('USER', 'mac-user')
+
+    layout = materialize_claude_home_config(target_home, source_home=source_home)
+
+    payload = json.loads(layout.credentials_path.read_text(encoding='utf-8'))
+    assert payload['claudeAiOauth']['refreshToken'] == 'keychain-refresh-token'
+    assert calls[0] == [
+        '/usr/bin/security',
+        'find-generic-password',
+        '-a',
+        'mac-user',
+        '-s',
+        'Claude Code',
+        '-w',
+    ]
 
 
 def test_materialize_claude_home_config_preserves_runtime_hooks_and_permissions(tmp_path: Path) -> None:

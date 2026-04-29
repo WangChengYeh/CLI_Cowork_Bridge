@@ -61,6 +61,8 @@ Inside that home, the managed Claude state is:
 - `.ccb/agents/<agent>/provider-state/claude/home/.claude/settings.json`
 - `.ccb/agents/<agent>/provider-state/claude/home/.claude/.credentials.json`
   - only when inherited Claude Code login auth is projected into the managed home
+  - on macOS, this may be materialized from the user's Claude Code Keychain
+    entry when that entry can be read during startup
 - `.ccb/agents/<agent>/provider-state/claude/home/.config/claude-code/auth.json`
   - copied only for compatibility with older or alternate Claude Code login
     cache layouts
@@ -68,6 +70,9 @@ Inside that home, the managed Claude state is:
 - `.ccb/agents/<agent>/provider-state/claude/home/.claude/commands/` when command inheritance is enabled
 - `.ccb/agents/<agent>/provider-state/claude/home/.claude/CLAUDE.md` when Claude prompt inheritance is enabled
 - `.ccb/agents/<agent>/provider-state/claude/home/.claude.json`
+  - contains managed workspace trust plus selected inherited Claude account
+    metadata required for official login reuse; it is not a provider
+    conversation identity
 
 If the effective Claude home is explicitly overridden by a provider profile, the
 effective projects root and session-env root must still be derived from that
@@ -126,9 +131,21 @@ When `ccb` starts a managed Claude agent:
 - managed login-auth projection must synchronize Claude Code credential cache
   artifacts required for non-interactive reuse, such as
   `.claude/.credentials.json`, when official login auth inheritance is enabled
+- on macOS, where official Claude Code login secrets may live in macOS
+  Keychain instead of a source-home file, managed login-auth projection may
+  read the user's Claude Code Keychain item and materialize the equivalent
+  managed `.claude/.credentials.json` cache; projected secret material remains
+  provider state and must be excluded from diagnostics
 - managed login-auth projection may also synchronize older or alternate Claude
   Code credential cache artifacts such as `.config/claude-code/auth.json` when
   they exist in the source home
+- managed `.claude.json` projection must refresh inherited Claude account
+  metadata such as `oauthAccount` and onboarding state from the source
+  `.claude.json` on each launch, while preserving managed workspace trust
+  records already written under the private managed home
+- managed `.claude.json` projection must not copy source workspace trust records
+  as conversation authority, and must not copy source API-key secrets such as
+  `primaryApiKey`
 - when source-home auth inheritance is enabled and the source Claude settings
   still provide auth env keys, startup must refresh those source auth values
   into the managed home on each managed launch
@@ -144,7 +161,8 @@ When `ccb` starts a managed Claude agent:
   Claude re-login to survive restart after the global Claude home has been
   logged out
 - when auth inheritance is disabled, startup must not silently keep stale
-  managed Claude auth env state or stale copied login credential artifacts
+  managed Claude auth env state, stale copied login credential artifacts, or
+  stale inherited Claude account metadata in `.claude.json`
 - when inheritance is enabled, it must refresh inherited Claude `skills/`,
   `commands/`, and `.claude/CLAUDE.md` projections into the managed home on
   each managed launch so source-home updates become visible after restart
