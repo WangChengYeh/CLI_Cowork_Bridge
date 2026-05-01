@@ -140,7 +140,7 @@ jobs:
           set -euo pipefail
 
           repo="$(pwd)"
-          project="/mnt/c/Temp/ccb-wsl-mnt-smoke-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
+          project="/mnt/c/Temp/ccb-wsl-mnt-smoke-${{ github.run_id }}-${{ github.run_attempt }}"
           rm -rf "$project"
           mkdir -p "$project/.ccb"
           printf 'demo:fake\n' > "$project/.ccb/ccb.config"
