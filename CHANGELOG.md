@@ -2,6 +2,14 @@
 
 ## Unreleased
 
+## v6.0.27 (2026-05-06)
+
+### macOS Foreground Attach Timeout Hardening
+
+- **Foreground Attach Timeout Split**: interactive `ccb` startup now uses foreground-attach-specific RPC and target-ready budgets instead of reusing the short daemon probe timeout
+- **macOS Attach Race Reduced**: foreground attach now tolerates slower post-start `ccbd` ping and tmux namespace/window visibility on macOS without redefining daemon startup success
+- **Clearer Attach Failures**: attach errors now distinguish between an unresponsive control-plane ping and a responsive daemon whose project namespace is not yet attachable
+
 ## v6.0.26 (2026-05-05)
 
 ### macOS Install And Claude Ask Cleanup

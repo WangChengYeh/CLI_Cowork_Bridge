@@ -322,9 +322,13 @@ Foreground command split:
   - foreground attach must tolerate short tmux visibility lag after namespace create/reflow:
     - persisted namespace state may become visible slightly before tmux session/window targets are selectable
     - `ccb` must therefore perform a bounded readiness wait for the authoritative session and workspace window before declaring foreground attach failure
+    - this bounded wait must use foreground-attach-specific policy, not the short `rpc_probe_timeout_s` used for daemon compatibility probes
+    - the foreground attach RPC budget is allowed to match the stable operational client budget, while daemon config/probe checks must remain fast-fail
+    - the foreground attach target-ready budget must remain bounded by the startup transaction budget so namespace/UI lag does not redefine backend startup authority
   - once the tmux client is observed attached, `ccb` should issue a best-effort tmux client refresh so the first attached frame does not depend on a manual user redraw
   - in a non-interactive terminal, reports the start transaction without attaching to tmux
   - startup success and foreground attach success are distinct outcomes; foreground attach failure must not rewrite a successful startup report as failed
+  - foreground attach errors must state whether `ccbd` failed to answer the attach ping or whether `ccbd` was responsive but the project namespace was not attachable
 - ask-family and other non-foreground daemon commands
   - reuse the same keeper-owned backend startup transaction
   - stop waiting at control-plane readiness

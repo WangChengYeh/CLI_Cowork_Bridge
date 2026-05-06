@@ -401,6 +401,9 @@ CLI 不再直接 spawn `ccbd`。CLI 只负责：
 - `foreground_attach_timeout_s`
   - 只服务交互式 `ccb` 的 namespace/UI attach 等待
   - 不得影响 `ask`、`ping` 等 control-plane caller
+  - 必须与 `rpc_probe_timeout_s` 使用不同的实现常量；foreground attach 不得复用 daemon config/probe 的 fast-fail timeout
+  - foreground attach 的单次 `ping('ccbd')` 可使用稳定 operational RPC 预算，但 target-ready 总预算仍必须被 `startup_transaction_timeout_s` 夹住
+  - foreground attach 失败必须区分 control-plane ping 不响应和 tmux namespace/window 不可 attach，不能回灌成 daemon startup transaction 失败
 
 默认策略上，`startup_transaction_timeout_s` 应该是冷启动 ceiling，而不是 steady-state latency 目标。
 实现上可以允许 20 到 30 秒的事务上限，但正常路径必须在 ready 后立刻返回，不能把该值表现成每次调用都要等待的固定延迟。

@@ -1,10 +1,12 @@
 from __future__ import annotations
 
+import importlib
 from pathlib import Path
 from types import SimpleNamespace
 
 import pytest
 
+import ccbd.startup_policy as startup_policy
 import cli.services.daemon as daemon_service
 from ccbd.models import LeaseHealth
 from ccbd.services.lifecycle import CcbdLifecycleStore, build_lifecycle
@@ -168,3 +170,19 @@ def test_connect_compatible_daemon_uses_short_control_plane_timeout(monkeypatch,
     assert handle is not None
     assert captured == [daemon_service.CONTROL_PLANE_RPC_TIMEOUT_S, None]
     assert handle.client.timeout_s is None
+
+
+def test_startup_policy_clamps_foreground_attach_timeout_to_startup_budget(monkeypatch) -> None:
+    monkeypatch.setenv('CCB_STARTUP_TRANSACTION_TIMEOUT_S', '4.0')
+    monkeypatch.setenv('CCB_FOREGROUND_ATTACH_RPC_TIMEOUT_S', '2.5')
+    monkeypatch.setenv('CCB_FOREGROUND_ATTACH_TARGET_READY_TIMEOUT_S', '10.0')
+
+    reloaded = importlib.reload(startup_policy)
+
+    assert reloaded.FOREGROUND_ATTACH_RPC_TIMEOUT_S == 2.5
+    assert reloaded.FOREGROUND_ATTACH_TARGET_READY_TIMEOUT_S == 4.0
+
+    monkeypatch.delenv('CCB_STARTUP_TRANSACTION_TIMEOUT_S', raising=False)
+    monkeypatch.delenv('CCB_FOREGROUND_ATTACH_RPC_TIMEOUT_S', raising=False)
+    monkeypatch.delenv('CCB_FOREGROUND_ATTACH_TARGET_READY_TIMEOUT_S', raising=False)
+    importlib.reload(startup_policy)
