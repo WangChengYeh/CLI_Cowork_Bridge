@@ -296,6 +296,8 @@ ccb reinstall
 - **运行态移出挂载盘**：在 `/mnt/<drive>/...` 下的 WSL 项目中，项目 authority 仍留在 `.ccb`，`ccbd/` 和 agent runtime state 会迁移到本机 Linux state root，并写入显式 marker
 - **诊断和 Bundle 映射更新**：doctor 输出和 support bundle 现在会暴露 project anchor、runtime-state root、迁移原因，并把 relocated runtime 文件映射回逻辑 `.ccb` archive 路径
 - **Provider Lookup 和 Ask Routing 保持稳定**：relocated runtime 目录仍能回溯到 project anchor，用于 session discovery 和 ask sender attribution，Linux/macOS 默认布局不变
+- **Runtime marker 会校验**：relocated runtime marker 和 ref 现在会拒绝格式错误或归属不匹配的 payload，避免旧残留悄悄把一个项目映射到另一个项目
+- **WSL Smoke 与最终合同一致**：发布 smoke 现在检查 relocation 的最终 runtime-root 路径，而不是把第一阶段的迁移结果当成 socket fallback 终点
 
 </details>
 
