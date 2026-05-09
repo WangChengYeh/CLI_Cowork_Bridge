@@ -1,6 +1,6 @@
 <div align="center">
 
-# CCB - Agent CLI Hub and Teams
+# CLI Cowork Bridge - Agent Hub and Teams
 
 <p>
   <img src="https://img.shields.io/badge/Every_Interaction_Visible-096DD9?style=for-the-badge" alt="Every Interaction Visible">

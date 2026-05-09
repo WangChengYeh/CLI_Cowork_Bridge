@@ -1,13 +1,13 @@
 <div align="center">
 
-# CCB - Agent CLI 聚合和团队
+# CLI Cowork Bridge - Agent Hub and Teams
 
 <p>
   <img src="https://img.shields.io/badge/交互皆可见-096DD9?style=for-the-badge" alt="交互皆可见">
   <img src="https://img.shields.io/badge/模型皆可控-CF1322?style=for-the-badge" alt="模型皆可控">
 </p>
 
-[![Version](https://img.shields.io/badge/version-6.0.29-orange.svg)]()
+[![Version](https://img.shields.io/badge/version-7.2.0-orange.svg)]()
 [![Platform](https://img.shields.io/badge/platform-Linux%20%7C%20macOS%20%7C%20Windows-lightgrey.svg)]()
 
 [English](README.md) | **中文**
