@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 from dataclasses import dataclass
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
@@ -11,6 +12,7 @@ from runtime.worker_health import RuntimeWorkerHealth
 @dataclass(slots=True)
 class RuntimeWorkerQuarantinePolicy:
     failure_threshold: int = 3
+    cooldown_seconds: int = 300
 
 
 @dataclass(slots=True)
@@ -18,6 +20,7 @@ class RuntimeWorkerQuarantineRecord:
     worker_name: str
     quarantined: bool
     reason: str | None = None
+    quarantined_at: str | None = None
 
 
 class RuntimeWorkerQuarantineStore:
@@ -38,6 +41,7 @@ class RuntimeWorkerQuarantineStore:
                 worker_name=name,
                 quarantined=bool(record.get('quarantined')),
                 reason=record.get('reason'),
+                quarantined_at=record.get('quarantined_at'),
             )
             for name, record in raw.items()
         }
@@ -50,6 +54,7 @@ class RuntimeWorkerQuarantineStore:
             name: {
                 'quarantined': record.quarantined,
                 'reason': record.reason,
+                'quarantined_at': record.quarantined_at,
             }
             for name, record in records.items()
         }
@@ -73,6 +78,7 @@ class RuntimeWorkerQuarantineStore:
             worker_name=worker_name,
             quarantined=True,
             reason=reason,
+            quarantined_at=datetime.now(timezone.utc).isoformat(),
         )
 
         records[worker_name] = record
@@ -87,11 +93,38 @@ class RuntimeWorkerQuarantineStore:
 
         self.write_all(records)
 
-    def is_quarantined(self, worker_name: str) -> bool:
+    def is_quarantined(
+        self,
+        worker_name: str,
+        *,
+        policy: RuntimeWorkerQuarantinePolicy | None = None,
+        now: datetime | None = None,
+    ) -> bool:
         records = self.read_all()
         record = records.get(worker_name)
 
-        return bool(record and record.quarantined)
+        if not record or not record.quarantined:
+            return False
+
+        policy = policy or RuntimeWorkerQuarantinePolicy()
+        now = now or datetime.now(timezone.utc)
+
+        if record.quarantined_at:
+            try:
+                quarantined_at = datetime.fromisoformat(
+                    record.quarantined_at,
+                )
+
+                age = (now - quarantined_at).total_seconds()
+
+                if age > policy.cooldown_seconds:
+                    self.recover(worker_name)
+                    return False
+
+            except ValueError:
+                pass
+
+        return True
 
 
 def evaluate_worker_quarantine(
