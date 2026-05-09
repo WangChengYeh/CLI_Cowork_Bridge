@@ -13,6 +13,10 @@ STATE_STOPPED = 'stopped'
 STATE_STALE = 'stale'
 
 
+class RuntimeDaemonAlreadyRunning(RuntimeError):
+    pass
+
+
 @dataclass(slots=True)
 class RuntimeDaemonState:
     state: str
@@ -93,6 +97,14 @@ class RuntimeDaemonStateStore:
 
         return state
 
+    def ensure_can_start(self) -> None:
+        state = self.read_resolved()
+
+        if state.state == STATE_RUNNING:
+            raise RuntimeDaemonAlreadyRunning(
+                f'runtime daemon already running with pid={state.pid}'
+            )
+
     def write(self, state: RuntimeDaemonState) -> RuntimeDaemonState:
         tmp_path = self.state_path.with_suffix('.json.tmp')
 
@@ -103,7 +115,15 @@ class RuntimeDaemonStateStore:
         tmp_path.replace(self.state_path)
         return state
 
-    def mark_running(self, *, pid: int | None = None) -> RuntimeDaemonState:
+    def mark_running(
+        self,
+        *,
+        pid: int | None = None,
+        force: bool = False,
+    ) -> RuntimeDaemonState:
+        if not force:
+            self.ensure_can_start()
+
         timestamp = now_utc()
         return self.write(
             RuntimeDaemonState(
