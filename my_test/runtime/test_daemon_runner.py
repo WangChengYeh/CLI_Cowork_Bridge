@@ -52,3 +52,20 @@ def test_run_runtime_forever_updates_daemon_state(tmp_path: Path):
 
     assert state_path.exists()
     assert result.iterations == 1
+
+
+
+def test_run_runtime_forever_stops_by_condition(tmp_path: Path):
+    runtime = bootstrap_runtime(
+        project_root=tmp_path,
+    )
+
+    result = run_runtime_forever(
+        project_root=tmp_path,
+        bootstrap=runtime,
+        sleep_fn=lambda _: None,
+        should_stop=lambda: True,
+    )
+
+    assert result.iterations == 0
+    assert result.stopped_by_condition is True
