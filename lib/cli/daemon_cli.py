@@ -15,6 +15,7 @@ from runtime.daemon_state import (
     RuntimeDaemonAlreadyRunning,
     RuntimeDaemonStateStore,
 )
+from runtime.health import evaluate_runtime_health
 from runtime.signals import (
     RuntimeSignalStopFlag,
     install_runtime_signal_handlers,
@@ -138,6 +139,7 @@ def run_daemon_cli(
     if args.command == 'status':
         runtime_status = supervisor.status()
         daemon_runtime_state = daemon_state.read_resolved()
+        health = evaluate_runtime_health(daemon_runtime_state)
 
         stdout.write(f'state={daemon_runtime_state.state}\n')
         stdout.write(f'pid={daemon_runtime_state.pid}\n')
@@ -146,6 +148,9 @@ def run_daemon_cli(
         stdout.write(
             f'heartbeat_at={daemon_runtime_state.heartbeat_at}\n'
         )
+        stdout.write(f'health_status={health.status}\n')
+        stdout.write(f'health_score={health.score}\n')
+        stdout.write(f'health_reason={health.reason}\n')
         return 0
 
     if args.command == 'poll-once':
