@@ -5,11 +5,12 @@ import os
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any
+from typing import Any, Callable
 
 
 STATE_RUNNING = 'running'
 STATE_STOPPED = 'stopped'
+STATE_STALE = 'stale'
 
 
 @dataclass(slots=True)
@@ -41,11 +42,31 @@ def now_utc() -> str:
     return datetime.now(timezone.utc).isoformat()
 
 
+def pid_exists(pid: int | None) -> bool:
+    if pid is None or pid <= 0:
+        return False
+
+    try:
+        os.kill(pid, 0)
+    except ProcessLookupError:
+        return False
+    except PermissionError:
+        return True
+
+    return True
+
+
 class RuntimeDaemonStateStore:
-    def __init__(self, *, project_root: Path) -> None:
+    def __init__(
+        self,
+        *,
+        project_root: Path,
+        pid_exists_fn: Callable[[int | None], bool] = pid_exists,
+    ) -> None:
         self.project_root = Path(project_root)
         self.state_path = self.project_root / '.ccb' / 'runtime-daemon.json'
         self.state_path.parent.mkdir(parents=True, exist_ok=True)
+        self.pid_exists_fn = pid_exists_fn
 
     def read(self) -> RuntimeDaemonState:
         if not self.state_path.exists():
@@ -58,6 +79,19 @@ class RuntimeDaemonStateStore:
 
         with self.state_path.open('r', encoding='utf-8') as handle:
             return RuntimeDaemonState.from_record(json.load(handle))
+
+    def read_resolved(self) -> RuntimeDaemonState:
+        state = self.read()
+
+        if state.state == STATE_RUNNING and not self.pid_exists_fn(state.pid):
+            return RuntimeDaemonState(
+                state=STATE_STALE,
+                pid=state.pid,
+                updated_at=state.updated_at,
+                heartbeat_at=state.heartbeat_at,
+            )
+
+        return state
 
     def write(self, state: RuntimeDaemonState) -> RuntimeDaemonState:
         tmp_path = self.state_path.with_suffix('.json.tmp')
