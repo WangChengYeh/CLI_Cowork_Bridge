@@ -44,6 +44,10 @@ def test_watchdog_tick_skips_healthy_runtime(tmp_path: Path):
         popen_fn=fake_popen,
     )
 
+    assert result.runtime_state in {
+        'running',
+        'stale',
+    }
     assert result.restarted is False
 
 
@@ -57,6 +61,7 @@ def test_watchdog_tick_restarts_stopped_runtime(tmp_path: Path):
         popen_fn=fake_popen,
     )
 
+    assert result.runtime_state == 'stopped'
     assert result.restarted is True
     assert result.restart is not None
 
@@ -81,6 +86,7 @@ def test_watchdog_tick_restarts_stale_runtime(tmp_path: Path):
         popen_fn=fake_popen,
     )
 
+    assert result.runtime_state == 'stale'
     assert result.restarted is True
 
 
@@ -97,6 +103,12 @@ def test_watchdog_loop_runs_multiple_iterations(tmp_path: Path):
     )
 
     assert result.iterations == 3
+    assert result.last_tick is not None
+    assert result.last_tick.runtime_state in {
+        'running',
+        'stale',
+        'stopped',
+    }
 
 
 
