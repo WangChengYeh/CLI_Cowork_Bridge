@@ -115,15 +115,9 @@ def run_daemon_cli(
             should_stop=stop_flag.should_stop,
         )
 
-        stdout.write(
-            f'foreground_iterations={result.iterations}\n'
-        )
-        stdout.write(
-            f'foreground_processed_events={result.processed_events}\n'
-        )
-        stdout.write(
-            f'foreground_stopped={result.stopped_by_condition}\n'
-        )
+        stdout.write(f'foreground_iterations={result.iterations}\n')
+        stdout.write(f'foreground_processed_events={result.processed_events}\n')
+        stdout.write(f'foreground_stopped={result.stopped_by_condition}\n')
 
         return 0
 
@@ -162,13 +156,7 @@ def run_daemon_cli(
             project_root=project_root,
         )
 
-        stdout.write(
-            json.dumps(
-                metrics.to_record(),
-                indent=2,
-                sort_keys=True,
-            )
-        )
+        stdout.write(json.dumps(metrics.to_record(), indent=2, sort_keys=True))
         stdout.write('\n')
 
         return 0
@@ -185,15 +173,11 @@ def run_daemon_cli(
 
             if result.last_tick is not None:
                 lifecycle_state = map_runtime_health_to_lifecycle_state(
-                    runtime_state=result.last_tick.health.status,
+                    runtime_state=result.last_tick.runtime_state,
                     health_status=result.last_tick.health.status,
                 )
-                stdout.write(
-                    f'health_status={result.last_tick.health.status}\n'
-                )
-                stdout.write(
-                    f'lifecycle_state={lifecycle_state.value}\n'
-                )
+                stdout.write(f'health_status={result.last_tick.health.status}\n')
+                stdout.write(f'lifecycle_state={lifecycle_state.value}\n')
 
             return 0
 
@@ -201,7 +185,7 @@ def run_daemon_cli(
             project_root=project_root,
         )
         lifecycle_state = map_runtime_health_to_lifecycle_state(
-            runtime_state=result.health.status,
+            runtime_state=result.runtime_state,
             health_status=result.health.status,
         )
 
@@ -231,9 +215,7 @@ def run_daemon_cli(
         stdout.write(f'pid={daemon_runtime_state.pid}\n')
         stdout.write(f'worker_count={runtime_status.worker_count}\n')
         stdout.write(f'cursor_name={runtime_status.cursor_name}\n')
-        stdout.write(
-            f'heartbeat_at={daemon_runtime_state.heartbeat_at}\n'
-        )
+        stdout.write(f'heartbeat_at={daemon_runtime_state.heartbeat_at}\n')
         stdout.write(f'health_status={health.status}\n')
         stdout.write(f'health_score={health.score}\n')
         stdout.write(f'health_reason={health.reason}\n')
@@ -241,9 +223,7 @@ def run_daemon_cli(
 
     if args.command == 'poll-once':
         daemon_state.heartbeat()
-
         result = supervisor.poll_once()
-
         daemon_state.heartbeat()
 
         stdout.write(f'processed_events={result.processed_events}\n')
