@@ -184,8 +184,15 @@ def run_daemon_cli(
             stdout.write(f'watchdog_restarts={result.restarts}\n')
 
             if result.last_tick is not None:
+                lifecycle_state = map_runtime_health_to_lifecycle_state(
+                    runtime_state=result.last_tick.health.status,
+                    health_status=result.last_tick.health.status,
+                )
                 stdout.write(
                     f'health_status={result.last_tick.health.status}\n'
+                )
+                stdout.write(
+                    f'lifecycle_state={lifecycle_state.value}\n'
                 )
 
             return 0
@@ -193,8 +200,13 @@ def run_daemon_cli(
         result = run_watchdog_tick(
             project_root=project_root,
         )
+        lifecycle_state = map_runtime_health_to_lifecycle_state(
+            runtime_state=result.health.status,
+            health_status=result.health.status,
+        )
 
         stdout.write(f'health_status={result.health.status}\n')
+        stdout.write(f'lifecycle_state={lifecycle_state.value}\n')
         stdout.write(f'health_score={result.health.score}\n')
         stdout.write(f'health_reason={result.health.reason}\n')
         stdout.write(f'restarted={result.restarted}\n')
