@@ -22,6 +22,7 @@ from runtime.signals import (
     RuntimeSignalStopFlag,
     install_runtime_signal_handlers,
 )
+from runtime.state_machine import map_runtime_health_to_lifecycle_state
 from runtime.watchdog import (
     run_watchdog_loop,
     run_watchdog_tick,
@@ -208,8 +209,13 @@ def run_daemon_cli(
         runtime_status = supervisor.status()
         daemon_runtime_state = daemon_state.read_resolved()
         health = evaluate_runtime_health(daemon_runtime_state)
+        lifecycle_state = map_runtime_health_to_lifecycle_state(
+            runtime_state=daemon_runtime_state.state,
+            health_status=health.status,
+        )
 
         stdout.write(f'state={daemon_runtime_state.state}\n')
+        stdout.write(f'lifecycle_state={lifecycle_state.value}\n')
         stdout.write(f'pid={daemon_runtime_state.pid}\n')
         stdout.write(f'worker_count={runtime_status.worker_count}\n')
         stdout.write(f'cursor_name={runtime_status.cursor_name}\n')
