@@ -1,0 +1,81 @@
+from pathlib import Path
+
+from runtime.background import launch_background_daemon
+from runtime.daemon_state import RuntimeDaemonStateStore
+from runtime.watchdog import run_watchdog_tick
+
+
+class FakeProcess:
+    def __init__(self, pid: int):
+        self.pid = pid
+
+
+class FakePopen:
+    def __init__(self):
+        self.calls = []
+
+    def __call__(self, argv, **kwargs):
+        self.calls.append(
+            {
+                'argv': argv,
+                'kwargs': kwargs,
+            }
+        )
+
+        return FakeProcess(pid=9999)
+
+
+
+def test_watchdog_tick_skips_healthy_runtime(tmp_path: Path):
+    fake_popen = FakePopen()
+
+    launch_background_daemon(
+        project_root=tmp_path,
+        argv=['ccb'],
+        popen_fn=fake_popen,
+    )
+
+    result = run_watchdog_tick(
+        project_root=tmp_path,
+        argv=['ccb'],
+        popen_fn=fake_popen,
+    )
+
+    assert result.restarted is False
+
+
+
+def test_watchdog_tick_restarts_stopped_runtime(tmp_path: Path):
+    fake_popen = FakePopen()
+
+    result = run_watchdog_tick(
+        project_root=tmp_path,
+        argv=['ccb'],
+        popen_fn=fake_popen,
+    )
+
+    assert result.restarted is True
+    assert result.restart is not None
+
+
+
+def test_watchdog_tick_restarts_stale_runtime(tmp_path: Path):
+    fake_popen = FakePopen()
+
+    store = RuntimeDaemonStateStore(
+        project_root=tmp_path,
+        pid_exists_fn=lambda pid: False,
+    )
+
+    store.mark_running(
+        pid=1234,
+        force=True,
+    )
+
+    result = run_watchdog_tick(
+        project_root=tmp_path,
+        argv=['ccb'],
+        popen_fn=fake_popen,
+    )
+
+    assert result.restarted is True
