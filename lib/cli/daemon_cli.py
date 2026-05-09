@@ -75,6 +75,8 @@ def run_daemon_cli(
     restart_daemon_fn: Callable = restart_background_daemon_if_needed,
     run_watchdog_tick_fn: Callable = run_watchdog_tick,
     run_watchdog_loop_fn: Callable = run_watchdog_loop,
+    bootstrap_fn: Callable = bootstrap_runtime,
+    run_runtime_forever_fn: Callable = run_runtime_forever,
 ) -> int:
     parser = build_daemon_parser()
     args = parser.parse_args(argv)
@@ -102,7 +104,7 @@ def run_daemon_cli(
         stdout.write(f'{state.state}\n')
         stdout.write(f'pid={state.pid}\n')
 
-        runtime = bootstrap_runtime(
+        runtime = bootstrap_fn(
             project_root=project_root,
             enable_imessage=args.imessage,
             imessage_allow_senders=set(args.recipients),
@@ -117,7 +119,7 @@ def run_daemon_cli(
         stop_flag = RuntimeSignalStopFlag()
         install_runtime_signal_handlers(stop_flag)
 
-        result = run_runtime_forever(
+        result = run_runtime_forever_fn(
             project_root=project_root,
             bootstrap=runtime,
             max_iterations=args.iterations,

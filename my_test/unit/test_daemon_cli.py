@@ -54,11 +54,21 @@ def test_daemon_start_foreground_reports_running(tmp_path: Path):
     stdout = StringIO()
     stderr = StringIO()
 
+    from runtime.daemon_runner import RuntimeDaemonRunResult
+
+    def fake_run_forever(*args, **kwargs):
+        return RuntimeDaemonRunResult(
+            iterations=1,
+            processed_events=0,
+            stopped_by_condition=False,
+        )
+
     result = run_daemon_cli(
         ['start', '--foreground'],
         project_root=tmp_path,
         stdout=stdout,
         stderr=stderr,
+        run_runtime_forever_fn=fake_run_forever,
     )
 
     output = stdout.getvalue()
