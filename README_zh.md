@@ -206,8 +206,8 @@ ccb reinstall           # 清理后重新安装
    当 `ccb` 和你的 agent CLI 运行在同一个类 Unix shell 里时，使用这条路径。
 
 ```bash
-git clone https://github.com/bfly123/claude_codex_bridge.git
-cd claude_codex_bridge
+git clone https://github.com/WangChengYeh/CLI_Cowork_Bridge.git
+cd CLI_Cowork_Bridge
 ./install.sh install
 ```
 
@@ -215,8 +215,8 @@ cd claude_codex_bridge
    当你的 agent CLI 原生运行在 Windows 时，使用这条路径。
 
 ```powershell
-git clone https://github.com/bfly123/claude_codex_bridge.git
-cd claude_codex_bridge
+git clone https://github.com/WangChengYeh/CLI_Cowork_Bridge.git
+cd CLI_Cowork_Bridge
 powershell -ExecutionPolicy Bypass -File .\install.ps1 install
 ```
 

@@ -206,8 +206,8 @@ ccb reinstall           # Clean then reinstall ccb
    Use this path when `ccb` and your agent CLIs run in the same Unix-like shell.
 
 ```bash
-git clone https://github.com/bfly123/claude_codex_bridge.git
-cd claude_codex_bridge
+git clone https://github.com/WangChengYeh/CLI_Cowork_Bridge.git
+cd CLI_Cowork_Bridge
 ./install.sh install
 ```
 
@@ -215,8 +215,8 @@ cd claude_codex_bridge
    Use this path when your agent CLIs run natively on Windows.
 
 ```powershell
-git clone https://github.com/bfly123/claude_codex_bridge.git
-cd claude_codex_bridge
+git clone https://github.com/WangChengYeh/CLI_Cowork_Bridge.git
+cd CLI_Cowork_Bridge
 powershell -ExecutionPolicy Bypass -File .\install.ps1 install
 ```
 
