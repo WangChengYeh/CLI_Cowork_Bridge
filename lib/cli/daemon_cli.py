@@ -7,6 +7,10 @@ from typing import TextIO
 from runtime.bootstrap import bootstrap_runtime
 from runtime.daemon_runner import run_runtime_forever
 from runtime.daemon_state import RuntimeDaemonStateStore
+from runtime.signals import (
+    RuntimeSignalStopFlag,
+    install_runtime_signal_handlers,
+)
 
 
 STATE_STOPPED = 'stopped'
@@ -58,10 +62,14 @@ def run_daemon_cli(
         stdout.write(f'pid={state.pid}\n')
 
         if args.foreground:
+            stop_flag = RuntimeSignalStopFlag()
+            install_runtime_signal_handlers(stop_flag)
+
             result = run_runtime_forever(
                 project_root=project_root,
                 bootstrap=runtime,
                 max_iterations=DEFAULT_FOREGROUND_ITERATIONS,
+                should_stop=stop_flag.should_stop,
             )
 
             stdout.write(
@@ -69,6 +77,9 @@ def run_daemon_cli(
             )
             stdout.write(
                 f'foreground_processed_events={result.processed_events}\n'
+            )
+            stdout.write(
+                f'foreground_stopped={result.stopped_by_condition}\n'
             )
 
         return 0
