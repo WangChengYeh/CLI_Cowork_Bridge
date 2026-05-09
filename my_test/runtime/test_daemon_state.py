@@ -1,9 +1,12 @@
 from pathlib import Path
 
+import pytest
+
 from runtime.daemon_state import (
     STATE_RUNNING,
     STATE_STALE,
     STATE_STOPPED,
+    RuntimeDaemonAlreadyRunning,
     RuntimeDaemonStateStore,
 )
 
@@ -74,7 +77,7 @@ def test_read_resolved_detects_stale_pid(tmp_path: Path):
         pid_exists_fn=lambda pid: False,
     )
 
-    store.mark_running(pid=99999)
+    store.mark_running(pid=99999, force=True)
 
     resolved = store.read_resolved()
 
@@ -94,3 +97,33 @@ def test_read_resolved_keeps_running_when_pid_exists(tmp_path: Path):
     resolved = store.read_resolved()
 
     assert resolved.state == STATE_RUNNING
+
+
+
+def test_mark_running_rejects_existing_runtime(tmp_path: Path):
+    store = RuntimeDaemonStateStore(
+        project_root=tmp_path,
+        pid_exists_fn=lambda pid: True,
+    )
+
+    store.mark_running(pid=1234)
+
+    with pytest.raises(RuntimeDaemonAlreadyRunning):
+        store.mark_running(pid=5678)
+
+
+
+def test_mark_running_allows_force_override(tmp_path: Path):
+    store = RuntimeDaemonStateStore(
+        project_root=tmp_path,
+        pid_exists_fn=lambda pid: True,
+    )
+
+    store.mark_running(pid=1234)
+
+    overridden = store.mark_running(
+        pid=5678,
+        force=True,
+    )
+
+    assert overridden.pid == 5678
