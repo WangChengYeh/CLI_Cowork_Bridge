@@ -20,6 +20,7 @@ from runtime.signals import (
     RuntimeSignalStopFlag,
     install_runtime_signal_handlers,
 )
+from runtime.watchdog import run_watchdog_tick
 
 
 STATE_STOPPED = 'stopped'
@@ -41,6 +42,7 @@ def build_daemon_parser() -> argparse.ArgumentParser:
 
     subparsers.add_parser('stop')
     subparsers.add_parser('restart')
+    subparsers.add_parser('watchdog')
     subparsers.add_parser('status')
     subparsers.add_parser('poll-once')
 
@@ -133,6 +135,22 @@ def run_daemon_cli(
 
         if result.reason is not None:
             stdout.write(f'reason={result.reason}\n')
+
+        return 0
+
+    if args.command == 'watchdog':
+        result = run_watchdog_tick(
+            project_root=project_root,
+        )
+
+        stdout.write(f'health_status={result.health.status}\n')
+        stdout.write(f'health_score={result.health.score}\n')
+        stdout.write(f'health_reason={result.health.reason}\n')
+        stdout.write(f'restarted={result.restarted}\n')
+
+        if result.restart is not None and result.restart.launch is not None:
+            stdout.write(f'pid={result.restart.launch.pid}\n')
+            stdout.write(f'log_path={result.restart.launch.log_path}\n')
 
         return 0
 
