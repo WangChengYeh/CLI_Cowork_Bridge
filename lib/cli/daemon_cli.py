@@ -6,6 +6,7 @@ from typing import TextIO
 
 from runtime.background import (
     launch_background_daemon,
+    restart_background_daemon_if_needed,
     stop_background_daemon,
 )
 from runtime.bootstrap import bootstrap_runtime
@@ -38,6 +39,7 @@ def build_daemon_parser() -> argparse.ArgumentParser:
     )
 
     subparsers.add_parser('stop')
+    subparsers.add_parser('restart')
     subparsers.add_parser('status')
     subparsers.add_parser('poll-once')
 
@@ -111,6 +113,22 @@ def run_daemon_cli(
         stdout.write(f'{STATE_STOPPED}\n')
         stdout.write(f'signaled={result.signaled}\n')
         stdout.write(f'pid={result.pid}\n')
+
+        if result.reason is not None:
+            stdout.write(f'reason={result.reason}\n')
+
+        return 0
+
+    if args.command == 'restart':
+        result = restart_background_daemon_if_needed(
+            project_root=project_root,
+        )
+
+        stdout.write(f'restarted={result.restarted}\n')
+
+        if result.launch is not None:
+            stdout.write(f'pid={result.launch.pid}\n')
+            stdout.write(f'log_path={result.launch.log_path}\n')
 
         if result.reason is not None:
             stdout.write(f'reason={result.reason}\n')
