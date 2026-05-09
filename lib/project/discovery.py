@@ -3,7 +3,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 import tempfile
-from typing import Any
+from typing import Any, Optional
 
 CCB_DIRNAME = '.ccb'
 WORKSPACE_BINDING_FILENAME = '.ccb-workspace.json'
@@ -21,14 +21,14 @@ def global_ccb_dir() -> Path:
     return Path.home() / CCB_DIRNAME
 
 
-def find_current_project_anchor(start_dir: Path) -> Path | None:
+def find_current_project_anchor(start_dir: Path) -> Optional[Path]:
     current = _resolved_dir(start_dir)
     if _project_anchor_dir(current) is None:
         return None
     return current
 
 
-def find_nearest_project_anchor(start_dir: Path) -> Path | None:
+def find_nearest_project_anchor(start_dir: Path) -> Optional[Path]:
     current = _resolved_dir(start_dir)
     for root in _search_roots(current):
         if _project_anchor_dir(root) is None:
@@ -40,7 +40,7 @@ def find_nearest_project_anchor(start_dir: Path) -> Path | None:
     return None
 
 
-def find_parent_project_anchor_dir(start_dir: Path) -> Path | None:
+def find_parent_project_anchor_dir(start_dir: Path) -> Optional[Path]:
     current = _resolved_dir(start_dir)
     for root in current.parents:
         candidate = _project_anchor_dir(root)
@@ -69,12 +69,12 @@ def is_dangerous_project_root(start_dir: Path) -> tuple[bool, str]:
     return False, ''
 
 
-def _project_anchor_dir(root: Path) -> Path | None:
+def _project_anchor_dir(root: Path) -> Optional[Path]:
     primary = root / CCB_DIRNAME
     return primary if primary.is_dir() else None
 
 
-def find_workspace_binding(start_dir: Path) -> Path | None:
+def find_workspace_binding(start_dir: Path) -> Optional[Path]:
     current = _resolved_dir(start_dir)
     for root in _search_roots(current):
         candidate = root / WORKSPACE_BINDING_FILENAME
@@ -108,7 +108,7 @@ def _search_roots(current: Path):
     return (current, *current.parents)
 
 
-def _resolved_home_dir() -> Path | None:
+def _resolved_home_dir() -> Optional[Path]:
     try:
         return Path.home().resolve()
     except Exception:
@@ -118,14 +118,14 @@ def _resolved_home_dir() -> Path | None:
             return None
 
 
-def _filesystem_anchor(current: Path) -> Path | None:
+def _filesystem_anchor(current: Path) -> Optional[Path]:
     try:
         return Path(current.anchor) if current.anchor else None
     except Exception:
         return None
 
 
-def _resolved_temp_dir() -> Path | None:
+def _resolved_temp_dir() -> Optional[Path]:
     try:
         return Path(tempfile.gettempdir()).expanduser().resolve()
     except Exception:

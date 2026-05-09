@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from agents.models import (
     AgentApiSpec,
     PermissionMode,
@@ -73,7 +75,7 @@ def agent_spec_to_hybrid_overlay_dict(
     return payload
 
 
-def _provider_profile_config_dict(spec) -> dict[str, object] | None:
+def _provider_profile_config_dict(spec) -> Optional[dict[str, object]]:
     profile = spec.provider_profile
     default_profile = ProviderProfileSpec()
     if spec.api == AgentApiSpec():

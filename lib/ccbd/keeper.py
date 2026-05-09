@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional, Union
+
 from datetime import timedelta
 from pathlib import Path
 import os
@@ -27,10 +29,10 @@ from storage.paths import PathLayout
 class ProjectKeeper(KeeperAppStateMixin):
     def __init__(
         self,
-        project_root: str | Path,
+        project_root: Union[str, Path],
         *,
         clock=utc_now,
-        pid: int | None = None,
+        pid: Optional[int] = None,
         process_exists_fn=process_exists,
         sleep_fn=time.sleep,
         spawn_ccbd_process_fn=spawn_ccbd_process,

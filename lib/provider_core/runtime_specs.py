@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from dataclasses import dataclass
 
 
@@ -126,7 +128,7 @@ CLIENT_SPECS_BY_PROVIDER = {
 }
 
 
-def parse_qualified_provider(key: str) -> tuple[str, str | None]:
+def parse_qualified_provider(key: str) -> tuple[str, Optional[str]]:
     key = (key or "").strip().lower()
     if not key:
         return ("", None)
@@ -136,7 +138,7 @@ def parse_qualified_provider(key: str) -> tuple[str, str | None]:
     return (base, instance)
 
 
-def make_qualified_key(base: str, instance: str | None) -> str:
+def make_qualified_key(base: str, instance: Optional[str]) -> str:
     base = (base or "").strip().lower()
     if instance:
         return f"{base}:{instance.strip()}"

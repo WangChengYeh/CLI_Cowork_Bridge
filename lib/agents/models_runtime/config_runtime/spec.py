@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import Any
+from typing import Any, Optional
 
 from provider_model_shortcuts import provider_model_startup_args, startup_args_contain_model_flag
 from provider_profiles.models import ProviderProfileSpec
@@ -35,19 +35,19 @@ class AgentSpec:
     provider: str
     target: str
     workspace_mode: WorkspaceMode
-    workspace_root: str | None
+    workspace_root: Optional[str]
     runtime_mode: RuntimeMode
     restore_default: RestoreMode
     permission_default: PermissionMode
     queue_policy: QueuePolicy
-    model: str | None = None
+    model: Optional[str] = None
     startup_args: tuple[str, ...] = field(default_factory=tuple)
     env: dict[str, str] = field(default_factory=dict)
     api: AgentApiSpec = field(default_factory=AgentApiSpec)
     provider_profile: ProviderProfileSpec = field(default_factory=ProviderProfileSpec)
-    branch_template: str | None = None
+    branch_template: Optional[str] = None
     labels: tuple[str, ...] = field(default_factory=tuple)
-    description: str | None = None
+    description: Optional[str] = None
     watch_paths: tuple[str, ...] = field(default_factory=tuple)
 
     def __post_init__(self) -> None:
@@ -71,7 +71,7 @@ class AgentSpec:
         object.__setattr__(self, 'api', normalize_agent_api(self.api))
         object.__setattr__(self, 'provider_profile', normalize_provider_profile(self.provider_profile))
 
-    def _normalize_model(self) -> str | None:
+    def _normalize_model(self) -> Optional[str]:
         if self.model is None:
             return None
         normalized = str(self.model).strip()
@@ -83,7 +83,7 @@ class AgentSpec:
         self,
         *,
         provider: str,
-        model: str | None,
+        model: Optional[str],
         startup_args: tuple[str, ...],
     ) -> tuple[str, ...]:
         if model is None:

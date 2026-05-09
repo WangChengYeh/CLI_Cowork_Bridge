@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 import os
 from collections.abc import Mapping
 
@@ -86,7 +88,7 @@ USER_SESSION_TRANSPORT_ENV_KEYS = frozenset(
 )
 
 
-def user_session_transport_env(environ: Mapping[str, object] | None = None) -> dict[str, str]:
+def user_session_transport_env(environ: Optional[Mapping[str, object]] = None) -> dict[str, str]:
     source = os.environ if environ is None else environ
     return {
         key: str(value)

@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from mailbox_kernel import InboundEventStatus
 
 from ..common import derive_mailbox_state, require_mailbox_target
@@ -30,7 +32,7 @@ def agent_queue(service, agent_name: str) -> dict[str, object]:
     }
 
 
-def _active_event(events: tuple[dict, ...], mailbox) -> dict | None:
+def _active_event(events: tuple[dict, ...], mailbox) -> Optional[dict]:
     event_index = {event['inbound_event_id']: event for event in events}
     active_event_id = mailbox.active_inbound_event_id if mailbox is not None else None
     if active_event_id is not None:
@@ -40,7 +42,7 @@ def _active_event(events: tuple[dict, ...], mailbox) -> dict | None:
     return next((event for event in events if event['status'] == InboundEventStatus.DELIVERING.value), None)
 
 
-def _last_event_timestamps(events: tuple[dict, ...], mailbox) -> tuple[str | None, str | None]:
+def _last_event_timestamps(events: tuple[dict, ...], mailbox) -> Optional[tuple[str], Optional[str]]:
     last_started = mailbox.last_inbound_started_at if mailbox is not None and events else None
     last_finished = mailbox.last_inbound_finished_at if mailbox is not None and events else None
     for event in events:
@@ -53,7 +55,7 @@ def _last_event_timestamps(events: tuple[dict, ...], mailbox) -> tuple[str | Non
     return last_started, last_finished
 
 
-def _mailbox_facts(normalized: str, mailbox, *, active: dict | None, queue_depth: int) -> tuple[str, str, int]:
+def _mailbox_facts(normalized: str, mailbox, *, active: Optional[dict], queue_depth: int) -> tuple[str, str, int]:
     if mailbox is not None:
         return mailbox.mailbox_id, derive_mailbox_state(active is not None, queue_depth), mailbox.lease_version
     return f'mbx_{normalized}', derive_mailbox_state(active is not None, queue_depth), 0

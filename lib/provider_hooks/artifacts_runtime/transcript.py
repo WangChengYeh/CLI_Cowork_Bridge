@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from pathlib import Path
 import re
 
@@ -8,14 +10,14 @@ from provider_core.protocol import ANY_REQ_ID_PATTERN, REQ_ID_BOUNDARY_PATTERN
 REQ_ID_RE = re.compile(rf'CCB_REQ_ID:\s*({ANY_REQ_ID_PATTERN}){REQ_ID_BOUNDARY_PATTERN}', re.IGNORECASE)
 
 
-def extract_req_id(text: str) -> str | None:
+def extract_req_id(text: str) -> Optional[str]:
     match = REQ_ID_RE.search(str(text or ''))
     if not match:
         return None
     return str(match.group(1) or '').strip() or None
 
 
-def latest_req_id_from_transcript(transcript_path: str | Path | None) -> str | None:
+def latest_req_id_from_transcript(transcript_path: str | Optional[Path]) -> Optional[str]:
     raw = str(transcript_path or '').strip()
     if not raw:
         return None

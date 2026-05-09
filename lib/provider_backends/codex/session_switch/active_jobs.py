@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 import json
 from pathlib import Path
 
@@ -28,7 +30,7 @@ def running_request_anchors(*, session_file: Path, session_data: dict[str, objec
     return tuple(request_anchor_for_job(job_id) for job_id, status in statuses.items() if status == "running")
 
 
-def _jobs_path(*, session_file: Path, session_data: dict[str, object]) -> Path | None:
+def _jobs_path(*, session_file: Path, session_data: dict[str, object]) -> Optional[Path]:
     agent_name = _agent_name(session_file=session_file, session_data=session_data)
     if not agent_name:
         return None
@@ -56,14 +58,14 @@ def _agent_name(*, session_file: Path, session_data: dict[str, object]) -> str:
         return raw.strip()
 
 
-def _agent_name_from_session_filename(filename: str) -> str | None:
+def _agent_name_from_session_filename(filename: str) -> Optional[str]:
     if not filename.startswith(".codex-") or not filename.endswith("-session"):
         return None
     value = filename[len(".codex-") : -len("-session")].strip()
     return value or None
 
 
-def _ccb_dir(session_file: Path) -> Path | None:
+def _ccb_dir(session_file: Path) -> Optional[Path]:
     parent = session_file.expanduser().parent
     if parent.name == ".ccb" or (parent / "agents").exists():
         return parent
@@ -73,7 +75,7 @@ def _ccb_dir(session_file: Path) -> Path | None:
     return None
 
 
-def _load_record(line: str) -> dict[str, object] | None:
+def _load_record(line: str) -> Optional[dict[str, object]]:
     try:
         value = json.loads(line)
     except Exception:

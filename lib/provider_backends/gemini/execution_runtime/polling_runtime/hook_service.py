@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from dataclasses import dataclass, replace
 from pathlib import Path
 
@@ -18,7 +20,7 @@ class HookContext:
     next_seq: int
 
 
-def poll_exact_hook(submission, *, now: str) -> ProviderPollResult | None:
+def poll_exact_hook(submission, *, now: str) -> Optional[ProviderPollResult]:
     context = hook_context(submission)
     if context is None:
         return None
@@ -62,7 +64,7 @@ def poll_exact_hook(submission, *, now: str) -> ProviderPollResult | None:
     return ProviderPollResult(submission=updated, items=(item,), decision=decision)
 
 
-def hook_context(submission) -> HookContext | None:
+def hook_context(submission) -> Optional[HookContext]:
     completion_dir = str(submission.runtime_state.get('completion_dir') or '').strip()
     request_anchor = request_anchor_from_runtime_state(submission.runtime_state, fallback=submission.job_id)
     next_seq = int(submission.runtime_state.get('next_seq', 1))

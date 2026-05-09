@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from dataclasses import dataclass
 from pathlib import Path
 import shutil
@@ -26,7 +28,7 @@ class ResetProjectSummary:
     reset_performed: bool
 
 
-def reset_project_state(project_root: Path, *, context: CliContext | None = None) -> ResetProjectSummary:
+def reset_project_state(project_root: Path, *, context: Optional[CliContext] = None) -> ResetProjectSummary:
     root = _resolve_path(project_root)
     layout = PathLayout(root)
     project_id = compute_project_id(root)
@@ -153,7 +155,7 @@ def _unregister_project_worktrees(project_root: Path, layout: PathLayout) -> Non
     unregister_worktrees_under(project_root, layout.workspaces_dir)
 
 
-def _read_optional_text(path: Path) -> str | None:
+def _read_optional_text(path: Path) -> Optional[str]:
     if not path.is_file():
         return None
     return path.read_text(encoding='utf-8')

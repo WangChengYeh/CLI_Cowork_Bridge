@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional, Union
+
 from cli.ask_syntax import parse_ask_route
 from cli.models import ParsedAskCommand, ParsedAskWaitCommand, ParsedCancelCommand, ParsedPendCommand
 
@@ -13,7 +15,7 @@ _REMOVED_ASK_FLAGS = {
 }
 
 
-def _parse_job_action(tokens: list[str], *, project: str | None, error_type):
+def _parse_job_action(tokens: list[str], *, project: Optional[str], error_type):
     if not tokens or tokens[0] not in ASK_JOB_ACTIONS:
         return None
     action = tokens[0]
@@ -26,7 +28,7 @@ def _parse_job_action(tokens: list[str], *, project: str | None, error_type):
     return ParsedCancelCommand(project=project, job_id=tokens[1])
 
 
-def _default_options() -> dict[str, str | float | None]:
+def _default_options() -> dict[str, Union[str, Optional[float]]]:
     return {
         'task_id': None,
         'reply_to': None,
@@ -36,7 +38,7 @@ def _default_options() -> dict[str, str | float | None]:
     }
 
 
-def _set_option_value(options: dict[str, str | float | None], option: str, value: str, *, error_type) -> None:
+def _set_option_value(options: dict[str, Union[str, Optional[float]]], option: str, value: str, *, error_type) -> None:
     if option == '--output':
         options['output_path'] = value
         return
@@ -72,7 +74,7 @@ def _parse_route_options(remaining: list[str], *, error_type):
     return options, silence, wait
 
 
-def _validate_wait_options(*, route, options: dict[str, str | float | None], wait: bool, error_type) -> None:
+def _validate_wait_options(*, route, options: dict[str, Union[str, Optional[float]]], wait: bool, error_type) -> None:
     if options['output_path'] is not None and not wait:
         raise error_type('--output requires --wait')
     if wait and route.target == 'all':
@@ -82,10 +84,10 @@ def _validate_wait_options(*, route, options: dict[str, str | float | None], wai
 def parse_ask(
     tokens: list[str],
     *,
-    project: str | None,
+    project: Optional[str],
     read_optional_stdin,
     error_type,
-) -> ParsedAskCommand | ParsedAskWaitCommand | ParsedPendCommand | ParsedCancelCommand:
+) -> Union[ParsedAskCommand, ParsedAskWaitCommand, ParsedPendCommand, ParsedCancelCommand]:
     action_command = _parse_job_action(tokens, project=project, error_type=error_type)
     if action_command is not None:
         return action_command

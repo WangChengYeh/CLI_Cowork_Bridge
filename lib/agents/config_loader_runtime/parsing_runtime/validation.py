@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Any
+from typing import Any, Optional
 
 from agents.models import AgentValidationError, ProjectConfig, normalize_agent_name
 
@@ -10,7 +10,7 @@ from .agent_specs import parse_agents
 from .expectations import expect_bool, expect_string, expect_string_list
 
 
-def validate_project_config(document: dict[str, Any], *, source_path: Path | None = None) -> ProjectConfig:
+def validate_project_config(document: dict[str, Any], *, source_path: Optional[Path] = None) -> ProjectConfig:
     _validate_document_shape(document)
     default_agents = _parse_default_agents(document)
     parsed_agents = parse_agents(document.get('agents'))
@@ -54,7 +54,7 @@ def _parse_cmd_enabled(document: dict[str, Any]) -> bool:
     return expect_bool(document['cmd_enabled'], field_name='cmd_enabled')
 
 
-def _parse_layout_spec(document: dict[str, Any]) -> str | None:
+def _parse_layout_spec(document: dict[str, Any]) -> Optional[str]:
     if document.get('layout') is None:
         return None
     return expect_string(document['layout'], field_name='layout')
@@ -65,8 +65,8 @@ def _build_project_config(
     default_agents: tuple[str, ...],
     parsed_agents,
     cmd_enabled: bool,
-    layout_spec: str | None,
-    source_path: Path | None,
+    layout_spec: Optional[str],
+    source_path: Optional[Path],
 ) -> ProjectConfig:
     try:
         return ProjectConfig(

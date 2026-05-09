@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from pathlib import Path
 
 from storage.json_store import JsonStore
@@ -9,11 +11,11 @@ from .models import HeartbeatState
 
 
 class HeartbeatStateStore:
-    def __init__(self, layout: PathLayout, store: JsonStore | None = None) -> None:
+    def __init__(self, layout: PathLayout, store: Optional[JsonStore] = None) -> None:
         self._layout = layout
         self._store = store or JsonStore()
 
-    def load(self, subject_kind: str, subject_id: str) -> HeartbeatState | None:
+    def load(self, subject_kind: str, subject_id: str) -> Optional[HeartbeatState]:
         path = self._layout.heartbeat_subject_path(subject_kind, subject_id)
         if not path.exists():
             return None
@@ -33,7 +35,7 @@ class HeartbeatStateStore:
         except FileNotFoundError:
             return
 
-    def list_all(self, subject_kind: str | None = None) -> list[HeartbeatState]:
+    def list_all(self, subject_kind: Optional[str] = None) -> list[HeartbeatState]:
         roots: list[Path]
         if subject_kind is None:
             root = self._layout.ccbd_heartbeats_dir

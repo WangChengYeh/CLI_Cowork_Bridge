@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from ccbd.services.project_namespace_pane import backend_socket_matches, inspect_project_namespace_pane, same_tmux_socket_path
 
 
@@ -16,7 +18,7 @@ def pane_outside_project_namespace(*, runtime, namespace_state_store, backend, p
     return _record_outside_namespace(runtime, namespace_state, record)
 
 
-def _normalized_tmux_pane_id(pane_id: str) -> str | None:
+def _normalized_tmux_pane_id(pane_id: str) -> Optional[str]:
     pane_text = str(pane_id or '').strip()
     return pane_text if pane_text.startswith('%') else None
 
@@ -28,11 +30,11 @@ def _load_namespace_state(namespace_state_store):
         return None
 
 
-def _backend_matches_namespace_socket(backend, tmux_socket_path: str | None) -> bool:
+def _backend_matches_namespace_socket(backend, tmux_socket_path: Optional[str]) -> bool:
     return backend_socket_matches(backend, tmux_socket_path)
 
 
-def _runtime_socket_matches_namespace(runtime, tmux_socket_path: str | None) -> bool:
+def _runtime_socket_matches_namespace(runtime, tmux_socket_path: Optional[str]) -> bool:
     runtime_socket = str(getattr(runtime, 'tmux_socket_path', None) or '').strip()
     return bool(runtime_socket) and same_tmux_socket_path(runtime_socket, tmux_socket_path)
 

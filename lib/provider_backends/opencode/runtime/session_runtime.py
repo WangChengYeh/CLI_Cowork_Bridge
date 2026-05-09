@@ -12,7 +12,7 @@ from provider_sessions.files import safe_write_session
 
 def find_opencode_session_file(
     *,
-    cwd: Path | None = None,
+    cwd: Optional[Path] = None,
     finder: Callable[[Path], Optional[Path]],
 ) -> Optional[Path]:
     del finder
@@ -53,8 +53,8 @@ def publish_opencode_registry(
     ccb_session_id: str,
     session_info: dict,
     terminal: str,
-    pane_id: str | None,
-    project_session_file: str | None,
+    pane_id: Optional[str],
+    project_session_file: Optional[str],
     upsert_registry_fn,
 ) -> None:
     try:

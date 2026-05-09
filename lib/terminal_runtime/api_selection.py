@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from terminal_runtime.backend_selection import TerminalBackendSelection, TerminalLayoutService
 
 
@@ -37,8 +39,8 @@ def create_layout(
     *,
     providers: list[str],
     cwd: str,
-    root_pane_id: str | None,
-    tmux_session_name: str | None,
+    root_pane_id: Optional[str],
+    tmux_session_name: Optional[str],
     percent: int,
     set_markers: bool,
     marker_prefix: str,

@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from dataclasses import dataclass
 import os
 import shutil
@@ -242,7 +244,7 @@ def _tmux_client_tty(
     *,
     client_pid: int,
     env: dict[str, str],
-) -> str | None:
+) -> Optional[str]:
     probe = subprocess.run(
         [
             'tmux',

@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from ccbd.api_models import JobRecord
 from completion.models import CompletionSourceKind
 from provider_execution.active import PreparedActiveStart, prepare_active_start, resume_active_submission
@@ -97,7 +99,7 @@ def resume_submission(
     load_session_fn,
     backend_for_session_fn,
     reader_factory,
-) -> ProviderSubmission | None:
+) -> Optional[ProviderSubmission]:
     return resume_active_submission(
         job,
         submission,

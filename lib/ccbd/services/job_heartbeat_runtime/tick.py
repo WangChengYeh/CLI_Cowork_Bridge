@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from heartbeat import HeartbeatAction, evaluate_heartbeat
 from mailbox_runtime.targets import known_mailbox_targets, normalize_mailbox_target
 
@@ -18,7 +20,7 @@ def tick_job_heartbeat(service, dispatcher, job) -> bool:
     return deliver_heartbeat_notice(service, dispatcher, job, context)
 
 
-def build_heartbeat_tick_context(service, dispatcher, job) -> HeartbeatTickContext | None:
+def build_heartbeat_tick_context(service, dispatcher, job) -> Optional[HeartbeatTickContext]:
     snapshot = dispatcher.get_snapshot(job.job_id)
     if snapshot_is_terminal(snapshot):
         service._store.remove(service._subject_kind, job.job_id)

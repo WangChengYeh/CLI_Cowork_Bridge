@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from pathlib import Path
 import os
 
@@ -16,14 +18,14 @@ from .socket_client_runtime import (
 
 
 class CcbdClient:
-    def __init__(self, socket_path: str | Path, *, timeout_s: float | None = None) -> None:
+    def __init__(self, socket_path: str | Path, *, timeout_s: Optional[float] = None) -> None:
         self._socket_path = Path(socket_path)
         self._timeout_s = _resolve_timeout(timeout_s)
 
-    def with_timeout(self, timeout_s: float | None) -> "CcbdClient":
+    def with_timeout(self, timeout_s: Optional[float]) -> "CcbdClient":
         return type(self)(self._socket_path, timeout_s=timeout_s)
 
-    def request(self, op: str, payload: dict | None = None) -> dict:
+    def request(self, op: str, payload: Optional[dict] = None) -> dict:
         req = RpcRequest(op=op, request=payload or {})
         try:
             sock = connect_socket(self._socket_path, timeout_s=self._timeout_s)
@@ -52,7 +54,7 @@ class CcbdClient:
         return call
 
 
-def _resolve_timeout(explicit: float | None) -> float:
+def _resolve_timeout(explicit: Optional[float]) -> float:
     if explicit is not None:
         try:
             return max(0.1, float(explicit))

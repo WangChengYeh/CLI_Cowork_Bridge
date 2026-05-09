@@ -1,12 +1,14 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from ccbd.api_models import JobRecord, TargetKind
 
 from .state_common import TargetSlot
 
 
 class DispatcherStateIndexMixin:
-    def target_for_job(self, job_id: str) -> TargetSlot | None:
+    def target_for_job(self, job_id: str) -> Optional[TargetSlot]:
         return self._job_index.get(job_id)
 
     def remember_job(self, job_id: str, target_kind: TargetKind | str, target_name: str) -> None:

@@ -3,13 +3,13 @@ from __future__ import annotations
 import time
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Callable
+from typing import Callable, Optional
 
 from runtime.bootstrap import RuntimeBootstrap, bootstrap_runtime
 from runtime.daemon_state import RuntimeDaemonStateStore
 
 
-@dataclass(slots=True)
+@dataclass
 class RuntimeDaemonRunResult:
     iterations: int
     processed_events: int
@@ -20,10 +20,10 @@ def run_runtime_forever(
     *,
     project_root: Path,
     interval_seconds: float = 1.0,
-    max_iterations: int | None = None,
-    bootstrap: RuntimeBootstrap | None = None,
+    max_iterations: Optional[int] = None,
+    bootstrap: Optional[RuntimeBootstrap] = None,
     sleep_fn: Callable[[float], None] = time.sleep,
-    should_stop: Callable[[], bool] | None = None,
+    should_stop: Callable[[], Optional[bool]] = None,
 ) -> RuntimeDaemonRunResult:
     runtime = bootstrap or bootstrap_runtime(project_root=project_root)
     state_store = RuntimeDaemonStateStore(project_root=project_root)

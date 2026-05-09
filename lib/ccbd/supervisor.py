@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from pathlib import Path
 
 from agents.config_identity import project_config_identity_payload
@@ -18,7 +20,7 @@ from cli.services.tmux_project_cleanup import cleanup_project_tmux_orphans_by_so
 
 
 class RuntimeSupervisor(SupervisorRuntimeStateMixin):
-    def __init__(self, *, project_root: Path, project_id: str, paths, config, registry, runtime_service, project_namespace: ProjectNamespaceController | None = None, clock=utc_now) -> None:
+    def __init__(self, *, project_root: Path, project_id: str, paths, config, registry, runtime_service, project_namespace: Optional[ProjectNamespaceController] = None, clock=utc_now) -> None:
         mount_manager = MountManager(paths, clock=clock)
         self._runtime_state = SupervisorRuntimeState(
             project_root=Path(project_root).expanduser().resolve(),
@@ -43,12 +45,12 @@ class RuntimeSupervisor(SupervisorRuntimeStateMixin):
         agent_names: tuple[str, ...],
         restore: bool,
         auto_permission: bool,
-        terminal_size: tuple[int, int] | None = None,
+        terminal_size: Optional[tuple[int, int]] = None,
         cleanup_tmux_orphans: bool = True,
         interactive_tmux_layout: bool = True,
         recreate_namespace: bool = False,
         reflow_workspace: bool = False,
-        recreate_reason: str | None = None,
+        recreate_reason: Optional[str] = None,
         background_maintenance: bool = False,
     ) -> StartFlowSummary:
         return start_supervisor(

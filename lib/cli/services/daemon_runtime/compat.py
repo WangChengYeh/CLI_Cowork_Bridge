@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 import time
 
 from agents.config_identity import project_config_identity_payload
@@ -35,7 +37,7 @@ def connect_compatible_daemon(
     runtime_client_factory=None,
     daemon_matches_project_config_fn=daemon_matches_project_config,
     shutdown_incompatible_daemon_fn=None,
-) -> DaemonHandle | None:
+) -> Optional[DaemonHandle]:
     if not inspection.socket_connectable:
         return None
     runtime_client_factory = runtime_client_factory or probe_client_factory

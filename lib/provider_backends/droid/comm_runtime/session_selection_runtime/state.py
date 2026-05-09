@@ -1,9 +1,11 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from pathlib import Path
 
 
-def set_preferred_session(reader, session_path: Path | None) -> None:
+def set_preferred_session(reader, session_path: Optional[Path]) -> None:
     if not session_path:
         return
     try:
@@ -14,7 +16,7 @@ def set_preferred_session(reader, session_path: Path | None) -> None:
         reader._preferred_session = candidate
 
 
-def set_session_id_hint(reader, session_id: str | None) -> None:
+def set_session_id_hint(reader, session_id: Optional[str]) -> None:
     if not session_id:
         return
     reader._session_id_hint = str(session_id).strip()

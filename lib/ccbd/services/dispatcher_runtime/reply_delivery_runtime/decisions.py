@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from completion.models import CompletionConfidence, CompletionDecision, CompletionStatus
 
 
@@ -7,8 +9,8 @@ def reply_delivery_completed_decision(
     job,
     *,
     finished_at: str,
-    provider_turn_ref: str | None = None,
-    diagnostics: dict[str, object] | None = None,
+    provider_turn_ref: Optional[str] = None,
+    diagnostics: Optional[dict[str, object]] = None,
 ) -> CompletionDecision:
     payload = {
         'reply_delivery': True,
@@ -36,7 +38,7 @@ def reply_delivery_failed_decision(
     *,
     finished_at: str,
     reason: str,
-    diagnostics: dict[str, object] | None = None,
+    diagnostics: Optional[dict[str, object]] = None,
 ) -> CompletionDecision:
     payload = {
         'reply_delivery': True,

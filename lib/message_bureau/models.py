@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import Any
+from typing import Any, Optional
 
 from .model_codecs import (
     attempt_from_record,
@@ -20,7 +20,7 @@ from .model_enums import AttemptState, MessageState, ReplyTerminalStatus, SCHEMA
 @dataclass(frozen=True)
 class MessageRecord:
     message_id: str
-    origin_message_id: str | None
+    origin_message_id: Optional[str]
     from_actor: str
     target_scope: str
     target_agents: tuple[str, ...] = field(default_factory=tuple)
@@ -28,8 +28,8 @@ class MessageRecord:
     reply_policy: dict[str, Any] = field(default_factory=dict)
     retry_policy: dict[str, Any] = field(default_factory=dict)
     priority: int = 100
-    payload_ref: str | None = None
-    submission_id: str | None = None
+    payload_ref: Optional[str] = None
+    submission_id: Optional[str] = None
     created_at: str = ''
     updated_at: str = ''
     message_state: MessageState = MessageState.CREATED
@@ -53,7 +53,7 @@ class AttemptRecord:
     provider: str
     job_id: str
     retry_index: int
-    health_snapshot_ref: str | None
+    health_snapshot_ref: Optional[str]
     started_at: str
     updated_at: str
     attempt_state: AttemptState

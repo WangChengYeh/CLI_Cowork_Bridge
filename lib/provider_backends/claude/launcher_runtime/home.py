@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 import getpass
 import json
 import os
@@ -53,21 +55,21 @@ def prepare_claude_home_overrides(runtime_dir: Path, profile) -> dict[str, str]:
     }
 
 
-def materialize_claude_home_config(target_home: Path, *, profile=None, source_home: Path | None = None) -> ClaudeHomeLayout:
+def materialize_claude_home_config(target_home: Path, *, profile=None, source_home: Optional[Path] = None) -> ClaudeHomeLayout:
     layout = claude_layout_for_home(Path(target_home).expanduser())
     source_root = Path(source_home).expanduser() if source_home is not None else _system_home_root()
     _prepare_managed_home(source_root, layout, profile=profile)
     return layout
 
 
-def _profile_runtime_home(profile) -> Path | None:
+def _profile_runtime_home(profile) -> Optional[Path]:
     runtime_home = getattr(profile, 'runtime_home', None) if profile is not None else None
     if not runtime_home:
         return None
     return Path(runtime_home).expanduser()
 
 
-def _existing_layout(runtime_dir: Path, *, managed_home: Path) -> ClaudeHomeLayout | None:
+def _existing_layout(runtime_dir: Path, *, managed_home: Path) -> Optional[ClaudeHomeLayout]:
     session_file = session_file_for_runtime_dir(runtime_dir)
     if session_file is None or not session_file.is_file():
         return None
@@ -99,7 +101,7 @@ def _is_within_home_root(candidate: Path, managed_home: Path) -> bool:
         return False
 
 
-def _normalize_path(value: object) -> Path | None:
+def _normalize_path(value: object) -> Optional[Path]:
     try:
         return Path(value).expanduser().resolve()
     except Exception:
@@ -210,7 +212,7 @@ def _materialize_macos_keychain_auth(target_layout: ClaudeHomeLayout) -> None:
     _write_json_object(target_layout.credentials_path, payload, mode=0o600)
 
 
-def _read_macos_keychain_claude_credentials() -> dict[str, object] | None:
+def _read_macos_keychain_claude_credentials() -> Optional[dict[str, object]]:
     if platform.system() != 'Darwin':
         return None
     security = shutil.which('security') or '/usr/bin/security'
@@ -256,7 +258,7 @@ def _macos_keychain_services() -> tuple[str, ...]:
     return tuple(services)
 
 
-def _projected_settings_payload(source_settings_path: Path, *, profile) -> dict[str, object] | None:
+def _projected_settings_payload(source_settings_path: Path, *, profile) -> Optional[dict[str, object]]:
     source_payload = _read_json_object(source_settings_path)
     if not source_payload:
         return {} if _needs_settings_stub(profile) else None
@@ -283,11 +285,11 @@ def _projected_settings_payload(source_settings_path: Path, *, profile) -> dict[
 
 
 def _merge_settings_payload(
-    projected: dict[str, object] | None,
+    projected: Optional[dict[str, object]],
     *,
     existing: dict[str, object],
     profile=None,
-) -> dict[str, object] | None:
+) -> Optional[dict[str, object]]:
     existing_payload = dict(existing or {})
     projected_payload = dict(projected or {})
     merged = dict(projected_payload)
@@ -401,7 +403,7 @@ def _json_object_from_text(value: str) -> dict[str, object]:
     return data if isinstance(data, dict) else {}
 
 
-def _write_json_object(path: Path, payload: dict[str, object], *, mode: int | None = None) -> None:
+def _write_json_object(path: Path, payload: dict[str, object], *, mode: Optional[int] = None) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(
         json.dumps(payload, ensure_ascii=False, indent=2) + '\n',

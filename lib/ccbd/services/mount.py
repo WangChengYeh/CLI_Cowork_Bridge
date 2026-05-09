@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from pathlib import Path
 
 from ccbd.models import CcbdLease, MountState, SCHEMA_VERSION
@@ -12,7 +14,7 @@ class MountManager:
     def __init__(
         self,
         layout: PathLayout,
-        store: JsonStore | None = None,
+        store: Optional[JsonStore] = None,
         *,
         clock=utc_now,
         uid_getter=current_uid,
@@ -24,7 +26,7 @@ class MountManager:
         self._uid_getter = uid_getter
         self._boot_id_getter = boot_id_getter
 
-    def load_state(self) -> CcbdLease | None:
+    def load_state(self) -> Optional[CcbdLease]:
         path = self._layout.ccbd_lease_path
         if not path.exists():
             return None
@@ -37,10 +39,10 @@ class MountManager:
         pid: int,
         socket_path: str | Path,
         generation: int,
-        started_at: str | None = None,
-        config_signature: str | None = None,
-        keeper_pid: int | None = None,
-        daemon_instance_id: str | None = None,
+        started_at: Optional[str] = None,
+        config_signature: Optional[str] = None,
+        keeper_pid: Optional[int] = None,
+        daemon_instance_id: Optional[str] = None,
     ) -> CcbdLease:
         timestamp = started_at or self._clock()
         lease = CcbdLease(
@@ -60,7 +62,7 @@ class MountManager:
         self._store.save(self._layout.ccbd_lease_path, lease, serializer=lambda value: value.to_record())
         return lease
 
-    def refresh_heartbeat(self, *, expected_pid: int | None = None, expected_daemon_instance_id: str | None = None) -> CcbdLease:
+    def refresh_heartbeat(self, *, expected_pid: Optional[int] = None, expected_daemon_instance_id: Optional[str] = None) -> CcbdLease:
         lease = self.load_state()
         if lease is None:
             raise RuntimeError('ccbd lease does not exist')
@@ -78,9 +80,9 @@ class MountManager:
     def mark_unmounted(
         self,
         *,
-        expected_pid: int | None = None,
-        expected_daemon_instance_id: str | None = None,
-    ) -> CcbdLease | None:
+        expected_pid: Optional[int] = None,
+        expected_daemon_instance_id: Optional[str] = None,
+    ) -> Optional[CcbdLease]:
         lease = self.load_state()
         if lease is None:
             return None
@@ -97,8 +99,8 @@ class MountManager:
         self,
         lease: CcbdLease,
         *,
-        expected_pid: int | None,
-        expected_daemon_instance_id: str | None,
+        expected_pid: Optional[int],
+        expected_daemon_instance_id: Optional[str],
     ) -> None:
         if expected_pid is not None and int(lease.ccbd_pid) != int(expected_pid):
             raise RuntimeError(

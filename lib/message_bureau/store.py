@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from agents.models import normalize_agent_name
 from storage.jsonl_store import JsonlStore
 from storage.paths import PathLayout
@@ -8,7 +10,7 @@ from .models import AttemptRecord, MessageRecord, ReplyRecord
 
 
 class MessageStore:
-    def __init__(self, layout: PathLayout, store: JsonlStore | None = None) -> None:
+    def __init__(self, layout: PathLayout, store: Optional[JsonlStore] = None) -> None:
         self._layout = layout
         self._store = store or JsonlStore()
 
@@ -18,7 +20,7 @@ class MessageStore:
     def list_all(self) -> list[MessageRecord]:
         return self._store.read_all(self._layout.ccbd_messages_path, loader=MessageRecord.from_record)
 
-    def get_latest(self, message_id: str) -> MessageRecord | None:
+    def get_latest(self, message_id: str) -> Optional[MessageRecord]:
         for record in reversed(self.list_all()):
             if record.message_id == message_id:
                 return record
@@ -29,7 +31,7 @@ class MessageStore:
 
 
 class AttemptStore:
-    def __init__(self, layout: PathLayout, store: JsonlStore | None = None) -> None:
+    def __init__(self, layout: PathLayout, store: Optional[JsonlStore] = None) -> None:
         self._layout = layout
         self._store = store or JsonlStore()
 
@@ -39,13 +41,13 @@ class AttemptStore:
     def list_all(self) -> list[AttemptRecord]:
         return self._store.read_all(self._layout.ccbd_attempts_path, loader=AttemptRecord.from_record)
 
-    def get_latest(self, attempt_id: str) -> AttemptRecord | None:
+    def get_latest(self, attempt_id: str) -> Optional[AttemptRecord]:
         for record in reversed(self.list_all()):
             if record.attempt_id == attempt_id:
                 return record
         return None
 
-    def get_latest_by_job_id(self, job_id: str) -> AttemptRecord | None:
+    def get_latest_by_job_id(self, job_id: str) -> Optional[AttemptRecord]:
         for record in reversed(self.list_all()):
             if record.job_id == job_id:
                 return record
@@ -60,7 +62,7 @@ class AttemptStore:
 
 
 class ReplyStore:
-    def __init__(self, layout: PathLayout, store: JsonlStore | None = None) -> None:
+    def __init__(self, layout: PathLayout, store: Optional[JsonlStore] = None) -> None:
         self._layout = layout
         self._store = store or JsonlStore()
 
@@ -70,7 +72,7 @@ class ReplyStore:
     def list_all(self) -> list[ReplyRecord]:
         return self._store.read_all(self._layout.ccbd_replies_path, loader=ReplyRecord.from_record)
 
-    def get_latest(self, reply_id: str) -> ReplyRecord | None:
+    def get_latest(self, reply_id: str) -> Optional[ReplyRecord]:
         for record in reversed(self.list_all()):
             if record.reply_id == reply_id:
                 return record

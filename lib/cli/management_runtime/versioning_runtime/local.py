@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 import json
 import shutil
 import subprocess
@@ -29,14 +31,14 @@ def get_version_info(dir_path: Path) -> dict:
     return info
 
 
-def read_embedded_version_info(ccb_file: Path) -> dict[str, str | None]:
+def read_embedded_version_info(ccb_file: Path) -> dict[str, Optional[str]]:
     if not ccb_file.exists():
         return {}
     try:
         content = ccb_file.read_text(encoding="utf-8", errors="replace")
     except Exception:
         return {}
-    info: dict[str, str | None] = {}
+    info: dict[str, Optional[str]] = {}
     for line in content.split("\n")[:60]:
         key, value = version_assignment(line)
         if key is None or not value:
@@ -45,7 +47,7 @@ def read_embedded_version_info(ccb_file: Path) -> dict[str, str | None]:
     return info
 
 
-def version_assignment(line: str) -> tuple[str | None, str | None]:
+def version_assignment(line: str) -> Optional[tuple[str], Optional[str]]:
     text = line.strip()
     if "=" not in text:
         return None, None
@@ -59,7 +61,7 @@ def version_assignment(line: str) -> tuple[str | None, str | None]:
     return mapping.get(name.strip()), value or None
 
 
-def read_version_file(version_file: Path) -> dict[str, str | None]:
+def read_version_file(version_file: Path) -> dict[str, Optional[str]]:
     if not version_file.exists():
         return {}
     try:
@@ -71,7 +73,7 @@ def read_version_file(version_file: Path) -> dict[str, str | None]:
     return {"version": value}
 
 
-def read_build_info(build_info_file: Path) -> dict[str, str | None]:
+def read_build_info(build_info_file: Path) -> dict[str, Optional[str]]:
     if not build_info_file.exists():
         return {}
     try:
@@ -80,7 +82,7 @@ def read_build_info(build_info_file: Path) -> dict[str, str | None]:
         return {}
     if not isinstance(payload, dict):
         return {}
-    normalized: dict[str, str | None] = {}
+    normalized: dict[str, Optional[str]] = {}
     for key in (
         "version",
         "commit",
@@ -98,7 +100,7 @@ def read_build_info(build_info_file: Path) -> dict[str, str | None]:
     return normalized
 
 
-def git_version_info(dir_path: Path) -> dict[str, str] | None:
+def git_version_info(dir_path: Path) -> Optional[dict[str, str]]:
     if not shutil.which("git") or not (dir_path / ".git").exists():
         return None
     result = subprocess.run(

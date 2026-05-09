@@ -1,13 +1,15 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from pathlib import Path
 
 
-def find_session_by_id(reader) -> Path | None:
+def find_session_by_id(reader) -> Optional[Path]:
     session_id = (reader._session_id_hint or '').strip()
     if not session_id or not reader.root.exists():
         return None
-    latest: Path | None = None
+    latest: Optional[Path] = None
     latest_mtime = -1.0
     try:
         for path in reader.root.glob(f'**/{session_id}.jsonl'):

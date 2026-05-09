@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 import json
 from pathlib import Path
 
@@ -7,8 +9,8 @@ from .parsing import extract_message
 from .session_selection import latest_session
 
 
-def latest_message(reader) -> str | None:
-    last: str | None = None
+def latest_message(reader) -> Optional[str]:
+    last: Optional[str] = None
     for entry in _iter_session_entries(reader):
         msg = extract_message(entry, "assistant")
         if msg:
@@ -18,7 +20,7 @@ def latest_message(reader) -> str | None:
 
 def latest_conversations(reader, n: int) -> list[tuple[str, str]]:
     pairs: list[tuple[str, str]] = []
-    last_user: str | None = None
+    last_user: Optional[str] = None
     for entry in _iter_session_entries(reader):
         user_msg = extract_message(entry, "user")
         if user_msg:
@@ -45,7 +47,7 @@ def _iter_session_entries(reader):
         return
 
 
-def _latest_session_path(reader) -> Path | None:
+def _latest_session_path(reader) -> Optional[Path]:
     session = latest_session(reader)
     if not session or not session.exists():
         return None

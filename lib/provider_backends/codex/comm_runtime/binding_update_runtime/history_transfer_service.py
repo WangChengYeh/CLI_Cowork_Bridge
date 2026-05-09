@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import time
 from pathlib import Path
-from typing import Any
+from typing import Any, Optional
 
 
 def apply_old_binding_metadata(
@@ -70,7 +70,7 @@ def _resolve_work_dir(work_dir_hint: Any) -> Path:
     return Path.cwd()
 
 
-def _resolve_session_path(old_path: str) -> Path | None:
+def _resolve_session_path(old_path: str) -> Optional[Path]:
     if not old_path:
         return None
     try:

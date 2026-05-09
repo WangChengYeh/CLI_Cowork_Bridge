@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from ccbd.api_models import JobRecord
 
 from provider_execution.base import ProviderRuntimeContext
@@ -20,7 +22,7 @@ def restore_submission(
     service,
     job: JobRecord,
     *,
-    runtime_context: ProviderRuntimeContext | None = None,
+    runtime_context: Optional[ProviderRuntimeContext] = None,
 ) -> ExecutionRestoreResult:
     preflight = restore_preflight_result(service, job)
     if preflight is not None:

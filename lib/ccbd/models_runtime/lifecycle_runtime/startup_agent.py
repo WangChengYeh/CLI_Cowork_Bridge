@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Any
+from typing import Any, Optional
 
 from ccbd.models_runtime.common import CcbdModelError
 
@@ -11,25 +11,25 @@ from .common import clean_text, coerce_int
 @dataclass(frozen=True)
 class CcbdStartupAgentResult:
     agent_name: str
-    provider: str | None
+    provider: Optional[str]
     action: str
     health: str
-    workspace_path: str | None
-    runtime_ref: str | None = None
-    session_ref: str | None = None
-    lifecycle_state: str | None = None
-    desired_state: str | None = None
-    reconcile_state: str | None = None
-    binding_source: str | None = None
-    terminal_backend: str | None = None
-    tmux_socket_name: str | None = None
-    tmux_socket_path: str | None = None
-    pane_id: str | None = None
-    active_pane_id: str | None = None
-    pane_state: str | None = None
-    runtime_pid: int | None = None
-    runtime_root: str | None = None
-    failure_reason: str | None = None
+    workspace_path: Optional[str]
+    runtime_ref: Optional[str] = None
+    session_ref: Optional[str] = None
+    lifecycle_state: Optional[str] = None
+    desired_state: Optional[str] = None
+    reconcile_state: Optional[str] = None
+    binding_source: Optional[str] = None
+    terminal_backend: Optional[str] = None
+    tmux_socket_name: Optional[str] = None
+    tmux_socket_path: Optional[str] = None
+    pane_id: Optional[str] = None
+    active_pane_id: Optional[str] = None
+    pane_state: Optional[str] = None
+    runtime_pid: Optional[int] = None
+    runtime_root: Optional[str] = None
+    failure_reason: Optional[str] = None
 
     def __post_init__(self) -> None:
         if self.agent_name == '':

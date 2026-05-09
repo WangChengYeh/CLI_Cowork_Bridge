@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 import os
 from pathlib import Path
 
@@ -13,7 +15,7 @@ def resolve_claude_restore_target(
     spec,
     runtime_dir: Path,
     restore: bool,
-    workspace_path: Path | None = None,
+    workspace_path: Optional[Path] = None,
     project_session_restore_target_fn,
     claude_history_state_fn,
     claude_home_layout_fn,
@@ -54,12 +56,12 @@ def resolve_claude_restore_target(
 
 def project_session_restore_target(
     workspace_path: Path,
-    session_instance: str | None,
+    session_instance: Optional[str],
     *,
     load_project_session_fn,
     claude_history_state_fn,
     managed_home: Path,
-) -> ProviderRestoreTarget | None:
+) -> Optional[ProviderRestoreTarget]:
     session = load_project_session_fn(workspace_path, instance=session_instance)
     if session is None:
         return None
@@ -84,9 +86,9 @@ def claude_history_state(
     *,
     invocation_dir: Path,
     project_root: Path,
-    env: dict[str, str] | None = None,
+    env: Optional[dict[str, str]] = None,
     home_dir: Path,
-) -> tuple[str | None, bool, Path | None]:
+) -> Optional[tuple[str], bool, Optional[Path]]:
     home = home_dir if home_dir is not None else Path.home()
     locator = ClaudeHistoryLocator(
         invocation_dir=invocation_dir,
@@ -97,7 +99,7 @@ def claude_history_state(
     return locator.latest_session_id()
 
 
-def existing_dir(value: object) -> Path | None:
+def existing_dir(value: object) -> Optional[Path]:
     raw = str(value or '').strip()
     if not raw:
         return None
@@ -127,7 +129,7 @@ def _is_within_root(candidate: Path, managed_root: Path) -> bool:
         return False
 
 
-def _normalize_path(value: object) -> Path | None:
+def _normalize_path(value: object) -> Optional[Path]:
     try:
         return Path(value).expanduser().resolve()
     except Exception:

@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 import os
 from pathlib import Path
 
@@ -48,7 +50,7 @@ def _required_session_info(comm):
     raise RuntimeError("❌ No active Droid session found. Run 'ccb droid' (or add droid to ccb.config) first")
 
 
-def _work_dir_hint(session_info: dict) -> Path | None:
+def _work_dir_hint(session_info: dict) -> Optional[Path]:
     work_dir = session_info.get('work_dir')
     return Path(work_dir) if isinstance(work_dir, str) and work_dir else None
 

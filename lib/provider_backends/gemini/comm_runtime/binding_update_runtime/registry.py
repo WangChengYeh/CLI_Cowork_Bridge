@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from pane_registry_runtime import upsert_registry
 
 
@@ -7,11 +9,11 @@ def publish_registry_binding(
     *,
     ccb_session_id: str,
     ccb_project_id: str,
-    work_dir: str | None,
+    work_dir: Optional[str],
     terminal: str,
-    pane_id: str | None,
-    pane_title_marker: str | None,
-    session_file: str | None,
+    pane_id: Optional[str],
+    pane_title_marker: Optional[str],
+    session_file: Optional[str],
     gemini_session_id: str,
     gemini_session_path: str,
 ) -> None:

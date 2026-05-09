@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from uuid import uuid4
 
 from agents.models import AgentState, AgentValidationError
@@ -40,7 +42,7 @@ class DispatcherFacadeMixin:
     def inbox(self, agent_name: str) -> dict:
         return self._message_bureau_control.inbox(agent_name)
 
-    def ack_reply(self, agent_name: str, inbound_event_id: str | None = None) -> dict:
+    def ack_reply(self, agent_name: str, inbound_event_id: Optional[str] = None) -> dict:
         return self._message_bureau_control.ack_reply(agent_name, inbound_event_id)
 
     def _resolve_targets(self, request) -> tuple[str, ...]:
@@ -66,7 +68,7 @@ class DispatcherFacadeMixin:
     def _has_outstanding_work(self, agent_name: str) -> bool:
         return self._state.has_outstanding(agent_name)
 
-    def _sync_runtime(self, agent_name: str, *, state: AgentState | None = None) -> None:
+    def _sync_runtime(self, agent_name: str, *, state: Optional[AgentState] = None) -> None:
         sync_runtime(self, agent_name, state=state)
 
     def reconcile_runtime_views(self) -> None:
@@ -90,7 +92,7 @@ class DispatcherFacadeMixin:
         current,
         tracked: CompletionTrackerView,
         *,
-        updated_at: str | None = None,
+        updated_at: Optional[str] = None,
     ) -> bool:
         timestamp = apply_tracker_view(
             current,

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from datetime import datetime, timezone
 from hashlib import sha256
-from typing import Any
+from typing import Any, Optional
 
 from .enums import CompletionItemKind, ReplyCandidateKind
 from .records import CompletionItem, ReplyCandidate
@@ -29,7 +29,7 @@ def fingerprint_text(*parts: Any) -> str:
     return digest.hexdigest()
 
 
-def first_non_empty(payload: dict[str, Any], *keys: str) -> str | None:
+def first_non_empty(payload: dict[str, Any], *keys: str) -> Optional[str]:
     for key in keys:
         value = payload.get(key)
         if isinstance(value, str) and value.strip():

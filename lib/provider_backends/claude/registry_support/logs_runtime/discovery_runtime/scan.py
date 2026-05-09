@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 import heapq
 from pathlib import Path
 
@@ -7,7 +9,7 @@ from ...pathing import path_within
 from ..meta import read_session_meta
 
 
-def scan_latest_log_for_work_dir(work_dir: Path, *, root: Path, scan_limit: int) -> tuple[Path | None, str | None]:
+def scan_latest_log_for_work_dir(work_dir: Path, *, root: Path, scan_limit: int) -> Optional[tuple[Path], Optional[str]]:
     root = Path(root).expanduser()
     if not root.exists():
         return None, None

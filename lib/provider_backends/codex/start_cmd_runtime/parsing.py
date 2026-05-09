@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from pathlib import Path
 import re
 import shlex
@@ -7,7 +9,7 @@ import shlex
 CODEX_RESUME_CMD_RE = re.compile(r'\bcodex\b(?:[^;\n]*?)\bresume\s+(?P<session>[^\s;]+)')
 
 
-def extract_resume_session_id(command: object) -> str | None:
+def extract_resume_session_id(command: object) -> Optional[str]:
     raw = _normalized_command(command)
     if not raw:
         return None
@@ -28,14 +30,14 @@ def _normalized_command(command: object) -> str:
     return str(command or '').strip()
 
 
-def _regex_resume_session_id(raw: str) -> str | None:
+def _regex_resume_session_id(raw: str) -> Optional[str]:
     match = CODEX_RESUME_CMD_RE.search(raw)
     if match is None:
         return None
     return _normalized_session_id(match.group('session'))
 
 
-def _token_resume_session_id(tokens: list[str] | None) -> str | None:
+def _token_resume_session_id(tokens: Optional[list[str]]) -> Optional[str]:
     if not tokens:
         return None
     for index, token in enumerate(tokens[:-1]):
@@ -44,7 +46,7 @@ def _token_resume_session_id(tokens: list[str] | None) -> str | None:
     return None
 
 
-def _tokenize_command(raw: str) -> list[str] | None:
+def _tokenize_command(raw: str) -> Optional[list[str]]:
     try:
         return shlex.split(raw)
     except Exception:
@@ -66,12 +68,12 @@ def _tokens_form_bare_resume(tokens: list[str]) -> bool:
     return codex_index + 2 == len(tokens) - 1 and tokens[codex_index + 1] == 'resume'
 
 
-def _normalized_session_id(session_id: object) -> str | None:
+def _normalized_session_id(session_id: object) -> Optional[str]:
     normalized = str(session_id or '').strip()
     return normalized or None
 
 
-def find_codex_token_index(tokens: list[str]) -> int | None:
+def find_codex_token_index(tokens: list[str]) -> Optional[int]:
     for index, token in enumerate(tokens):
         try:
             if Path(token).name == 'codex':

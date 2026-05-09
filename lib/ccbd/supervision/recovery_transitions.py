@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from agents.models import AgentState
 
 from .recovery_context import RecoveryContext
@@ -109,7 +111,7 @@ def mark_recovery_failed(
     restart_count: int,
     prior_health: str,
     next_health: str,
-    failure_reason: str | None,
+    failure_reason: Optional[str],
 ) -> str:
     failure_runtime = ctx.upsert_if_changed_fn(
         refreshed,

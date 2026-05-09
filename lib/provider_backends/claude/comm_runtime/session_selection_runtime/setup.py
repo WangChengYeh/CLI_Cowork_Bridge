@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 import os
 from pathlib import Path
 
@@ -8,7 +10,7 @@ def initialize_reader(
     reader,
     *,
     root: Path,
-    work_dir: Path | None,
+    work_dir: Optional[Path],
     use_sessions_index: bool,
     include_subagents: bool,
     include_subagent_user: bool,

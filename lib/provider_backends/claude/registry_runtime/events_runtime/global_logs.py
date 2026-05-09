@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Any
+from typing import Any, Optional
 
 from ..session_updates import read_log_meta_with_retry
 from .common import safe_update_binding, update_session_file
@@ -27,7 +27,7 @@ def handle_new_log_file_global(registry: Any, path: Path) -> None:
     safe_update_binding(session, session_path=path, session_id=session_id)
 
 
-def _discover_log_binding(path: Path) -> tuple[Path | None, str | None]:
+def _discover_log_binding(path: Path) -> Optional[tuple[Path], Optional[str]]:
     cwd, sid, is_sidechain = read_log_meta_with_retry(path)
     if is_sidechain is True or not cwd:
         return None, None

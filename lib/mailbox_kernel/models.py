@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Any
+from typing import Any, Optional
 
 from .model_codecs import (
     delivery_lease_from_record,
@@ -21,11 +21,11 @@ from .model_enums import InboundEventStatus, InboundEventType, LeaseState, Mailb
 class MailboxRecord:
     mailbox_id: str
     agent_name: str
-    active_inbound_event_id: str | None
+    active_inbound_event_id: Optional[str]
     queue_depth: int
     pending_reply_count: int
-    last_inbound_started_at: str | None
-    last_inbound_finished_at: str | None
+    last_inbound_started_at: Optional[str]
+    last_inbound_finished_at: Optional[str]
     mailbox_state: MailboxState
     lease_version: int
     updated_at: str
@@ -47,13 +47,13 @@ class InboundEventRecord:
     agent_name: str
     event_type: InboundEventType
     message_id: str
-    attempt_id: str | None
-    payload_ref: str | None
+    attempt_id: Optional[str]
+    payload_ref: Optional[str]
     priority: int
     status: InboundEventStatus
     created_at: str
-    started_at: str | None = None
-    finished_at: str | None = None
+    started_at: Optional[str] = None
+    finished_at: Optional[str] = None
 
     def __post_init__(self) -> None:
         normalize_inbound_event_record(self)
@@ -72,8 +72,8 @@ class DeliveryLease:
     inbound_event_id: str
     lease_version: int
     acquired_at: str
-    last_progress_at: str | None
-    expires_at: str | None
+    last_progress_at: Optional[str]
+    expires_at: Optional[str]
     lease_state: LeaseState
 
     def __post_init__(self) -> None:

@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from ccbd.api_models import DeliveryScope, JobEvent, JobRecord, JobStatus, MessageEnvelope, SubmissionRecord, TargetKind
 from storage.jsonl_store import JsonlStore
 from storage.paths import PathLayout
@@ -8,7 +10,7 @@ SCHEMA_VERSION = 2
 
 
 class JobStore:
-    def __init__(self, layout: PathLayout, store: JsonlStore | None = None) -> None:
+    def __init__(self, layout: PathLayout, store: Optional[JsonlStore] = None) -> None:
         self._layout = layout
         self._store = store or JsonlStore()
 
@@ -28,10 +30,10 @@ class JobStore:
             loader=_job_record_from_record,
         )
 
-    def get_latest(self, agent_name: str, job_id: str) -> JobRecord | None:
+    def get_latest(self, agent_name: str, job_id: str) -> Optional[JobRecord]:
         return self.get_latest_target(TargetKind.AGENT, agent_name, job_id)
 
-    def get_latest_target(self, target_kind: TargetKind | str, target_name: str, job_id: str) -> JobRecord | None:
+    def get_latest_target(self, target_kind: TargetKind | str, target_name: str, job_id: str) -> Optional[JobRecord]:
         for record in reversed(self.list_target(target_kind, target_name)):
             if record.job_id == job_id:
                 return record
@@ -39,7 +41,7 @@ class JobStore:
 
 
 class JobEventStore:
-    def __init__(self, layout: PathLayout, store: JsonlStore | None = None) -> None:
+    def __init__(self, layout: PathLayout, store: Optional[JsonlStore] = None) -> None:
         self._layout = layout
         self._store = store or JsonlStore()
 
@@ -67,7 +69,7 @@ class JobEventStore:
 
 
 class SubmissionStore:
-    def __init__(self, layout: PathLayout, store: JsonlStore | None = None) -> None:
+    def __init__(self, layout: PathLayout, store: Optional[JsonlStore] = None) -> None:
         self._layout = layout
         self._store = store or JsonlStore()
 
@@ -77,7 +79,7 @@ class SubmissionStore:
     def list_all(self) -> list[SubmissionRecord]:
         return self._store.read_all(self._layout.ccbd_submissions_path, loader=_submission_record_from_record)
 
-    def get_latest(self, submission_id: str) -> SubmissionRecord | None:
+    def get_latest(self, submission_id: str) -> Optional[SubmissionRecord]:
         for record in reversed(self.list_all()):
             if record.submission_id == submission_id:
                 return record

@@ -52,7 +52,7 @@ def _run(*args, **kwargs):
     return _sp.run(*args, **kwargs)
 
 
-def _extract_wsl_path_from_unc_like_path(path: str) -> str | None:
+def _extract_wsl_path_from_unc_like_path(path: str) -> Optional[str]:
     normalized = str(path or "").strip()
     if not normalized:
         return None
@@ -130,8 +130,8 @@ def create_auto_layout(
     providers: list[str],
     *,
     cwd: str,
-    root_pane_id: str | None = None,
-    tmux_session_name: str | None = None,
+    root_pane_id: Optional[str] = None,
+    tmux_session_name: Optional[str] = None,
     percent: int = 50,
     set_markers: bool = True,
     marker_prefix: str = "CCB",

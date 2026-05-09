@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from dataclasses import dataclass, replace
 
 from .backend import build_backend, prepare_server, session_alive
@@ -8,15 +10,15 @@ from .records import normalized_layout_signature
 
 @dataclass(frozen=True)
 class NamespaceEnsureContext:
-    current: object | None
+    current: Optional[object]
     backend: object
     session_is_alive: bool
     desired_socket_path: str
     desired_session_name: str
-    desired_layout_signature: str | None
+    desired_layout_signature: Optional[str]
     desired_control_window_name: str
     desired_workspace_window_name: str
-    recreate_cause: str | None
+    recreate_cause: Optional[str]
 
     def with_updates(
         self,
@@ -38,8 +40,8 @@ class NamespaceEnsureContext:
 def desired_namespace_state(
     controller,
     *,
-    layout_signature: str | None,
-) -> tuple[str, str, str | None, str, str]:
+    layout_signature: Optional[str],
+) -> tuple[str, str, Optional[str], str, str]:
     desired_socket_path = str(controller._layout.ccbd_tmux_socket_path)
     desired_session_name = controller._layout.ccbd_tmux_session_name
     desired_layout_signature = normalized_layout_signature(layout_signature)
@@ -57,8 +59,8 @@ def desired_namespace_state(
 def load_namespace_context(
     controller,
     *,
-    layout_signature: str | None,
-    recreate_reason: str | None,
+    layout_signature: Optional[str],
+    recreate_reason: Optional[str],
 ) -> NamespaceEnsureContext:
     (
         desired_socket_path,
@@ -88,7 +90,7 @@ def refresh_session_liveness(
     controller,
     context: NamespaceEnsureContext,
     *,
-    timeout_s: float | None = None,
+    timeout_s: Optional[float] = None,
 ) -> NamespaceEnsureContext:
     del controller
     if context.current is None:

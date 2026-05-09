@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 
 def clean_reply(
     reply: str,
@@ -17,7 +19,7 @@ def clean_reply(
     return cleaned.strip() if cleaned else ''
 
 
-def int_or_none(value: object) -> int | None:
+def int_or_none(value: object) -> Optional[int]:
     try:
         return int(value) if value is not None else None
     except Exception:

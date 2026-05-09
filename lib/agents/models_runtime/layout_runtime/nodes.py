@@ -1,21 +1,23 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from dataclasses import dataclass
 
 
 @dataclass(frozen=True)
 class LayoutLeaf:
     name: str
-    provider: str | None = None
-    workspace_mode: str | None = None
+    provider: Optional[str] = None
+    workspace_mode: Optional[str] = None
 
 
 @dataclass(frozen=True)
 class LayoutNode:
     kind: str
-    leaf: 'LayoutLeaf | None' = None
-    left: 'LayoutNode | None' = None
-    right: 'LayoutNode | None' = None
+    leaf: Optional['LayoutLeaf'] = None
+    left: Optional['LayoutNode'] = None
+    right: Optional['LayoutNode'] = None
 
     def __post_init__(self) -> None:
         kind = str(self.kind or '').strip().lower()

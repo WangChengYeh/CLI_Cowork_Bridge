@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from .validation_context import build_binding_validation_context
 from .validation_rules import (
     usable_agent_only_project_binding_for_context,
@@ -11,14 +13,14 @@ def usable_project_namespace_binding(
     binding,
     *,
     tmux_socket_path: str,
-    tmux_session_name: str | None,
-    workspace_window_id: str | None,
+    tmux_session_name: Optional[str],
+    workspace_window_id: Optional[str],
     agent_name: str,
     project_id: str,
     tmux_backend_factory,
     inspect_project_namespace_pane_fn,
     same_tmux_socket_path_fn,
-) -> object | None:
+) -> Optional[object]:
     context = build_binding_validation_context(
         tmux_socket_path=tmux_socket_path,
         tmux_session_name=tmux_session_name,
@@ -37,8 +39,8 @@ def usable_project_binding(
     *,
     cmd_enabled: bool,
     tmux_socket_path: str,
-    tmux_session_name: str | None,
-    workspace_window_id: str | None,
+    tmux_session_name: Optional[str],
+    workspace_window_id: Optional[str],
     agent_name: str,
     project_id: str,
     tmux_backend_factory,
@@ -64,8 +66,8 @@ def usable_agent_only_project_binding(
     binding,
     *,
     tmux_socket_path: str,
-    tmux_session_name: str | None,
-    workspace_window_id: str | None,
+    tmux_session_name: Optional[str],
+    workspace_window_id: Optional[str],
     agent_name: str,
     project_id: str,
     tmux_backend_factory,

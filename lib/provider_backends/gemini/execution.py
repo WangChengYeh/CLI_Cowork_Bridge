@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from pathlib import Path
 
 from ccbd.api_models import JobRecord
@@ -32,7 +34,7 @@ class GeminiProviderAdapter:
         no_terminal_timeout_s=900.0,
     )
 
-    def start(self, job: JobRecord, *, context: ProviderRuntimeContext | None, now: str) -> ProviderSubmission:
+    def start(self, job: JobRecord, *, context: Optional[ProviderRuntimeContext], now: str) -> ProviderSubmission:
         return _start_active_submission(
             self,
             job,
@@ -45,7 +47,7 @@ class GeminiProviderAdapter:
             wrap_prompt_fn=wrap_gemini_prompt,
         )
 
-    def poll(self, submission: ProviderSubmission, *, now: str) -> ProviderPollResult | None:
+    def poll(self, submission: ProviderSubmission, *, now: str) -> Optional[ProviderPollResult]:
         from .execution_runtime import polling as _polling
 
         _polling.extract_reply_for_req_fn = extract_reply_for_req
@@ -79,10 +81,10 @@ class GeminiProviderAdapter:
         job: JobRecord,
         submission: ProviderSubmission,
         *,
-        context: ProviderRuntimeContext | None,
+        context: Optional[ProviderRuntimeContext],
         persisted_state,
         now: str,
-    ) -> ProviderSubmission | None:
+    ) -> Optional[ProviderSubmission]:
         del persisted_state, now
         return _resume_submission(
             job,

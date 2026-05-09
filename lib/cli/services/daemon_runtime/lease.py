@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 
 def mark_inspected_lease_unmounted(manager, inspection):
     lease = getattr(inspection, 'lease', None)
@@ -17,7 +19,7 @@ def mark_inspected_lease_unmounted(manager, inspection):
         return None
 
 
-def _expected_pid(lease) -> int | None:
+def _expected_pid(lease) -> Optional[int]:
     try:
         pid = int(getattr(lease, 'ccbd_pid', 0) or 0)
     except Exception:
@@ -27,7 +29,7 @@ def _expected_pid(lease) -> int | None:
     return pid
 
 
-def _expected_daemon_instance_id(lease) -> str | None:
+def _expected_daemon_instance_id(lease) -> Optional[str]:
     value = str(getattr(lease, 'daemon_instance_id', '') or '').strip()
     return value or None
 

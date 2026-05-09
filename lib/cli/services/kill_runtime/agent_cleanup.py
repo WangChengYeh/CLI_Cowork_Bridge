@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from dataclasses import dataclass, replace
 import os
 from pathlib import Path
@@ -14,7 +16,7 @@ from terminal_runtime.tmux import normalize_socket_name, socket_name_from_tmux_e
 class KillPreparation:
     configured_agent_names: tuple[str, ...]
     extra_agent_names: tuple[str, ...]
-    tmux_sockets: tuple[str | None, ...]
+    tmux_sockets: Optional[tuple[str], ...]
     pid_candidates: dict[int, list[Path]]
 
 
@@ -44,8 +46,8 @@ def prepare_local_shutdown(context, *, force: bool, collect_agent_pid_candidates
     )
 
 
-def collect_candidate_tmux_sockets() -> set[str | None]:
-    sockets: set[str | None] = set()
+def collect_candidate_tmux_sockets() -> Optional[set[str]]:
+    sockets: Optional[set[str]] = set()
     for value in (
         normalize_socket_name(os.environ.get("CCB_TMUX_SOCKET")),
         socket_name_from_tmux_env(os.environ.get("TMUX")),
@@ -76,7 +78,7 @@ def _configured_agent_names(context) -> tuple[str, ...]:
         return ()
 
 
-def _capture_runtime_tmux_socket(tmux_sockets: set[str | None], runtime) -> None:
+def _capture_runtime_tmux_socket(tmux_sockets: Optional[set[str]], runtime) -> None:
     if runtime is None:
         return
     if not str(runtime.runtime_ref or "").startswith("tmux:"):

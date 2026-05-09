@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from pathlib import Path
 
 from ccbd.api_models import JobRecord
@@ -12,7 +14,7 @@ from provider_execution.common import no_wrap_requested, preferred_session_path,
 def start_submission(
     job: JobRecord,
     *,
-    context: ProviderRuntimeContext | None,
+    context: Optional[ProviderRuntimeContext],
     now: str,
     provider: str,
     load_session_fn,

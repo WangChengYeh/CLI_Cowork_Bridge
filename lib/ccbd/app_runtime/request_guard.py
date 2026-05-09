@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 _STOPPING_GUARDED_OPS = frozenset({
     'submit',
     'attach',
@@ -12,7 +14,7 @@ _STOPPING_GUARDED_OPS = frozenset({
 })
 
 
-def rejection_for_request(app, op: str) -> str | None:
+def rejection_for_request(app, op: str) -> Optional[str]:
     if op not in _STOPPING_GUARDED_OPS:
         return None
     try:

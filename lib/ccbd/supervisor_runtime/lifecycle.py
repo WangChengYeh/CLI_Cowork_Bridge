@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from agents.models import build_project_layout_plan
 from ccbd.services import CcbdLifecycleStore
 
@@ -13,12 +15,12 @@ def start_supervisor(
     agent_names: tuple[str, ...],
     restore: bool,
     auto_permission: bool,
-    terminal_size: tuple[int, int] | None,
+    terminal_size: Optional[tuple[int, int]],
     cleanup_tmux_orphans: bool,
     interactive_tmux_layout: bool,
     recreate_namespace: bool,
     reflow_workspace: bool,
-    recreate_reason: str | None,
+    recreate_reason: Optional[str],
     background_maintenance: bool,
     run_start_flow_fn,
 ):

@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from ..log_entries import extract_message, extract_user_message
 from .common import json_entries, log_missing_conversations, log_tail
 
@@ -20,7 +22,7 @@ def latest_conversations(reader, n: int = 1) -> list[tuple[str, str]]:
         return []
 
     pairs_rev: list[tuple[str, str]] = []
-    pending_reply: str | None = None
+    pending_reply: Optional[str] = None
     for entry in json_entries(lines):
         if pending_reply is None:
             ai_msg = extract_message(entry)

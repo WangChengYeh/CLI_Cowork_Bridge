@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 import json
 from pathlib import Path
 
@@ -24,7 +26,7 @@ def ensure_pane(session) -> tuple[bool, str]:
     return _ensure_pane_impl(session, now_str_fn=now_str, attach_pane_log_fn=attach_pane_log)
 
 
-def update_claude_binding(session, *, session_path: Path | None, session_id: str | None) -> None:
+def update_claude_binding(session, *, session_path: Optional[Path], session_id: Optional[str]) -> None:
     change = binding_change(session, session_path=session_path, session_id=session_id)
     if change is None:
         return
@@ -34,7 +36,7 @@ def update_claude_binding(session, *, session_path: Path | None, session_id: str
     maybe_extract_previous_binding(session, change)
 
 
-def binding_change(session, *, session_path: Path | None, session_id: str | None) -> dict[str, object] | None:
+def binding_change(session, *, session_path: Optional[Path], session_id: Optional[str]) -> Optional[dict[str, object]]:
     old_path = str(session.data.get("claude_session_path") or "").strip()
     old_id = str(session.data.get("claude_session_id") or "").strip()
     new_path = normalized_session_path(session_path)
@@ -53,7 +55,7 @@ def binding_change(session, *, session_path: Path | None, session_id: str | None
     }
 
 
-def normalized_session_path(session_path: Path | None) -> str:
+def normalized_session_path(session_path: Optional[Path]) -> str:
     if session_path is None:
         return ""
     try:
@@ -62,7 +64,7 @@ def normalized_session_path(session_path: Path | None) -> str:
         return str(session_path)
 
 
-def normalized_session_id(session_id: str | None, *, session_path_str: str) -> str:
+def normalized_session_id(session_id: Optional[str], *, session_path_str: str) -> str:
     new_id = str(session_id or "").strip()
     if new_id or not session_path_str:
         return new_id

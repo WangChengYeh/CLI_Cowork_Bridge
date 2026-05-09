@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 
 def normalize_arch(raw_arch: str) -> str:
     text = str(raw_arch or "").strip().lower()
@@ -12,7 +14,7 @@ def normalize_arch(raw_arch: str) -> str:
     return mapping.get(text, text or "unknown")
 
 
-def normalize_release_platform(raw_system: str) -> str | None:
+def normalize_release_platform(raw_system: str) -> Optional[str]:
     text = str(raw_system or "").strip()
     mapping = {
         "Linux": "linux",
@@ -23,7 +25,7 @@ def normalize_release_platform(raw_system: str) -> str | None:
     return mapping.get(text)
 
 
-def release_build_arch(platform_name: str, *, machine: str) -> str | None:
+def release_build_arch(platform_name: str, *, machine: str) -> Optional[str]:
     platform_name = normalize_release_platform(platform_name)
     if platform_name == "linux":
         return normalize_arch(machine)
@@ -32,7 +34,7 @@ def release_build_arch(platform_name: str, *, machine: str) -> str | None:
     return None
 
 
-def release_artifact_basename(platform_name: str, *, machine: str) -> str | None:
+def release_artifact_basename(platform_name: str, *, machine: str) -> Optional[str]:
     platform_name = normalize_release_platform(platform_name)
     if platform_name == "linux":
         arch = normalize_arch(machine)
@@ -42,7 +44,7 @@ def release_artifact_basename(platform_name: str, *, machine: str) -> str | None
     return None
 
 
-def release_artifact_name(platform_name: str, *, machine: str) -> str | None:
+def release_artifact_name(platform_name: str, *, machine: str) -> Optional[str]:
     basename = release_artifact_basename(platform_name, machine=machine)
     if not basename:
         return None

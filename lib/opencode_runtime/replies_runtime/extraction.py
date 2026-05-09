@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 
 def extract_text(parts: list[dict], allow_reasoning_fallback: bool = True) -> str:
     text = _collect_text(parts, {'text'})
@@ -10,7 +12,7 @@ def extract_text(parts: list[dict], allow_reasoning_fallback: bool = True) -> st
     return ''
 
 
-def extract_req_id_from_text(text: str, req_id_re) -> str | None:
+def extract_req_id_from_text(text: str, req_id_re) -> Optional[str]:
     if not text:
         return None
     match = req_id_re.search(text)

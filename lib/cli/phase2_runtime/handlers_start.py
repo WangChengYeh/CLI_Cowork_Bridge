@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 import os
 import sys
 
@@ -46,7 +48,7 @@ def _env_truthy(name: str) -> bool:
     return value in {'1', 'true', 'yes', 'on'}
 
 
-def _terminal_size_for_streams(*streams: object) -> tuple[int, int] | None:
+def _terminal_size_for_streams(*streams: object) -> Optional[tuple[int, int]]:
     for stream in streams:
         fileno = getattr(stream, 'fileno', None)
         if not callable(fileno):

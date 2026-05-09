@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from pathlib import Path
 
 from ccbd.system import parse_utc_timestamp, process_exists
@@ -28,7 +30,7 @@ def compute_project_id(project_root: Path) -> str:
     return _compute_project_id(project_root)
 
 
-def keeper_state_is_running(state: KeeperState | None, *, process_exists_fn=process_exists) -> bool:
+def keeper_state_is_running(state: Optional[KeeperState], *, process_exists_fn=process_exists) -> bool:
     if state is None:
         return False
     if state.state != 'running':

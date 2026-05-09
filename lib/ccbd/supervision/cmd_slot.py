@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from dataclasses import dataclass
 
 from agents.models import AgentState
@@ -27,7 +29,7 @@ class CmdLocalReplacementPlan:
     percent: int
 
 
-def reconcile_cmd_slot(ctx: RuntimeSupervisionContext) -> str | None:
+def reconcile_cmd_slot(ctx: RuntimeSupervisionContext) -> Optional[str]:
     if not bool(getattr(ctx.config, 'cmd_enabled', False)):
         return None
     namespace_controller = ProjectNamespaceController(ctx.layout, ctx.project_id)
@@ -71,7 +73,7 @@ def replace_cmd_slot_locally(
     *,
     backend,
     namespace,
-    anchor_pane_id: str | None,
+    anchor_pane_id: Optional[str],
 ) -> bool:
     pane_text = str(anchor_pane_id or '').strip()
     if not pane_text.startswith('%'):
@@ -116,7 +118,7 @@ def replace_cmd_slot_locally(
     return cmd_slot_matches_namespace(ctx, namespace, record)
 
 
-def resolve_cmd_local_replacement_plan(ctx: RuntimeSupervisionContext) -> CmdLocalReplacementPlan | None:
+def resolve_cmd_local_replacement_plan(ctx: RuntimeSupervisionContext) -> Optional[CmdLocalReplacementPlan]:
     try:
         layout = build_project_layout_plan(
             ctx.config,
@@ -153,7 +155,7 @@ def split_before_anchor_pane(
     anchor_pane_id: str,
     project_root: str,
     plan: CmdLocalReplacementPlan,
-) -> str | None:
+) -> Optional[str]:
     runner = getattr(backend, '_tmux_run', None)
     if not callable(runner):
         return None
@@ -236,7 +238,7 @@ def _build_namespace_backend(namespace_controller: ProjectNamespaceController, n
         return None
 
 
-def _inspect_root_record(backend, pane_id: str | None):
+def _inspect_root_record(backend, pane_id: Optional[str]):
     pane_text = str(pane_id or '').strip()
     if not pane_text.startswith('%'):
         return None
@@ -248,7 +250,7 @@ def _inspect_root_record(backend, pane_id: str | None):
         return None
 
 
-def _load_root_pane_id(namespace_controller: ProjectNamespaceController, namespace) -> str | None:
+def _load_root_pane_id(namespace_controller: ProjectNamespaceController, namespace) -> Optional[str]:
     try:
         try:
             pane_id = namespace_controller.root_pane_id(

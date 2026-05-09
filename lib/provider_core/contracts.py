@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Callable, Literal
+from typing import Callable, Literal, Optional, Union
 
 from agents.models import AgentSpec
 from cli.context import CliContext
@@ -16,16 +16,16 @@ from .manifests import ProviderManifest
 @dataclass(frozen=True)
 class ProviderRuntimeIdentity:
     state: str
-    reason: str | None = None
+    reason: Optional[str] = None
 
 
 @dataclass(frozen=True)
 class ProviderSessionBinding:
     provider: str
-    load_session: Callable[[Path, str | None], object | None]
+    load_session: Callable[[Path, Optional[str]], Optional[object]]
     session_id_attr: str
     session_path_attr: str
-    live_runtime_identity: Callable[[object], ProviderRuntimeIdentity | None] | None = None
+    live_runtime_identity: Optional[Callable[[object], Optional[ProviderRuntimeIdentity]]] = None
 
     def __post_init__(self) -> None:
         provider = str(self.provider or '').strip().lower()
@@ -40,9 +40,9 @@ class ProviderRuntimeLauncher:
     launch_mode: Literal['simple_tmux', 'codex_tmux']
     build_start_cmd: Callable[[ParsedStartCommand, AgentSpec, Path, str], str]
     build_session_payload: Callable[[CliContext, AgentSpec, WorkspacePlan, Path, Path, str, str, str, dict[str, object]], dict[str, object]]
-    prepare_runtime: Callable[[Path], dict[str, object]] | None = None
-    post_launch: Callable[[object, str, Path, str, dict[str, object]], None] | None = None
-    resolve_run_cwd: Callable[[ParsedStartCommand, AgentSpec, WorkspacePlan, Path, str], Path | str | None] | None = None
+    prepare_runtime: Optional[Callable[[Path], dict[str, Optional[object]]]] = None
+    post_launch: Optional[Callable[[object, str, Path, str, dict[str, object]], None]] = None
+    resolve_run_cwd: Optional[Callable[[ParsedStartCommand, AgentSpec, WorkspacePlan, Path, str], Union[Path, Optional[str]]]] = None
 
     def __post_init__(self) -> None:
         provider = str(self.provider or '').strip().lower()
@@ -54,9 +54,9 @@ class ProviderRuntimeLauncher:
 @dataclass(frozen=True)
 class ProviderBackend:
     manifest: ProviderManifest
-    execution_adapter: ProviderExecutionAdapter | None = None
-    session_binding: ProviderSessionBinding | None = None
-    runtime_launcher: ProviderRuntimeLauncher | None = None
+    execution_adapter: Optional[ProviderExecutionAdapter] = None
+    session_binding: Optional[ProviderSessionBinding] = None
+    runtime_launcher: Optional[ProviderRuntimeLauncher] = None
 
     @property
     def provider(self) -> str:

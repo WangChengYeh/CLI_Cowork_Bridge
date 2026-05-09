@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 import socket
 from pathlib import Path
 from urllib.parse import urlparse
@@ -24,7 +26,7 @@ def should_drop_claude_base_url(value: str, *, local_tcp_listener_available_fn) 
     return not local_tcp_listener_available_fn(host, port)
 
 
-def local_base_url_target(value: str) -> tuple[str | None, int | None]:
+def local_base_url_target(value: str) -> Optional[tuple[str], Optional[int]]:
     parsed = urlparse(str(value or "").strip())
     host = (parsed.hostname or "").strip().lower()
     if host not in {"127.0.0.1", "localhost", "::1"}:

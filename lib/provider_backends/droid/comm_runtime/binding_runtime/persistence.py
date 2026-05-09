@@ -29,7 +29,7 @@ def _apply_binding(
     data: dict[str, Any],
     *,
     session_path_str: str,
-    session_id: str | None,
+    session_id: Optional[str],
 ) -> tuple[bool, bool]:
     updated = False
     binding_changed = False
@@ -57,7 +57,7 @@ def _ensure_project_id(data: dict[str, Any]) -> bool:
     return False
 
 
-def _resolve_session_id(session_path_str: str, session_id: str | None) -> str:
+def _resolve_session_id(session_path_str: str, session_id: Optional[str]) -> str:
     resolved = str(session_id or '').strip()
     if resolved:
         return resolved
@@ -72,7 +72,7 @@ def remember_droid_session_binding(
     project_session_file: Path,
     session_path: Path,
     session_id_loader: Callable[[Path], tuple[Optional[str], Optional[str]]],
-) -> dict[str, Any] | None:
+) -> Optional[dict[str, Any]]:
     data = _load_session_data(project_session_file)
     old_path, old_id = _binding_fields(data)
     session_path_str = str(session_path)

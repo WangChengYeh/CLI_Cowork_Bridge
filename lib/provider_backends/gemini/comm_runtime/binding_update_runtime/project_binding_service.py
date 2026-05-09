@@ -3,7 +3,7 @@ from __future__ import annotations
 import json
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any
+from typing import Any, Optional
 
 from project.identity import compute_ccb_project_id
 
@@ -30,7 +30,7 @@ class GeminiBindingChange:
     binding_changed: bool
 
 
-def update_project_session_binding(*, project_file: Path, session_path: Path) -> GeminiBindingState | None:
+def update_project_session_binding(*, project_file: Path, session_path: Path) -> Optional[GeminiBindingState]:
     data = load_project_session_data(project_file)
     if data is None:
         return None
@@ -47,7 +47,7 @@ def update_project_session_binding(*, project_file: Path, session_path: Path) ->
     )
 
 
-def load_project_session_data(project_file: Path) -> dict[str, Any] | None:
+def load_project_session_data(project_file: Path) -> Optional[dict[str, Any]]:
     if not project_file.exists():
         return None
     try:
@@ -60,7 +60,7 @@ def load_project_session_data(project_file: Path) -> dict[str, Any] | None:
     return data
 
 
-def binding_change(data: dict[str, Any], *, session_path: Path) -> GeminiBindingChange | None:
+def binding_change(data: dict[str, Any], *, session_path: Path) -> Optional[GeminiBindingChange]:
     old_path = str(data.get("gemini_session_path") or "").strip()
     old_id = str(data.get("gemini_session_id") or "").strip()
     new_path = str(session_path)

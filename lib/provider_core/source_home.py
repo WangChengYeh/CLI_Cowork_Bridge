@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 import os
 from pathlib import Path
 
@@ -27,7 +29,7 @@ def current_provider_source_home() -> Path:
     return Path.home().expanduser()
 
 
-def _env_path(name: str) -> Path | None:
+def _env_path(name: str) -> Optional[Path]:
     raw = str(os.environ.get(name) or '').strip()
     if not raw:
         return None
@@ -37,7 +39,7 @@ def _env_path(name: str) -> Path | None:
         return None
 
 
-def _account_home_root() -> Path | None:
+def _account_home_root() -> Optional[Path]:
     if pwd is None:
         return _env_path('USERPROFILE')
     try:

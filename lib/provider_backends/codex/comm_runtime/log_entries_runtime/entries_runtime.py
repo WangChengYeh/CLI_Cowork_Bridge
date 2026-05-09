@@ -1,11 +1,11 @@
 from __future__ import annotations
 
-from typing import Any
+from typing import Any, Optional
 
 from .messages import extract_message, extract_user_message
 
 
-def extract_entry(entry: dict) -> dict[str, Any] | None:
+def extract_entry(entry: dict) -> Optional[dict[str, Any]]:
     base, payload = base_entry(entry)
     direct = direct_entry(base, entry, payload=payload)
     if direct is not None:
@@ -13,7 +13,7 @@ def extract_entry(entry: dict) -> dict[str, Any] | None:
     return fallback_entry(base, entry, payload=payload)
 
 
-def extract_event(entry: dict) -> tuple[str, str] | None:
+def extract_event(entry: dict) -> Optional[tuple[str, str]]:
     normalized = extract_entry(entry)
     if normalized is None:
         return None
@@ -49,7 +49,7 @@ def normalized_payload(payload: object) -> dict[str, Any]:
     return {}
 
 
-def direct_entry(base: dict[str, Any], entry: dict, *, payload: dict[str, Any]) -> dict[str, Any] | None:
+def direct_entry(base: dict[str, Any], entry: dict, *, payload: dict[str, Any]) -> Optional[dict[str, Any]]:
     entry_type = str(base["entry_type"])
     payload_type = str(base["payload_type"])
     if entry_type == "response_item" and payload_type == "message":
@@ -59,7 +59,7 @@ def direct_entry(base: dict[str, Any], entry: dict, *, payload: dict[str, Any]) 
     return event_message_entry(base, entry, payload=payload, payload_type=payload_type)
 
 
-def response_message_entry(base: dict[str, Any], entry: dict, *, role: str) -> dict[str, Any] | None:
+def response_message_entry(base: dict[str, Any], entry: dict, *, role: str) -> Optional[dict[str, Any]]:
     if role == "user":
         return entry_with_text(base, role="user", text=extract_user_message(entry) or "")
     if role == "assistant":
@@ -73,7 +73,7 @@ def event_message_entry(
     *,
     payload: dict[str, Any],
     payload_type: str,
-) -> dict[str, Any] | None:
+) -> Optional[dict[str, Any]]:
     if payload_type == "user_message":
         return entry_with_text(base, role="user", text=extract_user_message(entry) or "")
     if payload_type in {"agent_message", "assistant_message", "assistant", "assistant_response", "message"}:
@@ -92,7 +92,7 @@ def event_message_entry(
     return None
 
 
-def fallback_entry(base: dict[str, Any], entry: dict, *, payload: dict[str, Any]) -> dict[str, Any] | None:
+def fallback_entry(base: dict[str, Any], entry: dict, *, payload: dict[str, Any]) -> Optional[dict[str, Any]]:
     user_text = stripped_text(extract_user_message(entry))
     if user_text:
         return entry_with_text(base, role="user", text=user_text)

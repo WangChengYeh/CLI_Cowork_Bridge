@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 import hashlib
 import importlib
 import json
@@ -34,7 +36,7 @@ def materialize_codex_home_config(
     target_home: Path,
     *,
     profile=None,
-    source_home: Path | None = None,
+    source_home: Optional[Path] = None,
 ) -> Path:
     target_home = Path(target_home).expanduser()
     source_home = Path(source_home).expanduser() if source_home is not None else _system_codex_home()
@@ -67,7 +69,7 @@ def materialize_codex_home_config(
     return target_config
 
 
-def codex_api_authority(profile) -> CodexApiAuthority | None:
+def codex_api_authority(profile) -> Optional[CodexApiAuthority]:
     if profile is None or _inherits_api(profile):
         return None
     env = _profile_env(profile)
@@ -80,7 +82,7 @@ def codex_api_authority(profile) -> CodexApiAuthority | None:
     )
 
 
-def codex_provider_authority_fingerprint(profile) -> str | None:
+def codex_provider_authority_fingerprint(profile) -> Optional[str]:
     authority = codex_api_authority(profile)
     if authority is None:
         return None
@@ -228,7 +230,7 @@ def _clone_payload(value: object) -> object:
     return value
 
 
-def _materialize_auth_file(source: Path, target: Path, *, profile, authority: CodexApiAuthority | None) -> None:
+def _materialize_auth_file(source: Path, target: Path, *, profile, authority: Optional[CodexApiAuthority]) -> None:
     if authority is not None:
         explicit_key = _explicit_api_key(profile)
         if explicit_key:

@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from dataclasses import replace
 
 from provider_execution.base import ProviderPollResult, ProviderSubmission
@@ -13,7 +15,7 @@ def finalize_poll_result(
     poll: CodexPollState,
     *,
     state: dict[str, object],
-) -> ProviderPollResult | None:
+) -> Optional[ProviderPollResult]:
     prior_state = submission.runtime_state.get("state") or {}
     prior_session_path = str(submission.runtime_state.get("session_path") or "")
     updated_submission = replace(

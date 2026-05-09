@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import hashlib
-from typing import Callable
+from typing import Callable, Optional
 
 from .errors import is_aborted_error
 from .extraction import extract_text
@@ -12,8 +12,8 @@ def find_new_assistant_reply_with_state(
     state: dict,
     *,
     read_parts: Callable[[str], list[dict]],
-    extract_req_id_from_text: Callable[[str], str | None] | None = None,
-) -> tuple[str | None, dict | None]:
+    extract_req_id_from_text: Optional[Callable[[str], Optional[str]]] = None,
+) -> tuple[Optional[str], Optional[dict]]:
     previous = _assistant_state(state)
     observed = observe_latest_assistant(
         messages,
@@ -43,8 +43,8 @@ def observe_latest_assistant(
     messages: list[dict],
     *,
     read_parts: Callable[[str], list[dict]],
-    extract_req_id_from_text: Callable[[str], str | None] | None = None,
-) -> dict[str, object] | None:
+    extract_req_id_from_text: Optional[Callable[[str], Optional[str]]] = None,
+) -> Optional[dict[str, object]]:
     assistants = _assistant_messages(messages)
     if not assistants:
         return None
@@ -60,7 +60,7 @@ def latest_message_from_messages(
     messages: list[dict],
     *,
     read_parts: Callable[[str], list[dict]],
-) -> str | None:
+) -> Optional[str]:
     observed = observe_latest_assistant(messages, read_parts=read_parts)
     if observed is None or observed.get('completed') is None:
         return None
@@ -92,8 +92,8 @@ def _observed_assistant_reply(
     latest: dict,
     *,
     read_parts: Callable[[str], list[dict]],
-    extract_req_id_from_text: Callable[[str], str | None] | None = None,
-) -> dict[str, object] | None:
+    extract_req_id_from_text: Optional[Callable[[str], Optional[str]]] = None,
+) -> Optional[dict[str, object]]:
     assistant_id = str(latest.get('id'))
     completed = _completed_marker(latest)
     text = _assistant_text(assistant_id, read_parts, allow_reasoning_fallback=False)
@@ -124,7 +124,7 @@ def _assistant_text(
     return extract_text(parts, allow_reasoning_fallback=allow_reasoning_fallback)
 
 
-def _parent_message_id(message: dict) -> str | None:
+def _parent_message_id(message: dict) -> Optional[str]:
     parent_id = message.get('parentID')
     if isinstance(parent_id, str) and parent_id:
         return parent_id
@@ -135,11 +135,11 @@ def _parent_message_id(message: dict) -> str | None:
 
 
 def _parent_req_id(
-    parent_id: str | None,
+    parent_id: Optional[str],
     *,
     read_parts: Callable[[str], list[dict]],
-    extract_req_id_from_text: Callable[[str], str | None] | None,
-) -> str | None:
+    extract_req_id_from_text: Optional[Callable[[str], Optional[str]]],
+) -> Optional[str]:
     if not parent_id or extract_req_id_from_text is None:
         return None
     prompt_text = _assistant_text(parent_id, read_parts, allow_reasoning_fallback=True)
@@ -150,7 +150,7 @@ def _parent_req_id(
     return normalized or None
 
 
-def _text_hash(text: str) -> str | None:
+def _text_hash(text: str) -> Optional[str]:
     normalized = str(text or '').strip()
     if not normalized:
         return None
@@ -174,7 +174,7 @@ def _assistant_state_changed(
     )
 
 
-def _completed_marker(message: dict) -> int | None:
+def _completed_marker(message: dict) -> Optional[int]:
     completed = (message.get('time') or {}).get('completed')
     try:
         return int(completed) if completed is not None else None

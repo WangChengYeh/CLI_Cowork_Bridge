@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import time
 from pathlib import Path
-from typing import Any
+from typing import Any, Optional
 
 from provider_backends.claude.registry_support.logs import should_overwrite_binding
 from provider_backends.claude.registry_support.pathing import path_within
@@ -118,7 +118,7 @@ def _unscoped_session_candidate(registry: Any, entry):
     return load_session_for_entry(registry, entry)
 
 
-def _scoped_session_candidate(registry: Any, entry, *, cwd: str | None):
+def _scoped_session_candidate(registry: Any, entry, *, cwd: Optional[str]):
     if not (_valid_entry(entry) and cwd and path_within(cwd, str(entry.work_dir))):
         return None
     return load_session_for_entry(registry, entry)
@@ -135,13 +135,13 @@ def _should_update_unscoped_session(session, log_update) -> bool:
     return session.claude_session_id != log_update.session_id
 
 
-def _claude_session_path(session) -> Path | None:
+def _claude_session_path(session) -> Optional[Path]:
     path = str(session.claude_session_path or '').strip()
     return Path(path).expanduser() if path else None
 
 
 class _ProjectLogUpdate:
-    def __init__(self, *, path: Path, path_key: str, session_id: str, cwd: str | None, now: float) -> None:
+    def __init__(self, *, path: Path, path_key: str, session_id: str, cwd: Optional[str], now: float) -> None:
         self.path = path
         self.path_key = path_key
         self.session_id = session_id
@@ -149,7 +149,7 @@ class _ProjectLogUpdate:
         self.now = now
 
 
-def _normalized_cwd(cwd) -> str | None:
+def _normalized_cwd(cwd) -> Optional[str]:
     if not isinstance(cwd, str):
         return None
     text = cwd.strip()

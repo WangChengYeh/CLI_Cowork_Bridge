@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from dataclasses import replace
 
 from agents.models import AgentState, RuntimeBindingSource, normalize_runtime_binding_source
@@ -66,7 +68,7 @@ def runtime_health(monitor, runtime) -> str:
     return runtime.health
 
 
-def pane_health(monitor, runtime) -> str | None:
+def pane_health(monitor, runtime) -> Optional[str]:
     binding_source = normalize_runtime_binding_source(
         getattr(runtime, 'binding_source', RuntimeBindingSource.PROVIDER_SESSION)
     )

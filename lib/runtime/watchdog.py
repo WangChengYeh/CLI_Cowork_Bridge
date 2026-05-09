@@ -4,7 +4,7 @@ import subprocess
 import time
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Callable, Sequence
+from typing import Callable, Optional, Sequence
 
 from runtime.backoff import (
     RestartBackoffPolicy,
@@ -23,29 +23,29 @@ from runtime.health import (
 )
 
 
-@dataclass(slots=True)
+@dataclass
 class RuntimeWatchdogTickResult:
     runtime_state: str
     health: RuntimeHealth
     restarted: bool
-    restart: BackgroundDaemonRestartResult | None = None
-    backoff_reason: str | None = None
+    restart: Optional[BackgroundDaemonRestartResult] = None
+    backoff_reason: Optional[str] = None
 
 
-@dataclass(slots=True)
+@dataclass
 class RuntimeWatchdogLoopResult:
     iterations: int
     restarts: int
-    last_tick: RuntimeWatchdogTickResult | None = None
+    last_tick: Optional[RuntimeWatchdogTickResult] = None
 
 
 def run_watchdog_tick(
     *,
     project_root: Path,
-    argv: Sequence[str] | None = None,
+    argv: Optional[Sequence[str]] = None,
     popen_fn: Callable[..., subprocess.Popen] = subprocess.Popen,
     heartbeat_timeout_seconds: int = 60,
-    restart_policy: RestartBackoffPolicy | None = None,
+    restart_policy: Optional[RestartBackoffPolicy] = None,
 ) -> RuntimeWatchdogTickResult:
     state_store = RuntimeDaemonStateStore(project_root=project_root)
     state = state_store.read_resolved()
@@ -101,18 +101,18 @@ def run_watchdog_tick(
 def run_watchdog_loop(
     *,
     project_root: Path,
-    argv: Sequence[str] | None = None,
+    argv: Optional[Sequence[str]] = None,
     popen_fn: Callable[..., subprocess.Popen] = subprocess.Popen,
     heartbeat_timeout_seconds: int = 60,
     interval_seconds: float = 5.0,
-    max_iterations: int | None = None,
+    max_iterations: Optional[int] = None,
     sleep_fn: Callable[[float], None] = time.sleep,
-    should_stop: Callable[[], bool] | None = None,
-    restart_policy: RestartBackoffPolicy | None = None,
+    should_stop: Callable[[], Optional[bool]] = None,
+    restart_policy: Optional[RestartBackoffPolicy] = None,
 ) -> RuntimeWatchdogLoopResult:
     iterations = 0
     restarts = 0
-    last_tick: RuntimeWatchdogTickResult | None = None
+    last_tick: Optional[RuntimeWatchdogTickResult] = None
 
     while True:
         if should_stop is not None and should_stop():

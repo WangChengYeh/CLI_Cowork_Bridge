@@ -1,9 +1,9 @@
 from __future__ import annotations
 
-from typing import Any
+from typing import Any, Optional
 
 
-def message_event(entry: dict[str, Any]) -> tuple[str, str] | None:
+def message_event(entry: dict[str, Any]) -> Optional[tuple[str, str]]:
     role = str(entry.get('role') or '').strip().lower()
     text = str(entry.get('text') or '')
     if role in {'user', 'assistant'} and text.strip():

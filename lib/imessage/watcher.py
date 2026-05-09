@@ -3,7 +3,7 @@ from __future__ import annotations
 import sqlite3
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Iterable
+from typing import Iterable, Optional
 
 from room.models import RoomEvent, RoomEventType, RoomSource
 from room.parser import RoomCommandError, parse_room_command
@@ -14,21 +14,21 @@ class IMessageWatchError(RuntimeError):
     pass
 
 
-@dataclass(slots=True)
+@dataclass
 class IMessageInboundMessage:
     message_id: int
-    chat_id: str | None
+    chat_id: Optional[str]
     sender_handle: str
     text: str
     is_from_me: bool
 
 
-@dataclass(slots=True)
+@dataclass
 class IMessageWatchDecision:
     message: IMessageInboundMessage
     accepted: bool
-    reason: str | None = None
-    event: RoomEvent | None = None
+    reason: Optional[str] = None
+    event: Optional[RoomEvent] = None
 
 
 DEFAULT_PARTICIPANTS = {'codex', 'claude', 'gemini'}
@@ -92,11 +92,11 @@ class IMessageWatcher:
         self,
         *,
         project_root: Path,
-        db_path: Path | None = None,
-        allow_senders: set[str] | None = None,
+        db_path: Optional[Path] = None,
+        allow_senders: Optional[set[str]] = None,
         prefix: str = '@',
-        participants: set[str] | None = None,
-        store: RoomEventStore | None = None,
+        participants: Optional[set[str]] = None,
+        store: Optional[RoomEventStore] = None,
     ) -> None:
         self.project_root = project_root
         self.db_path = db_path or default_messages_db_path()

@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Mapping
+from typing import Mapping, Optional
 
 from .parsing import extract_resume_session_id, looks_like_bare_resume_cmd
 from .rewriting import build_resume_start_cmd
@@ -17,7 +17,7 @@ def effective_start_cmd(data: Mapping[str, object]) -> str:
     return codex_start_cmd or start_cmd
 
 
-def persist_resume_start_cmd_fields(data: dict[str, object], session_id: object) -> str | None:
+def persist_resume_start_cmd_fields(data: dict[str, object], session_id: object) -> Optional[str]:
     if not isinstance(data, dict):
         return None
     normalized_session_id = normalized_session_value(session_id)

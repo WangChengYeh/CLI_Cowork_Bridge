@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import time
-from typing import Callable
+from typing import Callable, Optional
 
 from completion.detectors.base import CompletionDetector
 from completion.models import CompletionDecision, CompletionRequestContext, reply_candidates_from_item, utc_now_iso
@@ -10,7 +10,7 @@ from completion.sources.base import CompletionSource
 
 
 class CompletionOrchestrator:
-    def __init__(self, *, now_factory: Callable[[], str] | None = None) -> None:
+    def __init__(self, *, now_factory: Callable[[], Optional[str]] = None) -> None:
         self._now_factory = now_factory or utc_now_iso
 
     def run(

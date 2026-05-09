@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from pathlib import Path
 
 from agents.models import AgentSpec
@@ -53,7 +55,7 @@ def resolve_run_cwd(
     plan: WorkspacePlan,
     runtime_dir: Path,
     launch_session_id: str,
-) -> Path | str | None:
+) -> Path | Optional[str]:
     return _resolve_run_cwd_impl(
         command,
         spec,
@@ -98,7 +100,7 @@ def _resolve_gemini_restore_target(
     spec: AgentSpec,
     runtime_dir: Path,
     restore: bool,
-    workspace_path: Path | None = None,
+    workspace_path: Optional[Path] = None,
 ) -> ProviderRestoreTarget:
     return _resolve_gemini_restore_target_impl(
         spec=spec,
@@ -112,8 +114,8 @@ def _resolve_gemini_restore_target(
 
 def build_gemini_env_prefix(
     *,
-    profile: ResolvedProviderProfile | None = None,
-    extra_env: dict[str, str] | None = None,
+    profile: Optional[ResolvedProviderProfile] = None,
+    extra_env: Optional[dict[str, str]] = None,
 ) -> str:
     return _build_gemini_env_prefix_impl(profile=profile, extra_env=extra_env)
 

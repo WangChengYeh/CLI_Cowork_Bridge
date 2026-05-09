@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from agents.models import RuntimeMode
 
 from .manifests import ProviderManifest
@@ -12,7 +14,7 @@ from .registry import (
 
 
 class ProviderCatalog:
-    def __init__(self, manifests: list[ProviderManifest] | None = None) -> None:
+    def __init__(self, manifests: Optional[list[ProviderManifest]] = None) -> None:
         self._manifests: dict[str, ProviderManifest] = {}
         for manifest in manifests or []:
             self.register(manifest)

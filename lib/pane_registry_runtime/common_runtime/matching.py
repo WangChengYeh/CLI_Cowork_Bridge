@@ -1,10 +1,12 @@
 from __future__ import annotations
 
+from typing import Optional
+
 import os
 from pathlib import Path
 
 
-def normalize_path_for_match(value: str | Path | None) -> str:
+def normalize_path_for_match(value: str | Optional[Path]) -> str:
     raw = str(value or "").strip()
     if not raw:
         return ""
@@ -22,7 +24,7 @@ def normalize_path_for_match(value: str | Path | None) -> str:
     return normalized
 
 
-def path_is_same_or_parent(parent: str | Path | None, child: str | Path | None) -> bool:
+def path_is_same_or_parent(parent: str | Optional[Path], child: str | Optional[Path]) -> bool:
     normalized_parent = normalize_path_for_match(parent)
     normalized_child = normalize_path_for_match(child)
     if not normalized_parent or not normalized_child:

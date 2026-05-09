@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 import os
 from pathlib import Path
 
@@ -13,7 +15,7 @@ from .discovery_names import (
 from .discovery_workspace import workspace_binding_agent_name
 
 
-def env_bound_session_file(*, base_filename: str) -> Path | None:
+def env_bound_session_file(*, base_filename: str) -> Optional[Path]:
     raw = normalized_filename(os.environ.get('CCB_SESSION_FILE') or '')
     if not raw:
         return None
@@ -34,7 +36,7 @@ def resolve_bound_agent_name(
     base_filename: str,
     work_dir: Path | str,
     allow_env: bool = True,
-) -> str | None:
+) -> Optional[str]:
     env_agent = _env_bound_agent_name(
         provider=provider,
         base_filename=base_filename,
@@ -62,7 +64,7 @@ def resolve_bound_instance(
     base_filename: str,
     work_dir: Path | str,
     allow_env: bool = True,
-) -> str | None:
+) -> Optional[str]:
     agent_name = resolve_bound_agent_name(
         provider=provider,
         base_filename=base_filename,
@@ -80,7 +82,7 @@ def find_bound_session_file(
     base_filename: str,
     work_dir: Path | str,
     allow_env: bool = True,
-) -> Path | None:
+) -> Optional[Path]:
     env_session = _env_bound_session_file(base_filename=base_filename, allow_env=allow_env)
     if env_session is not None:
         return env_session
@@ -103,13 +105,13 @@ def find_bound_session_file(
     return unique_project_session_file(base_filename=base_filename, work_dir=work_dir)
 
 
-def _env_bound_session_file(*, base_filename: str, allow_env: bool) -> Path | None:
+def _env_bound_session_file(*, base_filename: str, allow_env: bool) -> Optional[Path]:
     if not allow_env:
         return None
     return env_bound_session_file(base_filename=base_filename)
 
 
-def _env_bound_agent_name(*, provider: str, base_filename: str, allow_env: bool) -> str | None:
+def _env_bound_agent_name(*, provider: str, base_filename: str, allow_env: bool) -> Optional[str]:
     env_session = _env_bound_session_file(base_filename=base_filename, allow_env=allow_env)
     if env_session is None:
         return None

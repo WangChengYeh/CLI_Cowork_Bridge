@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from pathlib import Path
 
 from provider_core.protocol import is_done_text, make_req_id, strip_done_text
@@ -58,7 +60,7 @@ class ClaudeCommunicator:
     def _ensure_log_reader(self) -> None:
         _ensure_log_reader_impl(self, log_reader_cls=_claude_log_reader_cls())
 
-    def _load_session_info(self) -> dict | None:
+    def _load_session_info(self) -> Optional[dict]:
         work_dir = Path.cwd()
         resolution = resolve_claude_session(work_dir)
         if not resolution:
@@ -105,7 +107,7 @@ class ClaudeCommunicator:
     def ask_async(self, question: str) -> bool:
         return _ask_async_impl(self, question)
 
-    def ask_sync(self, question: str, timeout: int | None = None) -> str | None:
+    def ask_sync(self, question: str, timeout: Optional[int] = None) -> Optional[str]:
         return _ask_sync_impl(
             self,
             question,

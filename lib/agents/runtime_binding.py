@@ -1,18 +1,20 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from dataclasses import dataclass
 
 
-def _normalize(value: str | None) -> str | None:
+def _normalize(value: Optional[str]) -> Optional[str]:
     text = str(value or '').strip()
     return text or None
 
 
 @dataclass(frozen=True)
 class RuntimeBinding:
-    runtime_ref: str | None
-    session_ref: str | None
-    workspace_path: str | None
+    runtime_ref: Optional[str]
+    session_ref: Optional[str]
+    workspace_path: Optional[str]
 
     @property
     def status(self) -> str:
@@ -26,7 +28,7 @@ class RuntimeBinding:
     def is_bound(self) -> bool:
         return self.status == 'bound'
 
-    def to_fields(self) -> dict[str, str | None]:
+    def to_fields(self) -> dict[str, Optional[str]]:
         return {
             'runtime_ref': self.runtime_ref,
             'session_ref': self.session_ref,
@@ -37,9 +39,9 @@ class RuntimeBinding:
 
 def build_runtime_binding(
     *,
-    runtime_ref: str | None = None,
-    session_ref: str | None = None,
-    workspace_path: str | None = None,
+    runtime_ref: Optional[str] = None,
+    session_ref: Optional[str] = None,
+    workspace_path: Optional[str] = None,
 ) -> RuntimeBinding:
     return RuntimeBinding(
         runtime_ref=_normalize(runtime_ref),
@@ -49,11 +51,11 @@ def build_runtime_binding(
 
 
 def merge_runtime_binding(
-    existing: RuntimeBinding | None,
+    existing: Optional[RuntimeBinding],
     *,
-    runtime_ref: str | None = None,
-    session_ref: str | None = None,
-    workspace_path: str | None = None,
+    runtime_ref: Optional[str] = None,
+    session_ref: Optional[str] = None,
+    workspace_path: Optional[str] = None,
 ) -> RuntimeBinding:
     current = existing or build_runtime_binding()
     return build_runtime_binding(

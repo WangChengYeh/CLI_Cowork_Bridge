@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field, replace
-from typing import Any
+from typing import Any, Optional
 
 from ccbd.models import SCHEMA_VERSION
 
@@ -21,16 +21,16 @@ class ProjectNamespaceState:
     tmux_socket_path: str
     tmux_session_name: str
     layout_version: int = 1
-    layout_signature: str | None = None
-    control_window_name: str | None = None
-    control_window_id: str | None = None
-    workspace_window_name: str | None = None
-    workspace_window_id: str | None = None
+    layout_signature: Optional[str] = None
+    control_window_name: Optional[str] = None
+    control_window_id: Optional[str] = None
+    workspace_window_name: Optional[str] = None
+    workspace_window_id: Optional[str] = None
     workspace_epoch: int = 1
     ui_attachable: bool = True
-    last_started_at: str | None = None
-    last_destroyed_at: str | None = None
-    last_destroy_reason: str | None = None
+    last_started_at: Optional[str] = None
+    last_destroyed_at: Optional[str] = None
+    last_destroy_reason: Optional[str] = None
 
     def __post_init__(self) -> None:
         require_non_empty_text(self.project_id, field_name='project_id')
@@ -131,9 +131,9 @@ class ProjectNamespaceEvent:
     event_kind: str
     project_id: str
     occurred_at: str
-    namespace_epoch: int | None = None
-    tmux_socket_path: str | None = None
-    tmux_session_name: str | None = None
+    namespace_epoch: Optional[int] = None
+    tmux_socket_path: Optional[str] = None
+    tmux_session_name: Optional[str] = None
     details: dict[str, object] = field(default_factory=dict)
 
     def __post_init__(self) -> None:

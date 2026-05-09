@@ -1,12 +1,14 @@
 from __future__ import annotations
 
+from typing import Optional
+
 import os
 
 _DEFAULT_TIMEOUT_S = 30.0
 _DEFAULT_POLL_INTERVAL_S = 0.1
 
 
-def resolve_timeout(explicit: float | None) -> float:
+def resolve_timeout(explicit: Optional[float]) -> float:
     if explicit is not None:
         return max(0.1, float(explicit))
     raw = os.environ.get('CCB_WAIT_TIMEOUT_S')

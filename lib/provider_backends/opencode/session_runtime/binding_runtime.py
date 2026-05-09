@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -14,7 +16,7 @@ class OpenCodeBindingChange:
     new_project: str
 
 
-def update_opencode_binding(session, *, session_id: str | None, project_id: str | None) -> None:
+def update_opencode_binding(session, *, session_id: Optional[str], project_id: Optional[str]) -> None:
     change = binding_change(session, session_id=session_id, project_id=project_id)
     if change is None:
         return
@@ -25,7 +27,7 @@ def update_opencode_binding(session, *, session_id: str | None, project_id: str 
     session._write_back()
 
 
-def binding_change(session, *, session_id: str | None, project_id: str | None) -> OpenCodeBindingChange | None:
+def binding_change(session, *, session_id: Optional[str], project_id: Optional[str]) -> Optional[OpenCodeBindingChange]:
     old_id = str(session.data.get("opencode_session_id") or "").strip()
     old_project = str(session.data.get("opencode_project_id") or "").strip()
     new_id = str(session_id or "").strip()
@@ -40,7 +42,7 @@ def binding_change(session, *, session_id: str | None, project_id: str | None) -
     )
 
 
-def should_record_change(session, *, session_id: str | None, project_id: str | None) -> bool:
+def should_record_change(session, *, session_id: Optional[str], project_id: Optional[str]) -> bool:
     return any(
         (
             bool(session_id and session.data.get("opencode_session_id") != session_id),

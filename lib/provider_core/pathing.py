@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from pathlib import Path
 
 from provider_sessions.files import find_project_session_file as _find_project_session_file
@@ -14,7 +16,7 @@ PROVIDER_SESSION_FILENAMES = {
 }
 
 
-def session_filename_for_instance(base_filename: str, instance: str | None) -> str:
+def session_filename_for_instance(base_filename: str, instance: Optional[str]) -> str:
     if not instance:
         return base_filename
     instance = instance.strip()
@@ -26,7 +28,7 @@ def session_filename_for_instance(base_filename: str, instance: str | None) -> s
     return f'{base_filename}-{instance}'
 
 
-def find_session_file_for_work_dir(work_dir: Path, session_filename: str) -> Path | None:
+def find_session_file_for_work_dir(work_dir: Path, session_filename: str) -> Optional[Path]:
     resolved = _find_project_session_file(work_dir, session_filename)
     if resolved is not None:
         return resolved

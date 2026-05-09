@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Any
+from typing import Any, Optional
 
 
 def ensure_session_health(comm) -> None:
@@ -10,14 +10,14 @@ def ensure_session_health(comm) -> None:
         raise RuntimeError(f"❌ Session error: {status}")
 
 
-def remember_session_path(comm, state: dict[str, Any] | None) -> Path | None:
+def remember_session_path(comm, state: Optional[dict[str, Any]]) -> Optional[Path]:
     session_path = _session_path_from_state(state)
     if session_path is not None:
         comm._remember_gemini_session(session_path)
     return session_path
 
 
-def _session_path_from_state(state: dict[str, Any] | None) -> Path | None:
+def _session_path_from_state(state: Optional[dict[str, Any]]) -> Optional[Path]:
     if not isinstance(state, dict):
         return None
     session_path = state.get("session_path")

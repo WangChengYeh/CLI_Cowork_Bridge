@@ -4,7 +4,7 @@ import re
 import uuid
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Mapping
+from typing import Mapping, Optional
 
 
 @dataclass
@@ -17,7 +17,7 @@ class ClaudeHistoryLocator:
     def project_binding(self, work_dir: Path) -> tuple[Path, Path]:
         return project_binding_for_work_dir(work_dir=work_dir, env=self.env, home_dir=self.home_dir)
 
-    def latest_session_id(self) -> tuple[str | None, bool, Path | None]:
+    def latest_session_id(self) -> Optional[tuple[str], bool, Optional[Path]]:
         return latest_session_id_for_candidates(
             candidates=history_candidates(self.invocation_dir, self.project_root),
             home_dir=self.home_dir,
@@ -77,12 +77,12 @@ def project_key(work_dir: Path) -> str:
     return re.sub(r"[^A-Za-z0-9]", "-", str(work_dir))
 
 
-def latest_session_id_for_candidates(*, candidates: list[Path], home_dir: Path, project_binding_fn) -> tuple[str | None, bool, Path | None]:
+def latest_session_id_for_candidates(*, candidates: list[Path], home_dir: Path, project_binding_fn) -> Optional[tuple[str], bool, Optional[Path]]:
     session_env_root = home_dir / ".claude" / "session-env"
-    best_uuid: Path | None = None
-    best_any: Path | None = None
+    best_uuid: Optional[Path] = None
+    best_any: Optional[Path] = None
     has_any_history = False
-    best_cwd: Path | None = None
+    best_cwd: Optional[Path] = None
 
     for work_dir in candidates:
         project_dir, matched_cwd = project_binding_fn(work_dir)
@@ -108,7 +108,7 @@ def latest_session_id_for_candidates(*, candidates: list[Path], home_dir: Path, 
     return None, False, None
 
 
-def maybe_update_best_any(session_files: list[Path], work_dir: Path, *, best_any: Path | None, best_cwd: Path | None) -> tuple[Path | None, Path | None]:
+def maybe_update_best_any(session_files: list[Path], work_dir: Path, *, best_any: Optional[Path], best_cwd: Optional[Path]) -> Optional[tuple[Path], Optional[Path]]:
     try:
         best_in_dir = max(session_files, key=lambda p: p.stat().st_mtime)
         if best_any is None or best_in_dir.stat().st_mtime > best_any.stat().st_mtime:
@@ -123,9 +123,9 @@ def update_best_uuid_session(
     work_dir: Path,
     *,
     session_env_root: Path,
-    best_uuid: Path | None,
-    best_cwd: Path | None,
-) -> tuple[Path | None, Path | None]:
+    best_uuid: Optional[Path],
+    best_cwd: Optional[Path],
+) -> Optional[tuple[Path], Optional[Path]]:
     for session_file in session_files:
         if not valid_uuid_session_file(session_file, session_env_root=session_env_root):
             continue

@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from .common import binding_pane_id, tmux_backend_for_factory
 
 
@@ -8,8 +10,8 @@ def launch_binding_hint(
     binding,
     raw_binding,
     stale_binding: bool,
-    assigned_pane_id: str | None,
-    tmux_socket_path: str | None,
+    assigned_pane_id: Optional[str],
+    tmux_socket_path: Optional[str],
     same_tmux_socket_path_fn,
 ):
     if binding is not None:
@@ -27,12 +29,12 @@ def relabel_project_namespace_pane(
     agent_name: str,
     project_id: str,
     style_index: int,
-    tmux_socket_path: str | None,
-    namespace_epoch: int | None,
+    tmux_socket_path: Optional[str],
+    namespace_epoch: Optional[int],
     tmux_backend_factory,
     same_tmux_socket_path_fn,
     apply_ccb_pane_identity_fn,
-) -> str | None:
+) -> Optional[str]:
     if not same_tmux_socket_path_fn(getattr(binding, 'tmux_socket_path', None), tmux_socket_path):
         return None
     pane_id = binding_pane_id(binding)

@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 import shlex
 
 from provider_profiles import provider_api_env_keys
@@ -8,8 +10,8 @@ from provider_profiles import provider_api_env_keys
 def build_claude_env_prefix(
     *,
     profile=None,
-    extra_env: dict[str, str] | None = None,
-    env: dict[str, str] | None = None,
+    extra_env: Optional[dict[str, str]] = None,
+    env: Optional[dict[str, str]] = None,
     should_drop_base_url_fn,
     claude_user_base_url_fn,
 ) -> str:
@@ -32,7 +34,7 @@ def build_claude_env_prefix(
     return "; ".join(parts)
 
 
-def collect_explicit_api_env(*, profile=None, extra_env: dict[str, str] | None, api_keys: set[str]) -> dict[str, str]:
+def collect_explicit_api_env(*, profile=None, extra_env: Optional[dict[str, str]], api_keys: set[str]) -> dict[str, str]:
     explicit_env: dict[str, str] = {}
     if profile is not None:
         explicit_env.update(filtered_api_env(profile.env, api_keys=api_keys))

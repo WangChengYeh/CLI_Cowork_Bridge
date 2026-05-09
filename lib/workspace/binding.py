@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from pathlib import Path
 
 from project.discovery import load_workspace_binding
@@ -25,7 +27,7 @@ class WorkspaceBindingStore:
             branch_name=record.get('branch_name'),
         )
 
-    def save(self, plan: WorkspacePlan) -> Path | None:
+    def save(self, plan: WorkspacePlan) -> Optional[Path]:
         if plan.binding_path is None:
             return None
         binding = WorkspaceBinding(

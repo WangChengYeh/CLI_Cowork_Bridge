@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Any
+from typing import Any, Optional
 
 from completion.models import CompletionConfidence, CompletionCursor, CompletionDecision, CompletionItem, CompletionItemKind, CompletionSourceKind, CompletionStatus
 
@@ -14,10 +14,10 @@ SCHEMA_VERSION = 3
 @dataclass(frozen=True)
 class PersistedExecutionState:
     submission: ProviderSubmission
-    runtime_context: ProviderRuntimeContext | None
+    runtime_context: Optional[ProviderRuntimeContext]
     resume_capable: bool
     persisted_at: str
-    pending_decision: CompletionDecision | None = None
+    pending_decision: Optional[CompletionDecision] = None
     pending_items: tuple[CompletionItem, ...] = ()
     applied_event_seqs: tuple[int, ...] = ()
 
@@ -59,7 +59,7 @@ class PersistedExecutionState:
         )
 
 
-def _runtime_context_to_record(value: ProviderRuntimeContext | None) -> dict[str, Any] | None:
+def _runtime_context_to_record(value: Optional[ProviderRuntimeContext]) -> Optional[dict[str, Any]]:
     if value is None:
         return None
     return {
@@ -73,7 +73,7 @@ def _runtime_context_to_record(value: ProviderRuntimeContext | None) -> dict[str
     }
 
 
-def _runtime_context_from_record(record: dict[str, Any] | None) -> ProviderRuntimeContext | None:
+def _runtime_context_from_record(record: Optional[dict[str, Any]]) -> Optional[ProviderRuntimeContext]:
     if record is None:
         return None
     return ProviderRuntimeContext(
@@ -125,13 +125,13 @@ def _submission_from_record(record: dict[str, Any]) -> ProviderSubmission:
     )
 
 
-def _decision_to_record(value: CompletionDecision | None) -> dict[str, Any] | None:
+def _decision_to_record(value: Optional[CompletionDecision]) -> Optional[dict[str, Any]]:
     if value is None:
         return None
     return value.to_record()
 
 
-def _decision_from_record(record: dict[str, Any] | None) -> CompletionDecision | None:
+def _decision_from_record(record: Optional[dict[str, Any]]) -> Optional[CompletionDecision]:
     if record is None:
         return None
     cursor_record = record.get('source_cursor')

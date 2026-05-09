@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 import shutil
 
 from agents.models import RuntimeMode
@@ -26,9 +28,9 @@ def ensure_agent_runtime(
     cleanup_stale_tmux_binding_fn,
     launch_tmux_runtime_fn,
     resolve_agent_binding_fn,
-    assigned_pane_id: str | None = None,
+    assigned_pane_id: Optional[str] = None,
     style_index: int = 0,
-    tmux_socket_path: str | None = None,
+    tmux_socket_path: Optional[str] = None,
 ):
     launcher = _pane_backed_launcher(spec)
     if launcher is None:
@@ -75,7 +77,7 @@ def _pane_backed_launcher(spec):
 def _binding_is_reusable(
     *,
     binding,
-    assigned_pane_id: str | None,
+    assigned_pane_id: Optional[str],
     binding_runtime_alive_fn,
 ) -> bool:
     if assigned_pane_id is not None or binding is None:

@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Any, Callable
+from typing import Any, Callable, Optional
 
 from provider_backends.codex.session_runtime.follow_policy import codex_session_root_path, has_bound_codex_session
 
@@ -9,10 +9,10 @@ from provider_backends.codex.session_runtime.follow_policy import codex_session_
 def handle_codex_log_event(
     path: Path,
     *,
-    cwd_extractor: Callable[[Path], str | None],
-    session_resolver: Callable[[Path], tuple[Path | None, str | None]],
-    session_loader: Callable[[Path, str | None], Any],
-    session_id_extractor: Callable[[Path], str | None],
+    cwd_extractor: Callable[[Path], Optional[str]],
+    session_resolver: Callable[[Path], Optional[tuple[Path], Optional[str]]],
+    session_loader: Callable[[Path, Optional[str]], Any],
+    session_id_extractor: Callable[[Path], Optional[str]],
 ) -> None:
     if not path or not path.exists() or path.suffix != ".jsonl":
         return
@@ -65,7 +65,7 @@ def ensure_codex_watchdog_started(
         return instance, True
 
 
-def _should_accept_watchdog_binding(session, *, path: Path, session_id: str | None) -> bool:
+def _should_accept_watchdog_binding(session, *, path: Path, session_id: Optional[str]) -> bool:
     data = getattr(session, "data", None)
     session_root = codex_session_root_path(data)
     if session_root is not None and not _is_within(path, session_root):
@@ -81,7 +81,7 @@ def _should_accept_watchdog_binding(session, *, path: Path, session_id: str | No
     return bool(current_session_id and normalized_session_id and current_session_id == normalized_session_id)
 
 
-def _normalize_path(value: object) -> Path | None:
+def _normalize_path(value: object) -> Optional[Path]:
     if value is None:
         return None
     try:

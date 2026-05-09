@@ -6,7 +6,7 @@ from imessage.watcher import IMessageWatcher
 from room.models import RoomEvent, RoomEventType
 
 
-@dataclass(slots=True)
+@dataclass
 class IMessageWatchWorkerResult:
     accepted: int
     rejected: int

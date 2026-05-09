@@ -1,10 +1,12 @@
 from __future__ import annotations
 
+from typing import Optional
+
 import os
 from pathlib import Path
 
 
-def find_git_dir(start: Path) -> tuple[Path | None, Path | None]:
+def find_git_dir(start: Path) -> Optional[tuple[Path], Optional[Path]]:
     for candidate in [start, *start.parents]:
         git_entry = candidate / ".git"
         if not git_entry.exists():
@@ -15,7 +17,7 @@ def find_git_dir(start: Path) -> tuple[Path | None, Path | None]:
     return None, None
 
 
-def resolve_git_entry(candidate: Path, git_entry: Path) -> tuple[Path, Path] | None:
+def resolve_git_entry(candidate: Path, git_entry: Path) -> Optional[tuple[Path, Path]]:
     if git_entry.is_dir():
         return candidate, git_entry
     if not git_entry.is_file():
@@ -34,7 +36,7 @@ def resolve_git_entry(candidate: Path, git_entry: Path) -> tuple[Path, Path] | N
     return None
 
 
-def read_cached_project_id(git_dir: Path | None) -> str | None:
+def read_cached_project_id(git_dir: Optional[Path]) -> Optional[str]:
     if not git_dir:
         return None
     try:
@@ -47,7 +49,7 @@ def read_cached_project_id(git_dir: Path | None) -> str | None:
         return None
 
 
-def git_root_commit_cwd(git_root: Path | None, cwd: Path) -> str:
+def git_root_commit_cwd(git_root: Optional[Path], cwd: Path) -> str:
     return str(git_root or cwd)
 
 

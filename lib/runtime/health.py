@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from dataclasses import dataclass
 from datetime import datetime, timezone
 
@@ -17,14 +19,14 @@ HEALTH_STOPPED = 'stopped'
 HEALTH_UNKNOWN = 'unknown'
 
 
-@dataclass(slots=True)
+@dataclass
 class RuntimeHealth:
     status: str
     score: int
     reason: str
 
 
-def parse_timestamp(value: str | None) -> datetime | None:
+def parse_timestamp(value: Optional[str]) -> Optional[datetime]:
     if not value:
         return None
 
@@ -37,7 +39,7 @@ def parse_timestamp(value: str | None) -> datetime | None:
 def evaluate_runtime_health(
     state: RuntimeDaemonState,
     *,
-    now: datetime | None = None,
+    now: Optional[datetime] = None,
     heartbeat_timeout_seconds: int = 60,
 ) -> RuntimeHealth:
     now = now or datetime.now(timezone.utc)

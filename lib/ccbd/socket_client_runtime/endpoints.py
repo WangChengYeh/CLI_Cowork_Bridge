@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Callable
+from typing import Callable, Optional
 
 from ccbd.api_models import MessageEnvelope
 
@@ -47,7 +47,7 @@ def _payload_inbox(agent_name: str) -> dict:
     return {'agent_name': agent_name}
 
 
-def _payload_ack(agent_name: str, inbound_event_id: str | None = None) -> dict:
+def _payload_ack(agent_name: str, inbound_event_id: Optional[str] = None) -> dict:
     payload = {'agent_name': agent_name}
     if inbound_event_id:
         payload['inbound_event_id'] = inbound_event_id
@@ -63,7 +63,7 @@ def _payload_start(
     agent_names: tuple[str, ...] = (),
     restore: bool = False,
     auto_permission: bool = False,
-    terminal_size: tuple[int, int] | None = None,
+    terminal_size: Optional[tuple[int, int]] = None,
 ) -> dict:
     payload = {
         'agent_names': list(agent_names),
@@ -82,24 +82,24 @@ def _payload_attach(
     agent_name: str,
     workspace_path: str,
     backend_type: str,
-    pid: int | None = None,
-    runtime_ref: str | None = None,
-    session_ref: str | None = None,
-    health: str | None = None,
-    provider: str | None = None,
-    runtime_root: str | None = None,
-    runtime_pid: int | None = None,
-    terminal_backend: str | None = None,
-    pane_id: str | None = None,
-    active_pane_id: str | None = None,
-    pane_title_marker: str | None = None,
-    pane_state: str | None = None,
-    tmux_socket_name: str | None = None,
-    session_file: str | None = None,
-    session_id: str | None = None,
-    lifecycle_state: str | None = None,
-    managed_by: str | None = None,
-    binding_source: str | None = 'external-attach',
+    pid: Optional[int] = None,
+    runtime_ref: Optional[str] = None,
+    session_ref: Optional[str] = None,
+    health: Optional[str] = None,
+    provider: Optional[str] = None,
+    runtime_root: Optional[str] = None,
+    runtime_pid: Optional[int] = None,
+    terminal_backend: Optional[str] = None,
+    pane_id: Optional[str] = None,
+    active_pane_id: Optional[str] = None,
+    pane_title_marker: Optional[str] = None,
+    pane_state: Optional[str] = None,
+    tmux_socket_name: Optional[str] = None,
+    session_file: Optional[str] = None,
+    session_id: Optional[str] = None,
+    lifecycle_state: Optional[str] = None,
+    managed_by: Optional[str] = None,
+    binding_source: Optional[str] = 'external-attach',
 ) -> dict:
     return {
         'agent_name': agent_name,

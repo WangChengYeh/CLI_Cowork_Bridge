@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 import time
 
 from ..session_selection import latest_session
@@ -56,7 +58,7 @@ def _read_until_result(
         time.sleep(reader._poll_interval)
 
 
-def read_since(reader, state: dict[str, object], timeout: float, block: bool) -> tuple[str | None, dict[str, object]]:
+def read_since(reader, state: dict[str, object], timeout: float, block: bool) -> Optional[tuple[str], dict[str, object]]:
     return _read_until_result(
         reader,
         state,

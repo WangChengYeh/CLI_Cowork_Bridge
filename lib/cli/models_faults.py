@@ -1,17 +1,19 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from dataclasses import dataclass
 
 
 @dataclass(frozen=True)
 class ParsedFaultListCommand:
-    project: str | None
+    project: Optional[str]
     kind: str = 'fault-list'
 
 
 @dataclass(frozen=True)
 class ParsedFaultArmCommand:
-    project: str | None
+    project: Optional[str]
     agent_name: str
     task_id: str
     reason: str
@@ -22,7 +24,7 @@ class ParsedFaultArmCommand:
 
 @dataclass(frozen=True)
 class ParsedFaultClearCommand:
-    project: str | None
+    project: Optional[str]
     target: str
     kind: str = 'fault-clear'
 

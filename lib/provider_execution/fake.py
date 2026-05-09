@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from dataclasses import replace
 from datetime import timedelta
 
@@ -75,7 +77,7 @@ class FakeProviderAdapter:
             },
         )
 
-    def poll(self, submission: ProviderSubmission, *, now: str) -> ProviderPollResult | None:
+    def poll(self, submission: ProviderSubmission, *, now: str) -> Optional[ProviderPollResult]:
         state = dict(submission.runtime_state)
         events = list(state.get('events', []))
         next_index = int(state.get('next_index', 0))
@@ -87,7 +89,7 @@ class FakeProviderAdapter:
         )
 
         emitted: list[CompletionItem] = []
-        decision: CompletionDecision | None = None
+        decision: Optional[CompletionDecision] = None
         accepted_at = parse_utc_timestamp(submission.accepted_at)
 
         while next_index < len(events):
@@ -156,7 +158,7 @@ class FakeProviderAdapter:
     def export_runtime_state(self, submission: ProviderSubmission) -> dict[str, object]:
         return dict(submission.runtime_state)
 
-    def resume(self, job: JobRecord, submission: ProviderSubmission, *, context, persisted_state, now: str) -> ProviderSubmission | None:
+    def resume(self, job: JobRecord, submission: ProviderSubmission, *, context, persisted_state, now: str) -> Optional[ProviderSubmission]:
         del context, persisted_state, now
         if submission.job_id != job.job_id or submission.provider != job.provider:
             return None

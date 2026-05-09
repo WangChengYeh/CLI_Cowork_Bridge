@@ -45,7 +45,7 @@ def load_registry_by_project_id(
     ccb_project_id: str,
     provider: str,
     *,
-    work_dir: str | Path | None = None,
+    work_dir: str | Optional[Path] = None,
     get_backend_for_session_fn=get_backend_for_session,
     compute_project_id_fn=compute_ccb_project_id,
     upsert_registry_fn=None,

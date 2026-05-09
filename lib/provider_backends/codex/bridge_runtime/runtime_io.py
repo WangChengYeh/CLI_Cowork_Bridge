@@ -4,14 +4,14 @@ import json
 import os
 import time
 from datetime import datetime, timezone
-from typing import Any
+from typing import Any, Optional
 
 from provider_core.runtime_specs import provider_marker_prefix
 
 from .runtime_state import BridgeRuntimeState
 
 
-def read_request(state: BridgeRuntimeState) -> dict[str, Any] | None:
+def read_request(state: BridgeRuntimeState) -> Optional[dict[str, Any]]:
     if not state.paths.input_fifo.exists():
         return None
     try:

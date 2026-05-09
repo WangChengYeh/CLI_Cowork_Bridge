@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import time
-from typing import Callable
+from typing import Callable, Optional
 
 from provider_core.tmux_ownership import (
     apply_session_tmux_identity,
@@ -18,7 +18,7 @@ def attach_pane_log(session, backend: object, pane_id: str) -> None:
             pass
 
 
-def live_owned_pane(session, backend: object, pane_id: str) -> str | None:
+def live_owned_pane(session, backend: object, pane_id: str) -> Optional[str]:
     if not pane_id or not backend.is_alive(pane_id):
         return None
     ownership = inspect_tmux_pane_ownership(session, backend, str(pane_id))

@@ -35,7 +35,7 @@ def load_and_cache(
     work_dir: Path,
     *,
     session_entry_cls,
-    load_session_fn: Callable[[Path], object | None],
+    load_session_fn: Callable[[Path], Optional[object]],
     find_session_file_fn: Callable[[Path], Optional[Path]],
 ):
     session = load_session_fn(work_dir)
@@ -65,7 +65,7 @@ def _session_file(
     *,
     session,
     find_session_file_fn: Callable[[Path], Optional[Path]],
-) -> Path | None:
+) -> Optional[Path]:
     if session and session.session_file:
         return session.session_file
     return find_session_file_fn(work_dir)
@@ -81,7 +81,7 @@ def _session_valid(session) -> bool:
         return False
 
 
-def _file_mtime(path: Path | None) -> float:
+def _file_mtime(path: Optional[Path]) -> float:
     if path and path.exists():
         try:
             return path.stat().st_mtime

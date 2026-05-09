@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 import os
 from pathlib import Path
 import platform
@@ -20,7 +22,7 @@ def _is_within_directory(root: Path, candidate: Path) -> bool:
         return False
 
 
-def _env_install_prefix() -> Path | None:
+def _env_install_prefix() -> Optional[Path]:
     env_prefix = (os.environ.get("CODEX_INSTALL_PREFIX") or "").strip()
     return Path(env_prefix).expanduser() if env_prefix else None
 
@@ -109,7 +111,7 @@ def _stage_tree_ignores(_root: str, names: list[str]) -> set[str]:
     return {name for name in names if name in ignored}
 
 
-def _detect_git_head(source_dir: Path) -> tuple[str | None, str | None]:
+def _detect_git_head(source_dir: Path) -> Optional[tuple[str], Optional[str]]:
     git_bin = shutil.which("git")
     if not git_bin:
         return None, None
@@ -140,7 +142,7 @@ def _build_unix_installer_env(
     install_dir: Path,
     *,
     source_dir: Path,
-    extra_env: dict[str, str] | None = None,
+    extra_env: Optional[dict[str, str]] = None,
 ) -> dict[str, str]:
     env = os.environ.copy()
     env["CODEX_INSTALL_PREFIX"] = str(install_dir)
@@ -186,7 +188,7 @@ def run_staged_unix_installer(
     *,
     source_dir: Path,
     install_dir: Path,
-    extra_env: dict[str, str] | None = None,
+    extra_env: Optional[dict[str, str]] = None,
 ) -> int:
     source_dir = Path(source_dir).expanduser()
     script = source_dir / "install.sh"

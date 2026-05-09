@@ -1,9 +1,11 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from ccbd.api_models import JobRecord, JobStatus, TargetKind
 
 
-def should_track_heartbeat_job(job: JobRecord | None, *, tracked_message_types) -> bool:
+def should_track_heartbeat_job(job: Optional[JobRecord], *, tracked_message_types) -> bool:
     if job is None or job.status is not JobStatus.RUNNING:
         return False
     if job.target_kind is not TargetKind.AGENT:

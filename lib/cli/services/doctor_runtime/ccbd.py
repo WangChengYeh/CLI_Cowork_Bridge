@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 import os
 import shlex
 
@@ -57,14 +59,14 @@ def ccbd_summary(*, local, stores: dict[str, object], errors: list[str]) -> dict
     }
 
 
-def _path_bytes(path: object) -> int | None:
+def _path_bytes(path: object) -> Optional[int]:
     text = str(path or '').strip()
     if not text:
         return None
     return len(os.fsencode(text))
 
 
-def _tmux_start_server_command(socket_path: object) -> str | None:
+def _tmux_start_server_command(socket_path: object) -> Optional[str]:
     text = str(socket_path or '').strip()
     if not text:
         return None

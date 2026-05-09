@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from dataclasses import replace
 from ccbd.services.project_namespace import ProjectNamespaceController
 from ccbd.services.start_policy import CcbdStartPolicyStore
@@ -69,7 +71,7 @@ def kill_project(context: CliContext, command: ParsedKillCommand):
     return replace(final_summary, worktree_warnings=tuple(guard_summary.warnings))
 
 
-def _request_remote_stop(context: CliContext, *, force: bool) -> KillSummary | None:
+def _request_remote_stop(context: CliContext, *, force: bool) -> Optional[KillSummary]:
     return _request_remote_stop_impl(
         context,
         force=force,
@@ -99,7 +101,7 @@ def _destroy_project_namespace(context: CliContext, *, force: bool) -> None:
     )
 
 
-def _resolve_shutdown_summary(context: CliContext, *, remote_summary: KillSummary | None, force: bool) -> KillSummary:
+def _resolve_shutdown_summary(context: CliContext, *, remote_summary: Optional[KillSummary], force: bool) -> KillSummary:
     return _resolve_shutdown_summary_impl(
         context,
         remote_summary=remote_summary,
@@ -116,7 +118,7 @@ def _finalize_kill(
     *,
     force: bool,
     preparation,
-    remote_summary: KillSummary | None,
+    remote_summary: Optional[KillSummary],
     summary: KillSummary,
 ) -> KillSummary:
     return _finalize_kill_impl(

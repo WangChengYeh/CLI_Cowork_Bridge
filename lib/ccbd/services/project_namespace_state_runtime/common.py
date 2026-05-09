@@ -1,12 +1,14 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from ccbd.models import SCHEMA_VERSION
 
 NAMESPACE_STATE_RECORD_TYPE = 'ccbd_project_namespace_state'
 NAMESPACE_EVENT_RECORD_TYPE = 'ccbd_project_namespace_event'
 
 
-def clean_text(value: object) -> str | None:
+def clean_text(value: object) -> Optional[str]:
     text = str(value or '').strip()
     return text or None
 

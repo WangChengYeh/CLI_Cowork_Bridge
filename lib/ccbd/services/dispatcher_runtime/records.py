@@ -1,9 +1,11 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from ccbd.api_models import JobEvent, JobRecord, TargetKind
 
 
-def get_job(dispatcher, job_id: str) -> JobRecord | None:
+def get_job(dispatcher, job_id: str) -> Optional[JobRecord]:
     target = dispatcher._state.target_for_job(job_id)
     if target is not None:
         return dispatcher._job_store.get_latest_target(target[0], target[1], job_id)
@@ -15,7 +17,7 @@ def get_job(dispatcher, job_id: str) -> JobRecord | None:
     return None
 
 
-def latest_for_agent(dispatcher, agent_name: str) -> JobRecord | None:
+def latest_for_agent(dispatcher, agent_name: str) -> Optional[JobRecord]:
     records = dispatcher._job_store.list_agent(agent_name)
     if not records:
         return None

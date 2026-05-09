@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional, Union
+
 import time
 from pathlib import Path
 
@@ -12,7 +14,7 @@ from provider_core.session_binding_evidence import (
 )
 
 
-def _binding_adapter(provider: str) -> ProviderSessionBinding | None:
+def _binding_adapter(provider: str) -> Optional[ProviderSessionBinding]:
     return default_binding_adapter(provider)
 
 
@@ -20,10 +22,10 @@ def resolve_agent_binding(
     *,
     provider: str,
     agent_name: str,
-    workspace_path: str | Path,
-    project_root: str | Path | None = None,
+    workspace_path: Union[str, Path],
+    project_root: Union[str, Optional[Path]] = None,
     ensure_usable: bool = False,
-) -> AgentBinding | None:
+) -> Optional[AgentBinding]:
     return _resolve_agent_binding(
         provider=provider,
         agent_name=agent_name,

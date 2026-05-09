@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from dataclasses import replace
 from pathlib import Path
-from typing import Callable
+from typing import Callable, Optional
 
 from ccbd.api_models import JobRecord
 
@@ -14,13 +14,13 @@ def resume_active_submission(
     job: JobRecord,
     submission: ProviderSubmission,
     *,
-    context: ProviderRuntimeContext | None,
-    load_session_fn: Callable[[Path, str], object | None],
-    backend_for_session_fn: Callable[[dict], object | None],
+    context: Optional[ProviderRuntimeContext],
+    load_session_fn: Callable[[Path, str], Optional[object]],
+    backend_for_session_fn: Callable[[dict], Optional[object]],
     reader_factory: Callable[[object], object],
-    configure_reader_fn: Callable[[object, dict[str, object], ProviderRuntimeContext], None] | None = None,
-    completion_dir_fn: Callable[[object], str] | None = None,
-) -> ProviderSubmission | None:
+    configure_reader_fn: Callable[[object, dict[str, object], ProviderRuntimeContext], Optional[None]] = None,
+    completion_dir_fn: Callable[[object], Optional[str]] = None,
+) -> Optional[ProviderSubmission]:
     state = dict(submission.runtime_state)
     work_dir = _active_work_dir(context, state)
     if work_dir is None:
@@ -51,9 +51,9 @@ def resume_active_submission(
 
 
 def _active_work_dir(
-    context: ProviderRuntimeContext | None,
+    context: Optional[ProviderRuntimeContext],
     state: dict[str, object],
-) -> Path | None:
+) -> Optional[Path]:
     if context is None or not context.workspace_path:
         return None
     if str(state.get("mode") or "passive") != "active":
@@ -65,8 +65,8 @@ def _resume_prepared_session(
     job: JobRecord,
     work_dir: Path,
     *,
-    load_session_fn: Callable[[Path, str], object | None],
-) -> tuple[object, str] | None:
+    load_session_fn: Callable[[Path, str], Optional[object]],
+) -> Optional[tuple[object, str]]:
     session = load_session_fn(work_dir, agent_name=_session_selector_name(job))
     if session is None:
         return None
@@ -83,7 +83,7 @@ def _resumed_runtime_state(
     backend: object,
     pane_id: str,
     session: object,
-    completion_dir_fn: Callable[[object], str] | None,
+    completion_dir_fn: Callable[[object], Optional[str]],
 ) -> dict[str, object]:
     runtime_state = {
         **state,

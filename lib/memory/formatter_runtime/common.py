@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from datetime import datetime
 
 
@@ -13,7 +15,7 @@ _PROVIDER_LABELS = {
 }
 
 
-def provider_label(provider: str | None) -> str:
+def provider_label(provider: Optional[str]) -> str:
     key = str(provider or 'claude').strip().lower()
     if key in _PROVIDER_LABELS:
         return _PROVIDER_LABELS[key]

@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from completion.models import CompletionDecision
 
 _NON_RETRYABLE_API_AUTH_CODES = frozenset(
@@ -84,7 +86,7 @@ def failure_message_text(decision: CompletionDecision) -> str:
     )
 
 
-def nonretryable_api_failure_kind(decision: CompletionDecision) -> str | None:
+def nonretryable_api_failure_kind(decision: CompletionDecision) -> Optional[str]:
     if decision.status.value != 'failed':
         return None
     tokens = {

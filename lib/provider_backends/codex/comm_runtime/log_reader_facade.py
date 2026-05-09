@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import os
 from pathlib import Path
-from typing import Any
+from typing import Any, Optional
 
 from . import (
     capture_log_reader_state as _capture_log_reader_state,
@@ -29,10 +29,10 @@ class CodexLogReader:
 
     def __init__(
         self,
-        root: Path | None = None,
-        log_path: Path | None = None,
-        session_id_filter: str | None = None,
-        work_dir: Path | None = None,
+        root: Optional[Path] = None,
+        log_path: Optional[Path] = None,
+        session_id_filter: Optional[str] = None,
+        work_dir: Optional[Path] = None,
         follow_workspace_sessions: bool = False,
     ):
         self.root = current_session_root() if root is None else Path(root).expanduser()
@@ -61,42 +61,42 @@ class CodexLogReader:
     def _iter_lines_reverse(self, log_path: Path, *, max_bytes: int, max_lines: int) -> list[str]:
         return _iter_lines_reverse_impl(self, log_path, max_bytes=max_bytes, max_lines=max_lines)
 
-    def set_preferred_log(self, log_path: Path | None) -> None:
+    def set_preferred_log(self, log_path: Optional[Path]) -> None:
         self._preferred_log = self._normalize_path(log_path)
 
-    def _normalize_work_dir(self, work_dir: Path | None) -> str | None:
+    def _normalize_work_dir(self, work_dir: Optional[Path]) -> Optional[str]:
         return _normalize_work_dir_impl(work_dir)
 
-    def _extract_cwd_from_log(self, log_path: Path) -> str | None:
+    def _extract_cwd_from_log(self, log_path: Path) -> Optional[str]:
         return _extract_cwd_from_log_impl(self, log_path)
 
-    def _normalize_path(self, value: Any | None) -> Path | None:
+    def _normalize_path(self, value: Optional[Any]) -> Optional[Path]:
         return _normalize_path_impl(value)
 
-    def _scan_latest(self) -> Path | None:
+    def _scan_latest(self) -> Optional[Path]:
         return _scan_latest_impl(self)
 
-    def _latest_log(self) -> Path | None:
+    def _latest_log(self) -> Optional[Path]:
         return _latest_log_impl(self)
 
-    def current_log_path(self) -> Path | None:
+    def current_log_path(self) -> Optional[Path]:
         return self._latest_log()
 
     def capture_state(self) -> dict[str, Any]:
         return _capture_log_reader_state(self)
 
-    def wait_for_message(self, state: dict[str, Any], timeout: float) -> tuple[str | None, dict[str, Any]]:
+    def wait_for_message(self, state: dict[str, Any], timeout: float) -> Optional[tuple[str], dict[str, Any]]:
         return self._read_since(state, timeout, block=True)
 
-    def try_get_message(self, state: dict[str, Any]) -> tuple[str | None, dict[str, Any]]:
+    def try_get_message(self, state: dict[str, Any]) -> Optional[tuple[str], dict[str, Any]]:
         return self._read_since(state, timeout=0.0, block=False)
 
     def wait_for_event(
         self, state: dict[str, Any], timeout: float
-    ) -> tuple[tuple[str, str] | None, dict[str, Any]]:
+    ) -> Optional[tuple[tuple[str, str]], dict[str, Any]]:
         return self._read_event_since(state, timeout, block=True)
 
-    def try_get_event(self, state: dict[str, Any]) -> tuple[tuple[str, str] | None, dict[str, Any]]:
+    def try_get_event(self, state: dict[str, Any]) -> Optional[tuple[tuple[str, str]], dict[str, Any]]:
         return self._read_event_since(state, timeout=0.0, block=False)
 
     def wait_for_entries(self, state: dict[str, Any], timeout: float) -> tuple[list[dict[str, Any]], dict[str, Any]]:
@@ -111,20 +111,20 @@ class CodexLogReader:
             return [], new_state
         return [entry], new_state
 
-    def latest_message(self) -> str | None:
+    def latest_message(self) -> Optional[str]:
         return _latest_message_impl(self)
 
-    def _read_since(self, state: dict[str, Any], timeout: float, block: bool) -> tuple[str | None, dict[str, Any]]:
+    def _read_since(self, state: dict[str, Any], timeout: float, block: bool) -> Optional[tuple[str], dict[str, Any]]:
         return _read_since_impl(self, state, timeout, block)
 
     def _read_event_since(
         self, state: dict[str, Any], timeout: float, block: bool
-    ) -> tuple[tuple[str, str] | None, dict[str, Any]]:
+    ) -> Optional[tuple[tuple[str, str]], dict[str, Any]]:
         return _read_event_since_impl(self, state, timeout, block)
 
     def _read_entry_since(
         self, state: dict[str, Any], timeout: float, block: bool
-    ) -> tuple[dict[str, Any] | None, dict[str, Any]]:
+    ) -> Optional[tuple[dict[str, Any]], dict[str, Any]]:
         return _read_entry_since_impl(self, state, timeout, block)
 
     def latest_conversations(self, n: int = 1) -> list[tuple[str, str]]:

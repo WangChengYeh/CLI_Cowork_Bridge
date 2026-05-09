@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from .layouts_models import TmuxLayoutBackend
 
 
@@ -7,9 +9,9 @@ def resolve_root_pane(
     backend: TmuxLayoutBackend,
     *,
     cwd: str,
-    root_pane_id: str | None,
-    tmux_session_name: str | None,
-    detached_session_name: str | None,
+    root_pane_id: Optional[str],
+    tmux_session_name: Optional[str],
+    detached_session_name: Optional[str],
     inside_tmux: bool,
 ) -> tuple[str, bool, list[str]]:
     if root_pane_id:

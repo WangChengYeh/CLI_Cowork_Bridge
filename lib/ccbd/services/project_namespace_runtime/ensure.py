@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from .ensure_context import load_namespace_context, refresh_session_liveness
 from .ensure_identity import prepare_namespace_root_pane
 from .ensure_state import (
@@ -13,11 +15,11 @@ from .ensure_state import (
 def ensure_project_namespace(
     controller,
     *,
-    layout_signature: str | None = None,
+    layout_signature: Optional[str] = None,
     force_recreate: bool = False,
-    recreate_reason: str | None = None,
-    session_probe_timeout_s: float | None = None,
-    terminal_size: tuple[int, int] | None = None,
+    recreate_reason: Optional[str] = None,
+    session_probe_timeout_s: Optional[float] = None,
+    terminal_size: Optional[tuple[int, int]] = None,
 ) -> object:
     controller._layout.ccbd_dir.mkdir(parents=True, exist_ok=True)
     context = load_namespace_context(

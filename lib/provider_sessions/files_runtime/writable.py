@@ -1,11 +1,13 @@
 from __future__ import annotations
 
+from typing import Optional
+
 import os
 import stat
 from pathlib import Path
 
 
-def check_session_writable(session_file: Path) -> tuple[bool, str | None, str | None]:
+def check_session_writable(session_file: Path) -> tuple[bool, Optional[str], Optional[str]]:
     session_file = Path(session_file)
     parent = session_file.parent
 
@@ -31,7 +33,7 @@ def check_session_writable(session_file: Path) -> tuple[bool, str | None, str | 
     return True, None, None
 
 
-def _check_parent_directory(parent: Path) -> tuple[bool, str | None, str | None]:
+def _check_parent_directory(parent: Path) -> tuple[bool, Optional[str], Optional[str]]:
     if not parent.exists():
         return False, f'Directory not found: {parent}', f'mkdir -p {parent}'
 
@@ -44,7 +46,7 @@ def _check_parent_directory(parent: Path) -> tuple[bool, str | None, str | None]
     return True, None, None
 
 
-def _check_existing_session_target(session_file: Path) -> tuple[bool, str | None, str | None]:
+def _check_existing_session_target(session_file: Path) -> tuple[bool, Optional[str], Optional[str]]:
     if session_file.is_symlink():
         target = session_file.resolve()
         return False, f'Is symlink pointing to {target}', f'rm -f {session_file}'
@@ -58,7 +60,7 @@ def _check_existing_session_target(session_file: Path) -> tuple[bool, str | None
     return True, None, None
 
 
-def _check_session_file_ownership(session_file: Path) -> tuple[bool, str | None, str | None]:
+def _check_session_file_ownership(session_file: Path) -> tuple[bool, Optional[str], Optional[str]]:
     if os.name == 'nt' or not hasattr(os, 'getuid'):
         return True, None, None
     try:

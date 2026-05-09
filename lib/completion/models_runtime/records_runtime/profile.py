@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Any
+from typing import Any, Optional
 
 from agents.models import RuntimeMode, normalize_agent_name
 
@@ -50,7 +50,7 @@ class CompletionRequestContext:
     agent_name: str
     provider: str
     timeout_s: float
-    anchor_text: str | None = None
+    anchor_text: Optional[str] = None
     poll_interval_s: float = 0.5
 
     def __post_init__(self) -> None:

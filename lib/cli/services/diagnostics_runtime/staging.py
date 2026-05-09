@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 import json
 from pathlib import Path
 import tarfile
@@ -52,7 +54,7 @@ def create_tarball(*, stage_root: Path, output_path: Path, bundle_id: str) -> No
         archive.add(stage_root, arcname=bundle_id)
 
 
-def _source_exists(source: Path) -> tuple[bool, str | None]:
+def _source_exists(source: Path) -> tuple[bool, Optional[str]]:
     try:
         return source.exists() and source.is_file(), None
     except Exception as exc:

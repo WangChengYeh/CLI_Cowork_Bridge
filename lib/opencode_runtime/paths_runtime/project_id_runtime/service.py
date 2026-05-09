@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 import shutil
 from pathlib import Path
 
@@ -22,7 +24,7 @@ def normalize_work_dir(work_dir: Path) -> Path:
         return Path.cwd()
 
 
-def root_commit_project_id(*, git_root: Path | None, cwd: Path) -> str:
+def root_commit_project_id(*, git_root: Optional[Path], cwd: Path) -> str:
     try:
         import subprocess
 
@@ -37,7 +39,7 @@ def root_commit_project_id(*, git_root: Path | None, cwd: Path) -> str:
         return "global"
 
 
-def subprocess_run_kwargs(*, git_root: Path | None, cwd: Path) -> dict[str, object]:
+def subprocess_run_kwargs(*, git_root: Optional[Path], cwd: Path) -> dict[str, object]:
     import subprocess
 
     kwargs: dict[str, object] = {

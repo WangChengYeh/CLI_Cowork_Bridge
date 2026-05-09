@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -30,7 +32,7 @@ class BindingChange:
     new_id: str
 
 
-def update_codex_log_binding(session, *, log_path: str | None, session_id: str | None) -> None:
+def update_codex_log_binding(session, *, log_path: Optional[str], session_id: Optional[str]) -> None:
     change = binding_change(session, log_path=log_path, session_id=session_id)
     if change is None:
         return
@@ -42,7 +44,7 @@ def update_codex_log_binding(session, *, log_path: str | None, session_id: str |
     session._write_back()
 
 
-def binding_change(session, *, log_path: str | None, session_id: str | None) -> BindingChange | None:
+def binding_change(session, *, log_path: Optional[str], session_id: Optional[str]) -> Optional[BindingChange]:
     current = current_binding_state(session)
     requested = requested_binding(log_path=log_path, session_id=session_id)
     resume_start_cmd = persist_resume_start_cmd_fields(session.data, session_id) if session_id else None
@@ -65,7 +67,7 @@ def current_binding_state(session) -> CurrentBindingState:
     )
 
 
-def requested_binding(*, log_path: str | None, session_id: str | None) -> RequestedBinding:
+def requested_binding(*, log_path: Optional[str], session_id: Optional[str]) -> RequestedBinding:
     path = str(log_path or "").strip()
     return RequestedBinding(
         path=path,
@@ -78,8 +80,8 @@ def should_record_binding_change(
     current: CurrentBindingState,
     requested: RequestedBinding,
     *,
-    session_id: str | None,
-    resume_start_cmd: str | None,
+    session_id: Optional[str],
+    resume_start_cmd: Optional[str],
 ) -> bool:
     return any(
         (
@@ -94,17 +96,17 @@ def path_changed(session, new_path: str) -> bool:
     return bool(new_path and session.data.get("codex_session_path") != new_path)
 
 
-def id_changed(session, session_id: str | None) -> bool:
+def id_changed(session, session_id: Optional[str]) -> bool:
     return bool(session_id and session.data.get("codex_session_id") != session_id)
 
 
-def resume_command_changed(current: CurrentBindingState, resume_start_cmd: str | None) -> bool:
+def resume_command_changed(current: CurrentBindingState, resume_start_cmd: Optional[str]) -> bool:
     if resume_start_cmd is None:
         return False
     return current.start_cmd != resume_start_cmd or current.codex_start_cmd != resume_start_cmd
 
 
-def normalized_session_id(session_id: str | None, *, log_path_str: str) -> str:
+def normalized_session_id(session_id: Optional[str], *, log_path_str: str) -> str:
     new_id = str(session_id or "").strip()
     if new_id or not log_path_str:
         return new_id
@@ -164,7 +166,7 @@ def mark_active(data: dict[str, object]) -> None:
         data["active"] = True
 
 
-def expanded_old_path(old_path: str) -> Path | None:
+def expanded_old_path(old_path: str) -> Optional[Path]:
     if not old_path:
         return None
     try:

@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from dataclasses import dataclass
 
 from completion.models import CompletionDecision
@@ -9,7 +11,7 @@ from completion.models import CompletionDecision
 class ExecutionUpdate:
     job_id: str
     items: tuple
-    decision: CompletionDecision | None
+    decision: Optional[CompletionDecision]
 
 
 @dataclass(frozen=True)
@@ -21,7 +23,7 @@ class ExecutionRestoreResult:
     reason: str
     resume_capable: bool
     pending_items_count: int = 0
-    decision: CompletionDecision | None = None
+    decision: Optional[CompletionDecision] = None
 
     @property
     def restored(self) -> bool:

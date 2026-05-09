@@ -4,7 +4,7 @@ import json
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any
+from typing import Any, Optional
 
 
 WORKER_HEALTH_HEALTHY = 'healthy'
@@ -12,15 +12,15 @@ WORKER_HEALTH_FAILED = 'failed'
 WORKER_HEALTH_UNKNOWN = 'unknown'
 
 
-@dataclass(slots=True)
+@dataclass
 class RuntimeWorkerHealth:
     worker_name: str
     status: str
     success_count: int = 0
     failure_count: int = 0
-    last_success_at: str | None = None
-    last_failure_at: str | None = None
-    last_error: str | None = None
+    last_success_at: Optional[str] = None
+    last_failure_at: Optional[str] = None
+    last_error: Optional[str] = None
 
     def to_record(self) -> dict[str, Any]:
         return {

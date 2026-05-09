@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from completion.models import CompletionDecision
 
 from provider_execution.base import ProviderSubmission
@@ -27,7 +29,7 @@ def acknowledge(service, job_id: str) -> None:
     )
 
 
-def acknowledge_item(service, job_id: str, *, event_seq: int | None) -> None:
+def acknowledge_item(service, job_id: str, *, event_seq: Optional[int]) -> None:
     if event_seq is None or service._state_store is None:
         return
     persisted = service._state_store.load(job_id)
@@ -51,7 +53,7 @@ def persist_submission(
     service,
     job_id: str,
     *,
-    pending_decision: CompletionDecision | None = None,
+    pending_decision: Optional[CompletionDecision] = None,
     pending_items: tuple = (),
     applied_event_seqs: tuple[int, ...] = (),
 ) -> None:

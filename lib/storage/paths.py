@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from dataclasses import dataclass
 from datetime import datetime, timezone
 import json
@@ -104,7 +106,7 @@ class PathLayout(
         except Exception:
             return 'mismatch'
 
-    def ensure_runtime_state_root(self, *, created_at: str | None = None) -> None:
+    def ensure_runtime_state_root(self, *, created_at: Optional[str] = None) -> None:
         if self.runtime_state_placement.root_kind == 'project':
             return
         self.ccb_dir.mkdir(parents=True, exist_ok=True)

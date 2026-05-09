@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from .cancel import OpenCodeCancelMixin
 from .state import initialize_reader
 from .storage import OpenCodeStorageMixin
@@ -13,7 +15,7 @@ class OpenCodeLogReader(OpenCodeStorageMixin, OpenCodeTimelineMixin, OpenCodeCan
         work_dir=None,
         project_id: str = "global",
         *,
-        session_id_filter: str | None = None,
+        session_id_filter: Optional[str] = None,
     ):
         initialize_reader(
             self,

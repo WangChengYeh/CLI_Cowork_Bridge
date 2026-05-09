@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from cli.services.tmux_start_layout import TmuxStartLayout
 
 from .binding import bootstrap_project_namespace_cmd_pane
@@ -9,9 +11,9 @@ from .layout import cleanup_start_tmux_orphans, prepare_start_layout, session_ro
 def tmux_namespace_runtime(
     deps,
     *,
-    tmux_socket_path: str | None,
-    tmux_session_name: str | None,
-    tmux_workspace_window_name: str | None,
+    tmux_socket_path: Optional[str],
+    tmux_session_name: Optional[str],
+    tmux_workspace_window_name: Optional[str],
 ):
     tmux_backend = deps.tmux_backend_cls(socket_path=tmux_socket_path) if tmux_socket_path is not None else None
     if tmux_backend is None or not tmux_session_name:
@@ -32,7 +34,7 @@ def tmux_layout_for_start(
     prepared_agents,
     interactive_tmux_layout: bool,
     tmux_backend,
-    root_pane_id: str | None,
+    root_pane_id: Optional[str],
     actions_taken: list[str],
 ) -> TmuxStartLayout:
     if not interactive_tmux_layout:
@@ -59,10 +61,10 @@ def tmux_layout_for_start(
 def project_socket_active_panes(
     *,
     tmux_layout: TmuxStartLayout,
-    tmux_socket_path: str | None,
+    tmux_socket_path: Optional[str],
     config,
-    root_pane_id: str | None,
-) -> tuple[list[str], str | None]:
+    root_pane_id: Optional[str],
+) -> tuple[list[str], Optional[str]]:
     active_panes: list[str] = []
     if root_pane_id and tmux_socket_path is not None:
         active_panes.append(root_pane_id)
@@ -78,11 +80,11 @@ def bootstrap_cmd_pane_if_needed(
     deps,
     *,
     fresh_namespace: bool,
-    cmd_pane_id: str | None,
+    cmd_pane_id: Optional[str],
     project_root,
     project_id: str,
-    tmux_socket_path: str | None,
-    namespace_epoch: int | None,
+    tmux_socket_path: Optional[str],
+    namespace_epoch: Optional[int],
     actions_taken: list[str],
 ) -> None:
     if not fresh_namespace or cmd_pane_id is None:
@@ -100,7 +102,7 @@ def bootstrap_cmd_pane_if_needed(
 
 
 def record_active_panes(
-    active_panes_by_socket: dict[str | None, list[str]],
+    active_panes_by_socket: Optional[dict[str], list[str]],
     project_socket_active_panes: list[str],
     *,
     execution,
@@ -117,9 +119,9 @@ def cleanup_tmux_orphans_if_needed(
     cleanup_tmux_orphans: bool,
     project_id: str,
     paths,
-    active_panes_by_socket: dict[str | None, list[str]],
+    active_panes_by_socket: Optional[dict[str], list[str]],
     project_socket_active_panes: list[str],
-    tmux_socket_path: str | None,
+    tmux_socket_path: Optional[str],
     clock,
     actions_taken: list[str],
 ) -> tuple[object, ...]:

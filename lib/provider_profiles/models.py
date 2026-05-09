@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any
+from typing import Any, Optional
 
 
 _VALID_PROFILE_MODES = {"inherit", "overlay", "isolated"}
@@ -11,7 +11,7 @@ _VALID_PROFILE_MODES = {"inherit", "overlay", "isolated"}
 @dataclass(frozen=True)
 class ProviderProfileSpec:
     mode: str = "inherit"
-    home: str | None = None
+    home: Optional[str] = None
     env: dict[str, str] = field(default_factory=dict)
     inherit_api: bool = True
     inherit_auth: bool = True
@@ -46,8 +46,8 @@ class ResolvedProviderProfile:
     provider: str
     agent_name: str
     mode: str = "inherit"
-    profile_root: str | None = None
-    runtime_home: str | None = None
+    profile_root: Optional[str] = None
+    runtime_home: Optional[str] = None
     env: dict[str, str] = field(default_factory=dict)
     inherit_api: bool = True
     inherit_auth: bool = True
@@ -73,13 +73,13 @@ class ResolvedProviderProfile:
         object.__setattr__(self, 'env', {str(key): str(value) for key, value in dict(self.env).items()})
 
     @property
-    def profile_root_path(self) -> Path | None:
+    def profile_root_path(self) -> Optional[Path]:
         if not self.profile_root:
             return None
         return Path(self.profile_root)
 
     @property
-    def runtime_home_path(self) -> Path | None:
+    def runtime_home_path(self) -> Optional[Path]:
         if not self.runtime_home:
             return None
         return Path(self.runtime_home)
@@ -116,7 +116,7 @@ class ResolvedProviderProfile:
         )
 
 
-def _normalize_path_text(value: object) -> str | None:
+def _normalize_path_text(value: object) -> Optional[str]:
     raw = str(value or '').strip()
     if not raw:
         return None

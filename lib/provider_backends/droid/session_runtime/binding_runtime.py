@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -17,7 +19,7 @@ class DroidBindingChange:
     project_id: str
 
 
-def update_droid_binding(session, *, session_path: Path | None, session_id: str | None) -> None:
+def update_droid_binding(session, *, session_path: Optional[Path], session_id: Optional[str]) -> None:
     change = binding_change(session, session_path=session_path, session_id=session_id)
     if change is None:
         return
@@ -28,7 +30,7 @@ def update_droid_binding(session, *, session_path: Path | None, session_id: str 
     session._write_back()
 
 
-def binding_change(session, *, session_path: Path | None, session_id: str | None) -> DroidBindingChange | None:
+def binding_change(session, *, session_path: Optional[Path], session_id: Optional[str]) -> Optional[DroidBindingChange]:
     old_path = str(session.data.get("droid_session_path") or "").strip()
     old_id = str(session.data.get("droid_session_id") or "").strip()
     new_path = normalized_session_path(session_path)
@@ -45,7 +47,7 @@ def binding_change(session, *, session_path: Path | None, session_id: str | None
     )
 
 
-def normalized_session_path(session_path: Path | None) -> str:
+def normalized_session_path(session_path: Optional[Path]) -> str:
     if session_path is None:
         return ""
     try:
@@ -54,7 +56,7 @@ def normalized_session_path(session_path: Path | None) -> str:
         return str(session_path)
 
 
-def normalized_session_id(session_id: str | None, *, session_path: Path | None) -> str:
+def normalized_session_id(session_id: Optional[str], *, session_path: Optional[Path]) -> str:
     new_id = str(session_id or "").strip()
     if new_id or session_path is None:
         return new_id
@@ -74,7 +76,7 @@ def ensured_project_id(session) -> str:
         return ""
 
 
-def should_record_change(session, *, new_path: str, session_id: str | None, project_id: str) -> bool:
+def should_record_change(session, *, new_path: str, session_id: Optional[str], project_id: str) -> bool:
     return any(
         (
             bool(new_path and session.data.get("droid_session_path") != new_path),
@@ -119,7 +121,7 @@ def trigger_transfer_if_needed(session, change: DroidBindingChange) -> None:
         pass
 
 
-def expanded_old_path(old_path: str) -> Path | None:
+def expanded_old_path(old_path: str) -> Optional[Path]:
     if not old_path:
         return None
     try:

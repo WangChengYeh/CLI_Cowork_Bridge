@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Any
+from typing import Any, Optional
 
 from .common import path_is_same_or_parent, provider_pane_alive
 from .lookup_records import iter_fresh_registry_records
@@ -11,11 +11,11 @@ def latest_project_registry_record(
     *,
     project_id: str,
     qualified_provider: str,
-    requested_work_dir: str | None,
+    requested_work_dir: Optional[str],
     get_backend_for_session_fn,
     compute_project_id_fn,
-) -> tuple[dict[str, Any], bool] | None:
-    best: tuple[dict[str, Any], bool] | None = None
+) -> Optional[tuple[dict[str, Any], bool]]:
+    best: Optional[tuple[dict[str, Any], bool]] = None
     best_ts = -1
     registry_work_dir = requested_work_dir or Path.cwd()
     for data, updated_at in iter_fresh_registry_records(work_dir=registry_work_dir):
@@ -41,10 +41,10 @@ def match_project_registry_record(
     *,
     project_id: str,
     qualified_provider: str,
-    requested_work_dir: str | None,
+    requested_work_dir: Optional[str],
     get_backend_for_session_fn,
     compute_project_id_fn,
-) -> tuple[str, bool] | None:
+) -> Optional[tuple[str, bool]]:
     existing_project_id = existing_project_id_from_record(data)
     inferred_project_id = inferred_project_id_from_record(data, compute_project_id_fn=compute_project_id_fn)
     effective_project_id = existing_project_id or inferred_project_id

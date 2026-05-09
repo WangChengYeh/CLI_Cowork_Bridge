@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from provider_core.tmux_ownership import inspect_tmux_pane_ownership
 
 from .backend import session_backend
@@ -38,7 +40,7 @@ def binding_is_stable(session, pane_or_err: object, *, delay_s: float = 0.1, sle
         return False
 
 
-def binding_has_owned_tmux_pane(session, pane_id: str | None) -> bool:
+def binding_has_owned_tmux_pane(session, pane_id: Optional[str]) -> bool:
     terminal = str(getattr(session, 'terminal', '') or '').strip().lower()
     if terminal != 'tmux':
         return True

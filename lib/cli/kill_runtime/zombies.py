@@ -4,7 +4,7 @@ import os
 import re
 import shutil
 import subprocess
-from typing import Callable
+from typing import Callable, Optional
 
 _ZOMBIE_SESSION_PATTERN = re.compile(r"^(codex|gemini|opencode|claude|droid)-(\d+)-")
 
@@ -12,7 +12,7 @@ _ZOMBIE_SESSION_PATTERN = re.compile(r"^(codex|gemini|opencode|claude|droid)-(\d
 def find_all_zombie_sessions(
     *,
     is_pid_alive: Callable[[int], bool],
-    list_tmux_sessions_fn: Callable[[], list[str]] | None = None,
+    list_tmux_sessions_fn: Callable[[], Optional[list[str]]] = None,
 ) -> list[dict]:
     if list_tmux_sessions_fn is None:
         list_tmux_sessions_fn = _list_tmux_sessions
@@ -44,7 +44,7 @@ def _list_tmux_sessions() -> list[str]:
     return [session for session in result.stdout.strip().split("\n") if session]
 
 
-def _parse_zombie_session(session: str, *, is_pid_alive: Callable[[int], bool]) -> dict | None:
+def _parse_zombie_session(session: str, *, is_pid_alive: Callable[[int], bool]) -> Optional[dict]:
     match = _ZOMBIE_SESSION_PATTERN.match(session)
     if match is None:
         return None
@@ -68,7 +68,7 @@ def kill_global_zombies(
     is_pid_alive: Callable[[int], bool],
     find_all_zombie_sessions_fn: Callable[..., list[dict]],
     input_fn: Callable[[str], str] = input,
-    kill_tmux_session_fn: Callable[[str], bool] | None = None,
+    kill_tmux_session_fn: Callable[[str], Optional[bool]] = None,
 ) -> int:
     if kill_tmux_session_fn is None:
         kill_tmux_session_fn = _kill_tmux_session

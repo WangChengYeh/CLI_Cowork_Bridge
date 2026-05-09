@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional, Union
+
 from pathlib import Path
 
 from ccbd.app_runtime import (
@@ -22,7 +24,7 @@ from ccbd.system import utc_now
 
 
 class CcbdApp:
-    def __init__(self, project_root: str | Path, *, clock=utc_now, pid: int | None = None) -> None:
+    def __init__(self, project_root: Union[str, Path], *, clock=utc_now, pid: Optional[int] = None) -> None:
         initialize_app(self, project_root, clock=clock, pid=pid)
 
     def _register_handlers(self) -> None:
@@ -70,8 +72,8 @@ class CcbdApp:
         trigger: str,
         status: str,
         actions_taken: tuple[str, ...],
-        restore_summary: dict[str, object] | None = None,
-        failure_reason: str | None = None,
+        restore_summary: Optional[dict[str, object]] = None,
+        failure_reason: Optional[str] = None,
     ) -> None:
         record_startup_report_impl(
             self,
@@ -92,7 +94,7 @@ class CcbdApp:
         stopped_agents: tuple[str, ...],
         actions_taken: tuple[str, ...],
         cleanup_summaries,
-        failure_reason: str | None,
+        failure_reason: Optional[str],
     ) -> None:
         record_shutdown_report_impl(
             self,

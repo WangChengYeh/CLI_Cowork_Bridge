@@ -1,10 +1,12 @@
 from __future__ import annotations
 
+from typing import Optional
+
 _REPLY_PREFIX = 'reply:'
 _DELIVERY_PREFIX = 'delivery:'
 
 
-def compose_reply_payload(reply_id: str, *, delivery_job_id: str | None = None) -> str:
+def compose_reply_payload(reply_id: str, *, delivery_job_id: Optional[str] = None) -> str:
     normalized_reply_id = str(reply_id or '').strip()
     if not normalized_reply_id:
         raise ValueError('reply_id cannot be empty')
@@ -15,15 +17,15 @@ def compose_reply_payload(reply_id: str, *, delivery_job_id: str | None = None) 
     return ' '.join(parts)
 
 
-def reply_id_from_payload(payload_ref: str | None) -> str | None:
+def reply_id_from_payload(payload_ref: Optional[str]) -> Optional[str]:
     return _value_for_prefix(payload_ref, _REPLY_PREFIX)
 
 
-def delivery_job_id_from_payload(payload_ref: str | None) -> str | None:
+def delivery_job_id_from_payload(payload_ref: Optional[str]) -> Optional[str]:
     return _value_for_prefix(payload_ref, _DELIVERY_PREFIX)
 
 
-def _value_for_prefix(payload_ref: str | None, prefix: str) -> str | None:
+def _value_for_prefix(payload_ref: Optional[str], prefix: str) -> Optional[str]:
     text = str(payload_ref or '').strip()
     if not text:
         return None

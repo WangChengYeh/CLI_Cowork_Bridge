@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Any
+from typing import Any, Optional
 
 from opencode_runtime.replies import extract_text as _extract_text
 
@@ -18,7 +18,7 @@ from ..storage_reader import read_parts as _read_parts_runtime
 
 
 class OpenCodeTimelineMixin:
-    def _detect_project_id_for_workdir(self) -> str | None:
+    def _detect_project_id_for_workdir(self) -> Optional[str]:
         return _detect_project_id_for_workdir(
             storage_root=self.root,
             work_dir=self.work_dir,
@@ -26,13 +26,13 @@ class OpenCodeTimelineMixin:
             allow_parent_match=self._allow_parent_match,
         )
 
-    def _get_latest_session(self) -> dict | None:
+    def _get_latest_session(self) -> Optional[dict]:
         return _get_latest_session(self)
 
-    def _get_latest_session_from_db(self) -> dict | None:
+    def _get_latest_session_from_db(self) -> Optional[dict]:
         return _get_latest_session_from_db(self)
 
-    def _get_latest_session_from_files(self) -> dict | None:
+    def _get_latest_session_from_files(self) -> Optional[dict]:
         return _get_latest_session_from_files(self)
 
     def _read_messages(self, session_id: str) -> list[dict]:
@@ -48,16 +48,16 @@ class OpenCodeTimelineMixin:
     def capture_state(self) -> dict[str, Any]:
         return _capture_state(self)
 
-    def _read_since(self, state: dict[str, Any], timeout: float, block: bool) -> tuple[str | None, dict[str, Any]]:
+    def _read_since(self, state: dict[str, Any], timeout: float, block: bool) -> Optional[tuple[str], dict[str, Any]]:
         return _read_since_runtime(self, state, timeout, block)
 
-    def wait_for_message(self, state: dict[str, Any], timeout: float) -> tuple[str | None, dict[str, Any]]:
+    def wait_for_message(self, state: dict[str, Any], timeout: float) -> Optional[tuple[str], dict[str, Any]]:
         return self._read_since(state, timeout, block=True)
 
-    def try_get_message(self, state: dict[str, Any]) -> tuple[str | None, dict[str, Any]]:
+    def try_get_message(self, state: dict[str, Any]) -> Optional[tuple[str], dict[str, Any]]:
         return self._read_since(state, timeout=0.0, block=False)
 
-    def latest_message(self) -> str | None:
+    def latest_message(self) -> Optional[str]:
         return _latest_message_runtime(self)
 
     def conversations_for_session(self, session_id: str, n: int = 1) -> list[tuple[str, str]]:

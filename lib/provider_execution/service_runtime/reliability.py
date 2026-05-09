@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from dataclasses import replace
 from datetime import timedelta
 
@@ -55,7 +57,7 @@ def timeout_poll_result(
     submission: ProviderSubmission,
     adapter,
     now: str,
-) -> ProviderPollResult | None:
+) -> Optional[ProviderPollResult]:
     policy = timeout_policy_for(service, job_id=job_id, adapter=adapter)
     if policy is None:
         return None
@@ -74,7 +76,7 @@ def timeout_poll_result(
     )
 
 
-def timeout_policy_for(service, *, job_id: str, adapter) -> object | None:
+def timeout_policy_for(service, *, job_id: str, adapter) -> Optional[object]:
     policy = adapter_reliability_policy(adapter)
     if policy is None:
         return None
@@ -159,7 +161,7 @@ def build_timeout_result(
     return ProviderPollResult(submission=updated_submission, decision=decision)
 
 
-def deadline_at(started_at: str, *, timeout_s: float) -> str | None:
+def deadline_at(started_at: str, *, timeout_s: float) -> Optional[str]:
     if not started_at:
         return None
     try:

@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 import os
 import time
 from pathlib import Path
@@ -9,7 +11,7 @@ def launch_pane(
     backend,
     *,
     spec_name: str,
-    assigned_pane_id: str | None,
+    assigned_pane_id: Optional[str],
     start_cmd: str,
     run_cwd: Path,
     create_detached_tmux_pane_fn,
@@ -144,7 +146,7 @@ def pane_meets_minimum_size(
     return width >= min_width and height >= min_height
 
 
-def pane_dimensions(backend, pane_id: str) -> tuple[int, int] | None:
+def pane_dimensions(backend, pane_id: str) -> Optional[tuple[int, int]]:
     try:
         result = backend._tmux_run(  # type: ignore[attr-defined]
             ['display-message', '-p', '-t', pane_id, '#{pane_width}x#{pane_height}'],

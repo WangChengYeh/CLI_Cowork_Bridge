@@ -3,7 +3,7 @@ from __future__ import annotations
 import os
 import time
 from pathlib import Path
-from typing import Any
+from typing import Any, Optional
 
 from ui_text import t
 from provider_core.runtime_specs import provider_marker_prefix
@@ -85,7 +85,7 @@ def _ensure_session_health(comm, *, probe_terminal: bool) -> tuple[bool, str]:
     return healthy, status
 
 
-def _wait_timeout(comm, timeout: int | None) -> int:
+def _wait_timeout(comm, timeout: Optional[int]) -> int:
     return comm.timeout if timeout is None else int(timeout)
 
 
@@ -131,7 +131,7 @@ def ask_async(comm, question: str) -> bool:
         return False
 
 
-def ask_sync(comm, question: str, timeout: int | None = None) -> str | None:
+def ask_sync(comm, question: str, timeout: Optional[int] = None) -> Optional[str]:
     try:
         _ensure_session_health(comm, probe_terminal=False)
         print(f"🔔 {t('sending_to', provider='OpenCode')}", flush=True)

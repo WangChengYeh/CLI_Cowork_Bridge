@@ -1,7 +1,9 @@
 from __future__ import annotations
 
+from typing import Optional
 
-def clean_text(value: object) -> str | None:
+
+def clean_text(value: object) -> Optional[str]:
     text = str(value or '').strip()
     return text or None
 
@@ -12,7 +14,7 @@ def clean_tuple(value: object) -> tuple[str, ...]:
     return tuple(str(item).strip() for item in value if str(item).strip())
 
 
-def coerce_int(value: object) -> int | None:
+def coerce_int(value: object) -> Optional[int]:
     if value is None:
         return None
     text = str(value).strip()
@@ -24,7 +26,7 @@ def coerce_int(value: object) -> int | None:
     return number if number > 0 else None
 
 
-def to_runtime_state(value: object) -> str | None:
+def to_runtime_state(value: object) -> Optional[str]:
     if value is None:
         return None
     return clean_text(getattr(value, 'value', value))

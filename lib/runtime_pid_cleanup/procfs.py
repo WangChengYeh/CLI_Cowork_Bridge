@@ -1,19 +1,21 @@
 from __future__ import annotations
 
+from typing import Optional
+
 import os
 from pathlib import Path
 
 from .utils import coerce_pid
 
 
-def read_pid_file(path: Path) -> int | None:
+def read_pid_file(path: Path) -> Optional[int]:
     try:
         return coerce_pid(path.read_text(encoding='utf-8'))
     except Exception:
         return None
 
 
-def read_proc_path(pid: int, entry: str) -> Path | None:
+def read_proc_path(pid: int, entry: str) -> Optional[Path]:
     try:
         return Path(os.readlink(f'/proc/{pid}/{entry}')).expanduser()
     except Exception:

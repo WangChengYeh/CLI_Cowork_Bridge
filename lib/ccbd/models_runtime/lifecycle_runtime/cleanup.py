@@ -1,14 +1,14 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Any
+from typing import Any, Optional
 
 from ccbd.models_runtime.lifecycle_runtime.common import clean_text, clean_tuple
 
 
 @dataclass(frozen=True)
 class CcbdTmuxCleanupSummary:
-    socket_name: str | None
+    socket_name: Optional[str]
     owned_panes: tuple[str, ...] = ()
     active_panes: tuple[str, ...] = ()
     orphaned_panes: tuple[str, ...] = ()

@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from provider_core.session_binding_evidence import (
     session_pane_title_marker,
     session_ref,
@@ -60,8 +62,8 @@ def pane_state_for_health(
     runtime,
     health: str,
     *,
-    pane_id: str | None = None,
-) -> tuple[str | None, str | None]:
+    pane_id: Optional[str] = None,
+) -> Optional[tuple[str], Optional[str]]:
     next_pane_state = runtime.pane_state
     next_active_pane_id = runtime.active_pane_id or pane_id or runtime.pane_id
     if health in {'pane-dead', 'orphaned'}:

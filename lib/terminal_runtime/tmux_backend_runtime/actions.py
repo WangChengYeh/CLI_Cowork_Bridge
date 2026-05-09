@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 import os
 import time
 from pathlib import Path
@@ -77,7 +79,7 @@ def create_pane(
     cwd: str,
     direction: str = "right",
     percent: int = 50,
-    parent_pane: str | None = None,
+    parent_pane: Optional[str] = None,
 ) -> str:
     cmd = (cmd or "").strip()
     cwd = (cwd or ".").strip() or "."
@@ -95,7 +97,7 @@ def create_pane(
     return pane_id
 
 
-def selected_session_name(backend, pane_id: str) -> str | None:
+def selected_session_name(backend, pane_id: str) -> Optional[str]:
     session_raw = capture_tmux_value(backend, pane_id, "#{session_name}")
     return _parse_tmux_session_name_impl(session_raw)
 
@@ -105,7 +107,7 @@ def capture_tmux_value(
     pane_id: str,
     format_string: str,
     *,
-    timeout: float | None = None,
+    timeout: Optional[float] = None,
 ) -> str:
     try:
         cp = backend._tmux_run(
@@ -120,7 +122,7 @@ def capture_tmux_value(
     return (cp.stdout or "").strip()
 
 
-def resolve_parent_pane(backend, parent_pane: str | None) -> str | None:
+def resolve_parent_pane(backend, parent_pane: Optional[str]) -> Optional[str]:
     base = (parent_pane or "").strip() or None
     if base:
         return base

@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 import re
 
 from .nodes import LayoutLeaf, LayoutNode
@@ -73,7 +75,7 @@ class _LayoutParser:
             ),
         )
 
-    def _peek(self) -> str | None:
+    def _peek(self) -> Optional[str]:
         if self._index >= len(self._tokens):
             return None
         return self._tokens[self._index]

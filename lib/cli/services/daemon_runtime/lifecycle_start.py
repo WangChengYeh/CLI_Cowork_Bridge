@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from dataclasses import dataclass
 
 from ccbd.models import LeaseHealth
@@ -24,7 +26,7 @@ def poll_daemon_start_iteration(
     connect_compatible_daemon_fn,
     should_restart_unreachable_daemon_fn,
     restart_unreachable_daemon_fn,
-) -> DaemonHandle | None:
+) -> Optional[DaemonHandle]:
     _manager, _guard, inspection = inspect_daemon_fn(context)
     handle = maybe_connect_daemon(
         context,
@@ -57,7 +59,7 @@ def maybe_connect_daemon(
     *,
     state: DaemonStartState,
     connect_compatible_daemon_fn,
-) -> DaemonHandle | None:
+) -> Optional[DaemonHandle]:
     if _phase(inspection) != 'mounted' or not inspection.socket_connectable:
         return None
     handle = connect_compatible_daemon_fn(

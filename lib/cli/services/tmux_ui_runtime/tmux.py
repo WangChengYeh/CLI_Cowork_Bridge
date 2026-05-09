@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 
 def tmux_run(backend, args: list[str]) -> None:
     try:
@@ -8,7 +10,7 @@ def tmux_run(backend, args: list[str]) -> None:
         return
 
 
-def capture_tmux_value(backend, args: list[str]) -> str | None:
+def capture_tmux_value(backend, args: list[str]) -> Optional[str]:
     try:
         result = backend._tmux_run(args, check=False, capture=True)  # type: ignore[attr-defined]
     except Exception:
@@ -18,7 +20,7 @@ def capture_tmux_value(backend, args: list[str]) -> str | None:
     return ((getattr(result, 'stdout', '') or '').splitlines() or [''])[0].strip() or None
 
 
-def active_session_pane_id(backend, session_name: str) -> str | None:
+def active_session_pane_id(backend, session_name: str) -> Optional[str]:
     try:
         result = backend._tmux_run(  # type: ignore[attr-defined]
             ['list-panes', '-t', session_name, '-F', '#{?pane_active,#{pane_id},}'],
@@ -36,7 +38,7 @@ def active_session_pane_id(backend, session_name: str) -> str | None:
     return None
 
 
-def pane_option_value(backend, pane_id: str, option_name: str) -> str | None:
+def pane_option_value(backend, pane_id: str, option_name: str) -> Optional[str]:
     return capture_tmux_value(
         backend,
         ['display-message', '-p', '-t', pane_id, f'#{{{option_name}}}'],

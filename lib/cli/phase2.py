@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import sys
 from pathlib import Path
-from typing import Sequence, TextIO
+from typing import Optional, Sequence, TextIO
 
 from agents.config_loader import ensure_bootstrap_project_config
 from cli.context import CliContextBuilder
@@ -47,9 +47,9 @@ from storage.paths import PathLayout
 def maybe_handle_phase2(
     argv: Sequence[str],
     *,
-    cwd: Path | None = None,
-    stdout: TextIO | None = None,
-    stderr: TextIO | None = None,
+    cwd: Optional[Path] = None,
+    stdout: Optional[TextIO] = None,
+    stderr: Optional[TextIO] = None,
 ) -> int:
     config_command = _looks_like_config_validate(argv)
     out = stdout or sys.stdout
@@ -77,7 +77,7 @@ def _command_requires_bootstrap_config(command) -> bool:
     return kind not in {'config-validate', 'kill'}
 
 
-def _render_kill_without_anchor(command, *, cwd: Path | None, out: TextIO) -> int:
+def _render_kill_without_anchor(command, *, cwd: Optional[Path], out: TextIO) -> int:
     current = Path(cwd or Path.cwd()).expanduser()
     try:
         current = current.resolve()
@@ -98,7 +98,7 @@ def _render_kill_without_anchor(command, *, cwd: Path | None, out: TextIO) -> in
     return 0
 
 
-def _build_context(command, *, cwd: Path | None, out: TextIO):
+def _build_context(command, *, cwd: Optional[Path], out: TextIO):
     return _build_context_impl(
         command,
         cwd=cwd,

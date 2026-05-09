@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from ccbd.api_models import AcceptedJobReceipt, JobRecord, JobStatus, SubmissionRecord, SubmitReceipt, TargetKind
 
 from .records import append_event, append_job
@@ -51,7 +53,7 @@ def _build_job_record(
     draft: _JobDraft,
     *,
     job_id: str,
-    submission_id: str | None,
+    submission_id: Optional[str],
     accepted_at: str,
 ) -> tuple[JobRecord, JobStatus]:
     status = _pending_status(
@@ -81,7 +83,7 @@ def _build_job_record(
     )
 
 
-def _submit_plan(dispatcher, plan: _SubmissionPlan, *, accepted_at: str) -> tuple[SubmitReceipt, str | None]:
+def _submit_plan(dispatcher, plan: _SubmissionPlan, *, accepted_at: str) -> tuple[SubmitReceipt, Optional[str]]:
     receipts: list[AcceptedJobReceipt] = []
     job_ids: list[str] = []
     jobs: list[JobRecord] = []
@@ -111,7 +113,7 @@ def _submit_plan(dispatcher, plan: _SubmissionPlan, *, accepted_at: str) -> tupl
                 updated_at=accepted_at,
             )
         )
-    message_id: str | None = None
+    message_id: Optional[str] = None
     if dispatcher._message_bureau is not None:
         message_id = dispatcher._message_bureau.record_submission(
             plan.request,
@@ -131,7 +133,7 @@ def _submit_plan(dispatcher, plan: _SubmissionPlan, *, accepted_at: str) -> tupl
     )
 
 
-def _append_submission_job(dispatcher, submission_id: str | None, *, job_id: str, updated_at: str) -> None:
+def _append_submission_job(dispatcher, submission_id: Optional[str], *, job_id: str, updated_at: str) -> None:
     if not submission_id:
         return
     current = dispatcher._submission_store.get_latest(submission_id)

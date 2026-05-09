@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from collections.abc import Callable, Collection
 
 from agents.models import AgentValidationError
@@ -43,14 +45,14 @@ def submit_ask(
     return _summary_from_payload(context.project.project_id, payload)
 
 
-def _normalize_sender(value: str | None) -> str:
+def _normalize_sender(value: Optional[str]) -> str:
     try:
         return normalize_actor_name(value)
     except AgentValidationError as exc:
         raise ValueError(str(exc)) from exc
 
 
-def _normalize_target(value: str | None) -> str:
+def _normalize_target(value: Optional[str]) -> str:
     normalized = str(value or '').strip().lower()
     if normalized == 'all':
         return normalized
@@ -72,7 +74,7 @@ def _validate_sender(sender: str, configured_agents: Collection[str], *, cmd_ena
     raise ValueError(f'unknown sender agent: {sender}')
 
 
-def _delivery_scope(target: str | None) -> DeliveryScope:
+def _delivery_scope(target: Optional[str]) -> DeliveryScope:
     return DeliveryScope.BROADCAST if _normalize_target(target) == 'all' else DeliveryScope.SINGLE
 
 

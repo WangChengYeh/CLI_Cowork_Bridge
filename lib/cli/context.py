@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -18,14 +20,14 @@ class CliContext:
 
 
 class CliContextBuilder:
-    def __init__(self, resolver: ProjectResolver | None = None):
+    def __init__(self, resolver: Optional[ProjectResolver] = None):
         self._resolver = resolver or ProjectResolver()
 
     def build(
         self,
         command: ParsedCommand,
         *,
-        cwd: Path | None = None,
+        cwd: Optional[Path] = None,
         bootstrap_if_missing: bool = False,
     ) -> CliContext:
         current = Path(cwd or Path.cwd()).expanduser()

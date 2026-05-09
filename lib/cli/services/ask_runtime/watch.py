@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from collections.abc import Callable
-from typing import TextIO
+from typing import Optional, TextIO
 
 from cli.services.watch import WatchEventBatch
 from cli.services.watch_fallback import load_persisted_terminal_watch_payload
@@ -12,7 +12,7 @@ def watch_ask_job(
     job_id: str,
     out: TextIO,
     *,
-    timeout: float | None,
+    timeout: Optional[float],
     emit_output: bool,
     connect_mounted_daemon_fn: Callable,
     reconnect_error_classes: tuple[type[BaseException], ...],
@@ -87,18 +87,18 @@ def watch_ask_job(
 
 
 def _watch_deadline(
-    timeout: float | None,
+    timeout: Optional[float],
     *,
     timeout_seconds_fn: Callable[[], float],
     monotonic_fn: Callable[[], float],
-) -> float | None:
+) -> Optional[float]:
     timeout_s = timeout_seconds_fn() if timeout is None else float(timeout)
     if timeout_s <= 0:
         return None
     return monotonic_fn() + timeout_s
 
 
-def _deadline_exceeded(deadline: float | None, *, monotonic_fn: Callable[[], float]) -> bool:
+def _deadline_exceeded(deadline: Optional[float], *, monotonic_fn: Callable[[], float]) -> bool:
     return deadline is not None and monotonic_fn() > deadline
 
 
@@ -129,7 +129,7 @@ def _connect_client(
     reconnect_error_classes: tuple[type[BaseException], ...],
     monotonic_fn: Callable[[], float],
     sleep_fn: Callable[[float], None],
-    deadline: float | None,
+    deadline: Optional[float],
     poll_interval: float,
 ):
     while True:
@@ -147,7 +147,7 @@ def _connect_client(
         return handle.client
 
 
-def _persisted_terminal_batch(context, job_id: str, *, cursor: int) -> WatchEventBatch | None:
+def _persisted_terminal_batch(context, job_id: str, *, cursor: int) -> Optional[WatchEventBatch]:
     payload = load_persisted_terminal_watch_payload(context, job_id, cursor=cursor)
     if payload is None:
         return None

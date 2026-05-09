@@ -1,9 +1,9 @@
 from __future__ import annotations
 
-from typing import Any
+from typing import Any, Optional
 
 
-def extract_content_text(content: Any) -> str | None:
+def extract_content_text(content: Any) -> Optional[str]:
     if content is None:
         return None
     if isinstance(content, str):
@@ -20,7 +20,7 @@ def extract_content_text(content: Any) -> str | None:
     return "\n".join(texts).strip()
 
 
-def _extract_text_fragment(item: object) -> str | None:
+def _extract_text_fragment(item: object) -> Optional[str]:
     if not isinstance(item, dict):
         return None
     item_type = str(item.get("type") or "").strip().lower()

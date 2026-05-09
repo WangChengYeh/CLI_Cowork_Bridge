@@ -1,9 +1,11 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from .inspection import TmuxPaneOwnership
 
 
-def ownership_error_text(ownership: TmuxPaneOwnership, *, pane_id: str | None = None) -> str:
+def ownership_error_text(ownership: TmuxPaneOwnership, *, pane_id: Optional[str] = None) -> str:
     target = str(pane_id or ownership.pane_id or '').strip() or '<unknown>'
     if ownership.reason == 'ownership-not-recorded':
         return f'Pane ownership not recorded for {target}'

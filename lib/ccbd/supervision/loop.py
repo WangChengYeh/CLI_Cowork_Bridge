@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from ccbd.system import utc_now
 
 from .cmd_slot import reconcile_cmd_slot
@@ -27,7 +29,7 @@ class RuntimeSupervisionLoop:
         remount_project_fn=None,
         clock=utc_now,
         generation_getter=None,
-        event_store: SupervisionEventStore | None = None,
+        event_store: Optional[SupervisionEventStore] = None,
     ) -> None:
         self._ctx = build_runtime_supervision_context(
             project_id=project_id,

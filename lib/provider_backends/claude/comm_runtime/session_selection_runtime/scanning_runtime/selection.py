@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 import os
 from pathlib import Path
 
@@ -8,7 +10,7 @@ from ..membership import session_belongs_to_current_project
 from .scan import scan_latest_session, scan_latest_session_any_project
 
 
-def latest_session(reader) -> Path | None:
+def latest_session(reader) -> Optional[Path]:
     preferred = _preferred_session(reader)
     index_session = parse_sessions_index(reader)
     scanned = scan_latest_session(reader) if index_session is None else None
@@ -30,7 +32,7 @@ def latest_session(reader) -> Path | None:
     return None
 
 
-def _preferred_session(reader) -> Path | None:
+def _preferred_session(reader) -> Optional[Path]:
     preferred = reader._preferred_session
     if preferred and not session_belongs_to_current_project(reader, preferred):
         _clear_preferred_session(reader)
@@ -51,7 +53,7 @@ def _clear_preferred_session(reader) -> None:
     reader._preferred_session_locked = False
 
 
-def _newer_candidate(preferred: Path, index_session: Path | None, scanned: Path | None) -> Path | None:
+def _newer_candidate(preferred: Path, index_session: Optional[Path], scanned: Optional[Path]) -> Optional[Path]:
     try:
         preferred_mtime = preferred.stat().st_mtime
     except OSError:

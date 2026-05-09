@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 import time
 
 from ..subagents import read_new_subagent_events
@@ -7,7 +9,7 @@ from .common import poll_session_loop
 from .entries import read_new_entries, read_new_events, read_new_messages
 
 
-def read_since(reader, state: dict, timeout: float, block: bool) -> tuple[str | None, dict]:
+def read_since(reader, state: dict, timeout: float, block: bool) -> Optional[tuple[str], dict]:
     current_state = dict(state or {})
     while True:
         session, current_state, exhausted = poll_session_loop(reader, current_state, timeout, block)

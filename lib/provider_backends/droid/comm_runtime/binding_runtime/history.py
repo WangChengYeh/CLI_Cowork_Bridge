@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 import time
 from pathlib import Path
 
@@ -103,7 +105,7 @@ def _work_dir_from_data(data: dict[str, object]) -> Path:
     return Path(wd) if isinstance(wd, str) and wd else Path.cwd()
 
 
-def _previous_session_path(old_path: str) -> Path | None:
+def _previous_session_path(old_path: str) -> Optional[Path]:
     if not old_path:
         return None
     try:
@@ -112,7 +114,7 @@ def _previous_session_path(old_path: str) -> Path | None:
         return None
 
 
-def _optional_text(value: str) -> str | None:
+def _optional_text(value: str) -> Optional[str]:
     text = str(value or '').strip()
     return text or None
 

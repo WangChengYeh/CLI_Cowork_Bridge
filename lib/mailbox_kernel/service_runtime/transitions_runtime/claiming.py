@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from dataclasses import replace
 
 from ..mailbox import refresh_mailbox
@@ -7,7 +9,7 @@ from ..queries import head_pending_event, peek_next
 from .leasing import next_lease_version
 
 
-def claim(service, agent_name: str, inbound_event_id: str, *, started_at: str | None = None):
+def claim(service, agent_name: str, inbound_event_id: str, *, started_at: Optional[str] = None):
     normalized = service._normalize_agent_name(agent_name)
     timestamp = started_at or service._clock()
     current = _load_claim_candidate(service, normalized, inbound_event_id)
@@ -80,7 +82,7 @@ def _refresh_current(service, agent_name: str, current, timestamp: str):
     return current
 
 
-def claim_next(service, agent_name: str, *, event_type=None, started_at: str | None = None):
+def claim_next(service, agent_name: str, *, event_type=None, started_at: Optional[str] = None):
     next_event = peek_next(service, agent_name, event_type=event_type)
     if next_event is None:
         refresh_mailbox(service, agent_name, updated_at=started_at or service._clock())

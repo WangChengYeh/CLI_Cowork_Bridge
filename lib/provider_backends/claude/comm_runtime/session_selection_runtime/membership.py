@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 import json
 from pathlib import Path
 
@@ -26,14 +28,14 @@ def project_dir(reader) -> Path:
     return reader.root / project_key_for_path(reader.work_dir)
 
 
-def session_is_sidechain(session_path: Path) -> bool | None:
+def session_is_sidechain(session_path: Path) -> Optional[bool]:
     entry = _first_json_entry(session_path, line_limit=20)
     if entry is None or 'isSidechain' not in entry:
         return None
     return bool(entry.get('isSidechain'))
 
 
-def set_preferred_session(reader, session_path: Path | None) -> None:
+def set_preferred_session(reader, session_path: Optional[Path]) -> None:
     candidate = _resolved_existing_path(session_path)
     if candidate is None:
         return
@@ -42,7 +44,7 @@ def set_preferred_session(reader, session_path: Path | None) -> None:
         reader._preferred_session_locked = True
 
 
-def _resolved_existing_path(pathlike: Path | str | None) -> Path | None:
+def _resolved_existing_path(pathlike: Path | Optional[str]) -> Optional[Path]:
     try:
         candidate = Path(pathlike).expanduser()
     except Exception:
@@ -70,7 +72,7 @@ def _candidate_parent_allowed(candidate_parent: Path, *, allowed_dirs: list[Path
     return any(candidate_parent == allowed_dir or allowed_dir in candidate_parent.parents for allowed_dir in allowed_dirs)
 
 
-def _first_json_entry(session_path: Path, *, line_limit: int) -> dict | None:
+def _first_json_entry(session_path: Path, *, line_limit: int) -> Optional[dict]:
     try:
         with session_path.open('r', encoding='utf-8', errors='replace') as handle:
             for _ in range(line_limit):
@@ -83,7 +85,7 @@ def _first_json_entry(session_path: Path, *, line_limit: int) -> dict | None:
     return None
 
 
-def _json_line_entry(line: str) -> dict | None:
+def _json_line_entry(line: str) -> Optional[dict]:
     if not line:
         return None
     line = line.strip()

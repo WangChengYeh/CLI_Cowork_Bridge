@@ -1,10 +1,10 @@
 from __future__ import annotations
 
 import os
-from typing import Callable, Mapping
+from typing import Callable, Mapping, Optional
 
 
-def current_tty() -> str | None:
+def current_tty() -> Optional[str]:
     for fd in (0, 1, 2):
         try:
             return os.ttyname(fd)
@@ -16,9 +16,9 @@ def current_tty() -> str | None:
 def inside_tmux(
     *,
     env: Mapping[str, str],
-    which_fn: Callable[[str], str | None],
+    which_fn: Callable[[str], Optional[str]],
     run_fn: Callable,
-    current_tty_fn: Callable[[], str | None],
+    current_tty_fn: Callable[[], Optional[str]],
 ) -> bool:
     if not tmux_env_present(env):
         return False
@@ -42,26 +42,26 @@ def tmux_env_present(env: Mapping[str, str]) -> bool:
     return bool(env.get("TMUX") or env.get("TMUX_PANE"))
 
 
-def pane_tty_matches(run_fn: Callable, *, pane: str, tty: str | None) -> bool:
+def pane_tty_matches(run_fn: Callable, *, pane: str, tty: Optional[str]) -> bool:
     if not pane or not tty:
         return False
     return tmux_value(run_fn, target=pane, format_string="#{pane_tty}") == tty
 
 
-def client_tty_matches(run_fn: Callable, *, tty: str | None) -> bool:
+def client_tty_matches(run_fn: Callable, *, tty: Optional[str]) -> bool:
     if not tty:
         return False
     return tmux_value(run_fn, target=None, format_string="#{client_tty}") == tty
 
 
-def pane_id_matches(run_fn: Callable, *, pane: str, tty: str | None) -> bool:
+def pane_id_matches(run_fn: Callable, *, pane: str, tty: Optional[str]) -> bool:
     if tty or not pane:
         return False
     pane_id = tmux_value(run_fn, target=pane, format_string="#{pane_id}")
     return pane_id.startswith("%")
 
 
-def tmux_value(run_fn: Callable, *, target: str | None, format_string: str) -> str:
+def tmux_value(run_fn: Callable, *, target: Optional[str], format_string: str) -> str:
     command = ["tmux", "display-message", "-p"]
     if target:
         command.extend(["-t", target])
@@ -85,10 +85,10 @@ def tmux_value(run_fn: Callable, *, target: str | None, format_string: str) -> s
 def detect_terminal(
     *,
     env: Mapping[str, str],
-    which_fn: Callable[[str], str | None],
+    which_fn: Callable[[str], Optional[str]],
     run_fn: Callable,
-    current_tty_fn: Callable[[], str | None],
-) -> str | None:
+    current_tty_fn: Callable[[], Optional[str]],
+) -> Optional[str]:
     if inside_tmux(env=env, which_fn=which_fn, run_fn=run_fn, current_tty_fn=current_tty_fn):
         return "tmux"
     return None

@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from pathlib import Path
 
 from agents.models import normalize_agent_name
@@ -10,7 +12,7 @@ from project.discovery import (
 )
 
 
-def resolve_work_dir(work_dir: Path | str) -> Path | None:
+def resolve_work_dir(work_dir: Path | str) -> Optional[Path]:
     try:
         return Path(work_dir).expanduser().resolve()
     except Exception:
@@ -20,7 +22,7 @@ def resolve_work_dir(work_dir: Path | str) -> Path | None:
             return None
 
 
-def workspace_binding(work_dir: Path | str) -> tuple[Path | None, dict | None]:
+def workspace_binding(work_dir: Path | str) -> Optional[tuple[Path], Optional[dict]]:
     current = resolve_work_dir(work_dir)
     if current is None:
         return None, None
@@ -33,7 +35,7 @@ def workspace_binding(work_dir: Path | str) -> tuple[Path | None, dict | None]:
         return current, None
 
 
-def workspace_binding_agent_name(work_dir: Path | str) -> str | None:
+def workspace_binding_agent_name(work_dir: Path | str) -> Optional[str]:
     _current, binding = workspace_binding(work_dir)
     if binding is None:
         return None
@@ -44,7 +46,7 @@ def workspace_binding_agent_name(work_dir: Path | str) -> str | None:
     return normalized or None
 
 
-def binding_target_project(binding: dict) -> Path | None:
+def binding_target_project(binding: dict) -> Optional[Path]:
     try:
         target_project = Path(str(binding['target_project'])).expanduser()
     except Exception:
@@ -58,7 +60,7 @@ def binding_target_project(binding: dict) -> Path | None:
             return None
 
 
-def target_project_root(work_dir: Path | str) -> Path | None:
+def target_project_root(work_dir: Path | str) -> Optional[Path]:
     current, binding = workspace_binding(work_dir)
     if current is None:
         return None

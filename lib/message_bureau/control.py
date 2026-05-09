@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from datetime import datetime, timezone
 
 from jobs.store import JobStore, SubmissionStore
@@ -27,15 +29,15 @@ class MessageBureauControlService(MessageBureauControlStateMixin):
         layout: PathLayout,
         config,
         *,
-        mailbox_store: MailboxStore | None = None,
-        inbound_store: InboundEventStore | None = None,
-        lease_store: DeliveryLeaseStore | None = None,
-        message_store: MessageStore | None = None,
-        attempt_store: AttemptStore | None = None,
-        reply_store: ReplyStore | None = None,
-        job_store: JobStore | None = None,
-        submission_store: SubmissionStore | None = None,
-        mailbox_kernel: MailboxKernelService | None = None,
+        mailbox_store: Optional[MailboxStore] = None,
+        inbound_store: Optional[InboundEventStore] = None,
+        lease_store: Optional[DeliveryLeaseStore] = None,
+        message_store: Optional[MessageStore] = None,
+        attempt_store: Optional[AttemptStore] = None,
+        reply_store: Optional[ReplyStore] = None,
+        job_store: Optional[JobStore] = None,
+        submission_store: Optional[SubmissionStore] = None,
+        mailbox_kernel: Optional[MailboxKernelService] = None,
         clock=None,
     ) -> None:
         resolved_clock = clock or _utc_now
@@ -79,7 +81,7 @@ class MessageBureauControlService(MessageBureauControlStateMixin):
     def inbox(self, agent_name: str) -> dict[str, object]:
         return control_inbox(self, agent_name)
 
-    def ack_reply(self, agent_name: str, inbound_event_id: str | None = None) -> dict[str, object]:
+    def ack_reply(self, agent_name: str, inbound_event_id: Optional[str] = None) -> dict[str, object]:
         return control_ack_reply(self, agent_name, inbound_event_id=inbound_event_id)
 
 

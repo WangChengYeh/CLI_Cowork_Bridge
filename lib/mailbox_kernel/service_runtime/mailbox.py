@@ -1,11 +1,13 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from mailbox_runtime.targets import normalize_mailbox_owner_name
 
 from .queries import latest_events, pending_events
 
 
-def refresh_mailbox(service, agent_name: str, *, updated_at: str | None = None):
+def refresh_mailbox(service, agent_name: str, *, updated_at: Optional[str] = None):
     normalized = normalize_mailbox_owner_name(agent_name)
     timestamp = updated_at or service._clock()
     prior = service._mailbox_store.load(normalized)
@@ -74,7 +76,7 @@ def _latest_activity(service, normalized: str, *, prior):
     return last_started, last_finished
 
 
-def _latest_timestamp(current: str | None, candidate: str | None) -> str | None:
+def _latest_timestamp(current: Optional[str], candidate: Optional[str]) -> Optional[str]:
     if candidate and (current is None or candidate > current):
         return candidate
     return current

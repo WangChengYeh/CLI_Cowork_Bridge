@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import time
 from pathlib import Path
-from typing import TextIO
+from typing import Optional, TextIO
 
 from agents.config_loader import load_project_config
 from ccbd.socket_client import CcbdClientError
@@ -31,7 +31,7 @@ def watch_ask_job(
     job_id: str,
     out: TextIO,
     *,
-    timeout: float | None,
+    timeout: Optional[float],
     emit_output: bool,
 ):
     return _watch_ask_job_impl(

@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 import json
 import threading
 import time
@@ -10,7 +12,7 @@ from provider_sessions.watch import HAS_WATCHDOG, SessionFileWatcher
 
 from .paths import OPENCODE_STORAGE_ROOT
 
-_OPENCODE_WATCHER: SessionFileWatcher | None = None
+_OPENCODE_WATCHER: Optional[SessionFileWatcher] = None
 _OPENCODE_WATCH_STARTED = False
 _OPENCODE_WATCH_LOCK = threading.Lock()
 
@@ -19,7 +21,7 @@ def opencode_watch_predicate(path: Path) -> bool:
     return path.suffix == ".json" and path.name.startswith("ses_")
 
 
-def read_opencode_session_json(path: Path) -> dict | None:
+def read_opencode_session_json(path: Path) -> Optional[dict]:
     if not path or not path.exists():
         return None
     for _ in range(5):
@@ -90,11 +92,11 @@ def ensure_opencode_watchdog_started() -> None:
         _OPENCODE_WATCH_STARTED = True
 
 
-def is_existing_session_path(path: Path | None) -> bool:
+def is_existing_session_path(path: Optional[Path]) -> bool:
     return bool(path and path.exists())
 
 
-def payload_work_dir(payload: dict) -> Path | None:
+def payload_work_dir(payload: dict) -> Optional[Path]:
     directory = payload.get("directory")
     if not isinstance(directory, str) or not directory.strip():
         return None
@@ -104,7 +106,7 @@ def payload_work_dir(payload: dict) -> Path | None:
         return None
 
 
-def payload_session_id(payload: dict) -> str | None:
+def payload_session_id(payload: dict) -> Optional[str]:
     session_id = payload.get("id")
     return session_id if isinstance(session_id, str) else None
 

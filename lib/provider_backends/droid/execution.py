@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from pathlib import Path
 
 from ccbd.api_models import JobRecord
@@ -28,7 +30,7 @@ class DroidProviderAdapter:
             "restore_detail": "droid live polling works, but restart-time execution resume is not implemented yet",
         }
 
-    def start(self, job: JobRecord, *, context: ProviderRuntimeContext | None, now: str) -> ProviderSubmission:
+    def start(self, job: JobRecord, *, context: Optional[ProviderRuntimeContext], now: str) -> ProviderSubmission:
         return _start_submission_impl(
             job,
             context=context,
@@ -41,7 +43,7 @@ class DroidProviderAdapter:
             wrap_prompt_fn=wrap_droid_prompt,
         )
 
-    def poll(self, submission: ProviderSubmission, *, now: str) -> ProviderPollResult | None:
+    def poll(self, submission: ProviderSubmission, *, now: str) -> Optional[ProviderPollResult]:
         return _poll_submission_impl(
             submission,
             now=now,

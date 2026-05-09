@@ -1,12 +1,14 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from .polling_runtime import clean_reply as _clean_reply_impl
 from .polling_runtime import int_or_none as _int_or_none_impl
 from .polling_runtime import poll_exact_hook as _poll_exact_hook_impl
 from .polling_runtime import poll_submission as _poll_submission_impl
 
 
-def poll_submission(submission: ProviderSubmission, *, now: str) -> ProviderPollResult | None:
+def poll_submission(submission: ProviderSubmission, *, now: str) -> Optional[ProviderPollResult]:
     return _poll_submission_impl(
         submission,
         now=now,
@@ -26,11 +28,11 @@ def clean_reply(reply: str, *, req_id: str) -> str:
     )
 
 
-def int_or_none(value: object) -> int | None:
+def int_or_none(value: object) -> Optional[int]:
     return _int_or_none_impl(value)
 
 
-def poll_exact_hook(submission: ProviderSubmission, *, now: str) -> ProviderPollResult | None:
+def poll_exact_hook(submission: ProviderSubmission, *, now: str) -> Optional[ProviderPollResult]:
     return _poll_exact_hook_impl(submission, now=now)
 
 

@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from pathlib import Path
 
 from terminal_runtime.env import sanitize_filename
@@ -13,7 +15,7 @@ def pane_log_root() -> Path:
     return run_dir() / 'pane-logs'
 
 
-def pane_log_dir(backend: str, socket_name: str | None) -> Path:
+def pane_log_dir(backend: str, socket_name: Optional[str]) -> Path:
     root = pane_log_root()
     if backend == 'tmux':
         if socket_name:
@@ -24,7 +26,7 @@ def pane_log_dir(backend: str, socket_name: str | None) -> Path:
     return root / safe_backend
 
 
-def pane_log_path_for(pane_id: str, backend: str, socket_name: str | None) -> Path:
+def pane_log_path_for(pane_id: str, backend: str, socket_name: Optional[str]) -> Path:
     pane = str(pane_id or '').strip().replace('%', '')
     safe = sanitize_filename(pane) or 'pane'
     return pane_log_dir(backend, socket_name) / f'pane-{safe}.log'

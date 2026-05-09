@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from agents.models_runtime.layout import LayoutLeaf, LayoutNode, build_balanced_layout, parse_layout_spec
 from agents.models_runtime.enums import WorkspaceMode
 
@@ -115,7 +117,7 @@ def resolve_layout_spec(
     default_agents: tuple[str, ...],
     normalized_agents: dict,
     cmd_enabled: bool,
-    layout_spec: str | None,
+    layout_spec: Optional[str],
 ) -> str:
     rendered = str(layout_spec or '').strip()
     if not rendered:

@@ -2,10 +2,10 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
-from typing import Any
+from typing import Any, Optional
 
 
-def read_first_line(log_path: Path) -> str | None:
+def read_first_line(log_path: Path) -> Optional[str]:
     try:
         with log_path.open("r", encoding="utf-8") as handle:
             first_line = handle.readline()
@@ -14,7 +14,7 @@ def read_first_line(log_path: Path) -> str | None:
     return first_line or None
 
 
-def load_first_entry(log_path: Path) -> dict[str, Any] | None:
+def load_first_entry(log_path: Path) -> Optional[dict[str, Any]]:
     first_line = read_first_line(log_path)
     if not first_line:
         return None

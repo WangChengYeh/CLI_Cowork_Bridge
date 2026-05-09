@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from pathlib import Path
 import sys
 
@@ -20,9 +22,9 @@ def prepare_workspace_provider_hooks(
     workspace_path: Path,
     completion_dir: Path,
     agent_name: str,
-    home_root: Path | None,
-    resolved_profile: ResolvedProviderProfile | None = None,
-) -> Path | None:
+    home_root: Optional[Path],
+    resolved_profile: Optional[ResolvedProviderProfile] = None,
+) -> Optional[Path]:
     normalized = str(provider or '').strip().lower()
     if normalized not in {'claude', 'gemini'}:
         return None
@@ -90,7 +92,7 @@ def prepare_provider_workspace(
     return resolved_profile
 
 
-def _materialize_provider_home(*, layout, spec, runtime_dir: Path, resolved_profile: ResolvedProviderProfile | None) -> None:
+def _materialize_provider_home(*, layout, spec, runtime_dir: Path, resolved_profile: Optional[ResolvedProviderProfile]) -> None:
     provider = str(spec.provider or '').strip().lower()
     if provider == 'claude':
         home_root = resolve_claude_home_layout(runtime_dir, resolved_profile).home_root
@@ -117,8 +119,8 @@ def provider_hook_home_root(
     layout,
     spec,
     runtime_dir: Path,
-    resolved_profile: ResolvedProviderProfile | None,
-) -> Path | None:
+    resolved_profile: Optional[ResolvedProviderProfile],
+) -> Optional[Path]:
     provider = str(spec.provider or '').strip().lower()
     if provider == 'claude':
         return resolve_claude_home_layout(runtime_dir, resolved_profile).home_root
@@ -131,7 +133,7 @@ def provider_hook_home_root(
     return None
 
 
-def resolve_gemini_home_root(*, layout, agent_name: str, resolved_profile: ResolvedProviderProfile | None) -> Path:
+def resolve_gemini_home_root(*, layout, agent_name: str, resolved_profile: Optional[ResolvedProviderProfile]) -> Path:
     if resolved_profile is not None and resolved_profile.runtime_home_path is not None:
         return resolved_profile.runtime_home_path
     return layout.agent_provider_state_dir(agent_name, 'gemini') / 'home'

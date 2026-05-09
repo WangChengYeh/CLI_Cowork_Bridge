@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from completion.snapshot_store import CompletionSnapshotStore
 from jobs.store import JobEventStore, JobStore
 from storage.paths import PathLayout
@@ -7,7 +9,7 @@ from storage.paths import PathLayout
 _TERMINAL_JOB_STATUSES = frozenset({'completed', 'cancelled', 'failed', 'incomplete'})
 
 
-def load_persisted_terminal_watch_payload(context, target: str, *, cursor: int = 0) -> dict | None:
+def load_persisted_terminal_watch_payload(context, target: str, *, cursor: int = 0) -> Optional[dict]:
     job_id = str(target or '').strip()
     if not job_id.startswith('job_'):
         return None

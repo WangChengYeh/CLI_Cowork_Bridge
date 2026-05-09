@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 import argparse
 
 from cli.models import ParsedStartCommand
@@ -9,9 +11,9 @@ from .common import parse_args
 _REMOVED_START_FLAGS = {'-a', '--auto', '-r', '--resume', '--restore'}
 
 
-def parse_global_options(tokens: list[str], *, error_type) -> tuple[str | None, list[str]]:
+def parse_global_options(tokens: list[str], *, error_type) -> Optional[tuple[str], list[str]]:
     remaining = list(tokens)
-    project: str | None = None
+    project: Optional[str] = None
     while remaining and remaining[0] == '--project':
         remaining.pop(0)
         if not remaining:
@@ -20,7 +22,7 @@ def parse_global_options(tokens: list[str], *, error_type) -> tuple[str | None, 
     return project, remaining
 
 
-def parse_start(tokens: list[str], *, project: str | None, error_type) -> ParsedStartCommand:
+def parse_start(tokens: list[str], *, project: Optional[str], error_type) -> ParsedStartCommand:
     parser = argparse.ArgumentParser(prog='ccb', add_help=False)
     parser.add_argument('-s', '--safe', action='store_true')
     parser.add_argument('-n', '--new-context', dest='reset_context', action='store_true')

@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from .dispatcher_runtime import (
     DispatcherState,
     build_last_restore_report,
@@ -63,14 +65,14 @@ class JobDispatcher(DispatcherRuntimeStateMixin, DispatcherFacadeMixin):
         execution_service=None,
         auto_reply_delivery_on_complete: bool = False,
         require_actionable_runtime_binding_for_execution: bool = False,
-        completion_tracker: CompletionTrackerService | None = None,
-        provider_catalog: ProviderCatalog | None = None,
-        job_store: JobStore | None = None,
-        event_store: JobEventStore | None = None,
-        submission_store: SubmissionStore | None = None,
-        message_bureau: MessageBureauFacade | None = None,
-        message_bureau_control: MessageBureauControlService | None = None,
-        snapshot_writer: SnapshotWriter | None = None,
+        completion_tracker: Optional[CompletionTrackerService] = None,
+        provider_catalog: Optional[ProviderCatalog] = None,
+        job_store: Optional[JobStore] = None,
+        event_store: Optional[JobEventStore] = None,
+        submission_store: Optional[SubmissionStore] = None,
+        message_bureau: Optional[MessageBureauFacade] = None,
+        message_bureau_control: Optional[MessageBureauControlService] = None,
+        snapshot_writer: Optional[SnapshotWriter] = None,
         clock=utc_now,
     ) -> None:
         self._runtime_state = DispatcherRuntimeState(
@@ -118,13 +120,13 @@ class JobDispatcher(DispatcherRuntimeStateMixin, DispatcherFacadeMixin):
     def _cancel_with_decision(self, current: JobRecord, cancelled_at: str, reply: str, snapshot) -> CancelReceipt:
         return cancel_with_decision(self, current, cancelled_at, reply, snapshot)
 
-    def get(self, job_id: str) -> JobRecord | None:
+    def get(self, job_id: str) -> Optional[JobRecord]:
         return get_job(self, job_id)
 
     def get_snapshot(self, job_id: str):
         return self._snapshot_writer.load(job_id)
 
-    def latest_for_agent(self, agent_name: str) -> JobRecord | None:
+    def latest_for_agent(self, agent_name: str) -> Optional[JobRecord]:
         return latest_for_agent(self, agent_name)
 
     def poll_completions(self) -> tuple[JobRecord, ...]:

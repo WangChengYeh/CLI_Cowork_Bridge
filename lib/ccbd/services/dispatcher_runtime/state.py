@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Iterable
+from typing import TYPE_CHECKING, Iterable, Union
 
 from ccbd.api_models import JobRecord, JobStatus, TargetKind
 
@@ -34,7 +34,7 @@ class DispatcherState(
             self._queues[slot] = queue
         return queue
 
-    def _normalize_slot(self, target_kind: TargetKind | str, target_name: str) -> TargetSlot:
+    def _normalize_slot(self, target_kind: Union[TargetKind, str], target_name: str) -> TargetSlot:
         return TargetKind(target_kind), str(target_name)
 
     def rebuild(self, job_store: JobStore, *, agent_names: Iterable[str]) -> None:

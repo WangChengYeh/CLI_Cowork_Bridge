@@ -1,10 +1,12 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from ..log_entries import extract_message
 from .common import json_entries, log_missing_reply, log_tail
 
 
-def latest_message(reader) -> str | None:
+def latest_message(reader) -> Optional[str]:
     default_bytes = 1024 * 1024 * 8
     default_lines = 5000
     log_path, lines = log_tail(

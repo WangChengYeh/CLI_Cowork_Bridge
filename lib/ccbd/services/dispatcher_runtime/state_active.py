@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional, Union
+
 from ccbd.api_models import TargetKind
 
 from .state_common import TargetSlot
@@ -16,14 +18,14 @@ class DispatcherStateActiveMixin:
         target_kind: TargetKind | str,
         target_name: str,
         *,
-        job_id: str | None = None,
+        job_id: Optional[str] = None,
     ) -> None:
         slot = self._normalize_slot(target_kind, target_name)
         if job_id is not None and self._active_jobs.get(slot) != job_id:
             return
         self._active_jobs.pop(slot, None)
 
-    def active_job_for(self, target_kind: TargetKind | str, target_name: str) -> str | None:
+    def active_job_for(self, target_kind: TargetKind | str, target_name: str) -> Optional[str]:
         return self._active_jobs.get(self._normalize_slot(target_kind, target_name))
 
     def active_items(self) -> tuple[tuple[TargetKind, str, str], ...]:

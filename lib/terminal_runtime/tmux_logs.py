@@ -3,22 +3,22 @@ from __future__ import annotations
 import time
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Callable
+from typing import Callable, Optional
 
 
 @dataclass
 class TmuxPaneLogManager:
-    socket_name: str | None
+    socket_name: Optional[str]
     tmux_run_fn: Callable[..., object]
     is_alive_fn: Callable[[str], bool]
     pane_pipe_enabled_fn: Callable[[str], bool]
-    pane_log_path_for_fn: Callable[[str, str, str | None], Path]
+    pane_log_path_for_fn: Callable[[str, str, Optional[str]], Path]
     cleanup_pane_logs_fn: Callable[[Path], None]
     maybe_trim_log_fn: Callable[[Path], None]
     time_fn: Callable[[], float] = time.time
-    pane_log_info: dict[str, float] | None = None
+    pane_log_info: Optional[dict[str, float]] = None
 
-    def pane_log_path(self, pane_id: str) -> Path | None:
+    def pane_log_path(self, pane_id: str) -> Optional[Path]:
         pid = normalized_pane_id(pane_id)
         if not pid:
             return None
@@ -27,7 +27,7 @@ class TmuxPaneLogManager:
         except Exception:
             return None
 
-    def ensure_pane_log(self, pane_id: str) -> Path | None:
+    def ensure_pane_log(self, pane_id: str) -> Optional[Path]:
         pid = normalized_pane_id(pane_id)
         if not pid:
             return None
@@ -94,7 +94,7 @@ def trim_log_if_needed(
 
 
 def record_pane_log_refresh(
-    pane_log_info: dict[str, float] | None,
+    pane_log_info: Optional[dict[str, float]],
     pane_id: str,
     *,
     time_fn: Callable[[], float],

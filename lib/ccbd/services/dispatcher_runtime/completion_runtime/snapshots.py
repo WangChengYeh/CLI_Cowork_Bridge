@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import Optional, TYPE_CHECKING
 
 from ccbd.api_models import JobRecord
 from completion.models import CompletionFamily
@@ -16,8 +16,8 @@ def apply_tracker_view(
     snapshot_writer,
     profile_family: CompletionFamily,
     clock,
-    updated_at: str | None = None,
-) -> str | None:
+    updated_at: Optional[str] = None,
+) -> Optional[str]:
     prior_snapshot = snapshot_writer.load(current.job_id)
     if prior_snapshot is not None and prior_snapshot.state.terminal and not tracked.decision.terminal:
         return None
@@ -35,7 +35,7 @@ def apply_tracker_view(
     return timestamp
 
 
-def resolve_tracker_timestamp(tracked: 'CompletionTrackerView', *, clock, updated_at: str | None) -> str:
+def resolve_tracker_timestamp(tracked: 'CompletionTrackerView', *, clock, updated_at: Optional[str]) -> str:
     if updated_at is not None:
         return updated_at
     if tracked.decision.source_cursor is not None:

@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from ccbd.api_models import JobRecord
 
 from provider_execution.base import ProviderRuntimeContext
@@ -40,7 +42,7 @@ def persisted_state_or_result(service, job: JobRecord):
     )
 
 
-def recover_pending_items(service, job_id: str, persisted) -> tuple[list, object | None]:
+def recover_pending_items(service, job_id: str, persisted) -> tuple[list, Optional[object]]:
     pending_items = filter_pending_items(persisted)
     if pending_items:
         service._pending_replays[job_id] = (
@@ -50,7 +52,7 @@ def recover_pending_items(service, job_id: str, persisted) -> tuple[list, object
     return pending_items, persisted.pending_decision
 
 
-def terminal_pending_result(job: JobRecord, persisted, pending_items: list) -> ExecutionRestoreResult | None:
+def terminal_pending_result(job: JobRecord, persisted, pending_items: list) -> Optional[ExecutionRestoreResult]:
     if persisted.pending_decision is None or pending_items:
         return None
     return terminal_pending_restore(job, persisted)
@@ -100,7 +102,7 @@ def restored_result(job: JobRecord, *, pending_items: list) -> ExecutionRestoreR
     )
 
 
-def restore_preflight_result(service, job: JobRecord) -> ExecutionRestoreResult | None:
+def restore_preflight_result(service, job: JobRecord) -> Optional[ExecutionRestoreResult]:
     if job.job_id in service._active:
         return result(
             job,

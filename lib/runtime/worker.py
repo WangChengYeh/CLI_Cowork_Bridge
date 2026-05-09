@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Callable
+from typing import Callable, Optional
 
 from room.models import RoomEvent
 from runtime.worker_health import RuntimeWorkerHealthStore
@@ -13,17 +13,17 @@ from runtime.worker_quarantine import (
 )
 
 
-@dataclass(slots=True)
+@dataclass
 class RuntimeWorker:
     name: str
     handler: Callable[[RoomEvent], None]
     enabled: bool = True
 
 
-@dataclass(slots=True)
+@dataclass
 class RuntimeWorkerRegistry:
     workers: dict[str, RuntimeWorker] = field(default_factory=dict)
-    project_root: Path | None = None
+    project_root: Optional[Path] = None
     quarantine_policy: RuntimeWorkerQuarantinePolicy = field(
         default_factory=RuntimeWorkerQuarantinePolicy,
     )

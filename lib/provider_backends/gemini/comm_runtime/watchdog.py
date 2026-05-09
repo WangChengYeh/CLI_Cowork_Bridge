@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from pathlib import Path
 
 from provider_core.session_binding_runtime import resolve_bound_instance
@@ -68,7 +70,7 @@ def ensure_gemini_watchdog_started(
         return instance, True
 
 
-def is_existing_session_path(path: Path | None) -> bool:
+def is_existing_session_path(path: Optional[Path]) -> bool:
     return bool(path and path.exists())
 
 

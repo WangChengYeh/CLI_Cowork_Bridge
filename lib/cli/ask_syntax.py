@@ -1,12 +1,14 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from dataclasses import dataclass
 
 
 @dataclass(frozen=True)
 class ParsedAskRoute:
     target: str
-    sender: str | None
+    sender: Optional[str]
     message: str
 
 
@@ -19,7 +21,7 @@ def parse_ask_route(tokens: list[str], *, command_name: str) -> ParsedAskRoute:
     if not target:
         raise ValueError(f'{command_name} target cannot be empty')
 
-    sender: str | None = None
+    sender: Optional[str] = None
     if remaining and remaining[0] == 'from':
         if len(remaining) < 3:
             raise ValueError(f'{command_name} requires <target> [from <sender>] <message>')

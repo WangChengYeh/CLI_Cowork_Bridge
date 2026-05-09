@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 import os
 from pathlib import Path
 
@@ -20,7 +22,7 @@ def initialize_reader(
     root=None,
     work_dir=None,
     project_id: str,
-    session_id_filter: str | None,
+    session_id_filter: Optional[str],
 ) -> None:
     reader.root = Path(root or OPENCODE_STORAGE_ROOT).expanduser()
     reader._storage = OpenCodeStorageAccessor(reader.root)

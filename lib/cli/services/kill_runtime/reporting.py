@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from agents.config_loader import load_project_config
 from agents.store import AgentRuntimeStore
 from ccbd.lifecycle_report_store import CcbdShutdownReportStore
@@ -87,7 +89,7 @@ def record_kill_report(
     )
 
 
-def snapshot_for_runtime(runtime) -> CcbdRuntimeSnapshot | None:
+def snapshot_for_runtime(runtime) -> Optional[CcbdRuntimeSnapshot]:
     if runtime is None:
         return None
     try:

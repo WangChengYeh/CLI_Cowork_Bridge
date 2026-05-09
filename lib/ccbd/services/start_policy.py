@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Any
+from typing import Any, Optional
 
 from ccbd.models import SCHEMA_VERSION
 from storage.json_store import JsonStore
@@ -15,7 +15,7 @@ class CcbdStartPolicy:
     project_id: str
     auto_permission: bool
     recovery_restore: bool = True
-    last_started_at: str | None = None
+    last_started_at: Optional[str] = None
     source: str = 'start_command'
 
     def __post_init__(self) -> None:
@@ -59,11 +59,11 @@ class CcbdStartPolicy:
 
 
 class CcbdStartPolicyStore:
-    def __init__(self, layout: PathLayout, store: JsonStore | None = None) -> None:
+    def __init__(self, layout: PathLayout, store: Optional[JsonStore] = None) -> None:
         self._layout = layout
         self._store = store or JsonStore()
 
-    def load(self) -> CcbdStartPolicy | None:
+    def load(self) -> Optional[CcbdStartPolicy]:
         path = self._layout.ccbd_start_policy_path
         if not path.exists():
             return None
@@ -79,13 +79,13 @@ class CcbdStartPolicyStore:
             pass
 
 
-def recovery_start_options(policy: CcbdStartPolicy | None) -> tuple[bool, bool]:
+def recovery_start_options(policy: Optional[CcbdStartPolicy]) -> tuple[bool, bool]:
     if policy is None:
         return False, False
     return bool(policy.recovery_restore), bool(policy.auto_permission)
 
 
-def _clean_text(value: object) -> str | None:
+def _clean_text(value: object) -> Optional[str]:
     text = str(value or '').strip()
     return text or None
 

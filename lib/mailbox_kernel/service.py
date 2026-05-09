@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from mailbox_runtime.targets import normalize_mailbox_owner_name
 from storage.paths import PathLayout
 
@@ -32,9 +34,9 @@ class MailboxKernelService(MailboxKernelStateMixin):
         layout: PathLayout,
         *,
         clock,
-        mailbox_store: MailboxStore | None = None,
-        inbound_store: InboundEventStore | None = None,
-        lease_store: DeliveryLeaseStore | None = None,
+        mailbox_store: Optional[MailboxStore] = None,
+        inbound_store: Optional[InboundEventStore] = None,
+        lease_store: Optional[DeliveryLeaseStore] = None,
     ) -> None:
         self._runtime_state = MailboxKernelRuntimeState(
             layout=layout,
@@ -63,19 +65,19 @@ class MailboxKernelService(MailboxKernelStateMixin):
         self,
         agent_name: str,
         *,
-        event_type: InboundEventType | None = None,
+        event_type: Optional[InboundEventType] = None,
     ) -> tuple[InboundEventRecord, ...]:
         return pending_events(self, agent_name, event_type=event_type)
 
-    def head_pending_event(self, agent_name: str) -> InboundEventRecord | None:
+    def head_pending_event(self, agent_name: str) -> Optional[InboundEventRecord]:
         return head_pending_event(self, agent_name)
 
     def peek_next(
         self,
         agent_name: str,
         *,
-        event_type: InboundEventType | None = None,
-    ) -> InboundEventRecord | None:
+        event_type: Optional[InboundEventType] = None,
+    ) -> Optional[InboundEventRecord]:
         return peek_next(self, agent_name, event_type=event_type)
 
     def claim(
@@ -83,17 +85,17 @@ class MailboxKernelService(MailboxKernelStateMixin):
         agent_name: str,
         inbound_event_id: str,
         *,
-        started_at: str | None = None,
-    ) -> InboundEventRecord | None:
+        started_at: Optional[str] = None,
+    ) -> Optional[InboundEventRecord]:
         return claim(self, agent_name, inbound_event_id, started_at=started_at)
 
     def claim_next(
         self,
         agent_name: str,
         *,
-        event_type: InboundEventType | None = None,
-        started_at: str | None = None,
-    ) -> InboundEventRecord | None:
+        event_type: Optional[InboundEventType] = None,
+        started_at: Optional[str] = None,
+    ) -> Optional[InboundEventRecord]:
         return claim_next(self, agent_name, event_type=event_type, started_at=started_at)
 
     def ack_reply(
@@ -101,9 +103,9 @@ class MailboxKernelService(MailboxKernelStateMixin):
         agent_name: str,
         inbound_event_id: str,
         *,
-        started_at: str | None = None,
-        finished_at: str | None = None,
-    ) -> InboundEventRecord | None:
+        started_at: Optional[str] = None,
+        finished_at: Optional[str] = None,
+    ) -> Optional[InboundEventRecord]:
         return ack_reply(
             self,
             agent_name,
@@ -117,8 +119,8 @@ class MailboxKernelService(MailboxKernelStateMixin):
         agent_name: str,
         inbound_event_id: str,
         *,
-        finished_at: str | None = None,
-    ) -> InboundEventRecord | None:
+        finished_at: Optional[str] = None,
+    ) -> Optional[InboundEventRecord]:
         return mark_terminal(self, agent_name, inbound_event_id, status=InboundEventStatus.CONSUMED, finished_at=finished_at)
 
     def abandon(
@@ -126,8 +128,8 @@ class MailboxKernelService(MailboxKernelStateMixin):
         agent_name: str,
         inbound_event_id: str,
         *,
-        finished_at: str | None = None,
-    ) -> InboundEventRecord | None:
+        finished_at: Optional[str] = None,
+    ) -> Optional[InboundEventRecord]:
         return mark_terminal(self, agent_name, inbound_event_id, status=InboundEventStatus.ABANDONED, finished_at=finished_at)
 
     def supersede(
@@ -135,11 +137,11 @@ class MailboxKernelService(MailboxKernelStateMixin):
         agent_name: str,
         inbound_event_id: str,
         *,
-        finished_at: str | None = None,
-    ) -> InboundEventRecord | None:
+        finished_at: Optional[str] = None,
+    ) -> Optional[InboundEventRecord]:
         return mark_terminal(self, agent_name, inbound_event_id, status=InboundEventStatus.SUPERSEDED, finished_at=finished_at)
 
-    def refresh_mailbox(self, agent_name: str, *, updated_at: str | None = None) -> MailboxRecord:
+    def refresh_mailbox(self, agent_name: str, *, updated_at: Optional[str] = None) -> MailboxRecord:
         return refresh_mailbox(self, agent_name, updated_at=updated_at)
 
 

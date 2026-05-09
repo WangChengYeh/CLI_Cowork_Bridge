@@ -1,12 +1,14 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from dataclasses import dataclass
 
 
 @dataclass(frozen=True)
 class ProviderPaneAssessment:
-    binding: object | None
-    session: object | None
-    terminal: str | None
-    pane_state: str | None
+    binding: Optional[object]
+    session: Optional[object]
+    terminal: Optional[str]
+    pane_state: Optional[str]
     health: str

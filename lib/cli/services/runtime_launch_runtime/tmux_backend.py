@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from pathlib import Path
 
 
@@ -9,7 +11,7 @@ def prepared_state(launcher, runtime_dir: Path) -> dict:
     return dict(launcher.prepare_runtime(runtime_dir) or {})
 
 
-def tmux_backend(backend_factory, tmux_socket_path: str | None):
+def tmux_backend(backend_factory, tmux_socket_path: Optional[str]):
     if tmux_socket_path is None:
         return backend_factory()
     try:

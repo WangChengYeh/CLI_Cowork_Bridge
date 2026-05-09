@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from ccbd.api_models import JobRecord, MessageEnvelope
 from completion.models import CompletionDecision
 from mailbox_runtime.targets import known_mailbox_targets
@@ -32,13 +34,13 @@ class MessageBureauFacade(MessageBureauFacadeStateMixin):
         *,
         config=None,
         clock,
-        message_store: MessageStore | None = None,
-        attempt_store: AttemptStore | None = None,
-        reply_store: ReplyStore | None = None,
-        mailbox_store: MailboxStore | None = None,
-        inbound_store: InboundEventStore | None = None,
-        lease_store: DeliveryLeaseStore | None = None,
-        mailbox_kernel: MailboxKernelService | None = None,
+        message_store: Optional[MessageStore] = None,
+        attempt_store: Optional[AttemptStore] = None,
+        reply_store: Optional[ReplyStore] = None,
+        mailbox_store: Optional[MailboxStore] = None,
+        inbound_store: Optional[InboundEventStore] = None,
+        lease_store: Optional[DeliveryLeaseStore] = None,
+        mailbox_kernel: Optional[MailboxKernelService] = None,
     ) -> None:
         message_store = message_store or MessageStore(layout)
         attempt_store = attempt_store or AttemptStore(layout)
@@ -71,10 +73,10 @@ class MessageBureauFacade(MessageBureauFacadeStateMixin):
         request: MessageEnvelope,
         jobs: tuple[JobRecord, ...],
         *,
-        submission_id: str | None,
+        submission_id: Optional[str],
         accepted_at: str,
-        origin_message_id: str | None = None,
-    ) -> str | None:
+        origin_message_id: Optional[str] = None,
+    ) -> Optional[str]:
         return _record_submission_impl(
             self,
             request,
@@ -100,7 +102,7 @@ class MessageBureauFacade(MessageBureauFacadeStateMixin):
         *,
         finished_at: str,
         deliver_to_caller: bool = True,
-    ) -> str | None:
+    ) -> Optional[str]:
         return _record_reply_impl(
             self,
             job,
@@ -114,10 +116,10 @@ class MessageBureauFacade(MessageBureauFacadeStateMixin):
         job: JobRecord,
         *,
         reply: str,
-        diagnostics: dict[str, object] | None,
+        diagnostics: Optional[dict[str, object]],
         finished_at: str,
-        deliver_to_actor: str | None = None,
-    ) -> str | None:
+        deliver_to_actor: Optional[str] = None,
+    ) -> Optional[str]:
         return _record_notice_impl(
             self,
             job,
@@ -135,7 +137,7 @@ class MessageBureauFacade(MessageBureauFacadeStateMixin):
         finished_at: str,
         deliver_to_caller: bool = True,
         record_reply: bool = True,
-    ) -> str | None:
+    ) -> Optional[str]:
         return _record_terminal_impl(
             self,
             job,

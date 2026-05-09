@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 import os
 import subprocess
 from pathlib import Path
@@ -33,7 +35,7 @@ def check_tmux_runtime_health(*, runtime_dir: Path, input_fifo: Path) -> tuple[b
     return True, "Session healthy"
 
 
-def _try_read_pid(pid_file: Path, *, missing_message: str, invalid_message: str) -> tuple[int, str | None]:
+def _try_read_pid(pid_file: Path, *, missing_message: str, invalid_message: str) -> tuple[int, Optional[str]]:
     if not pid_file.exists():
         return 0, missing_message
     try:

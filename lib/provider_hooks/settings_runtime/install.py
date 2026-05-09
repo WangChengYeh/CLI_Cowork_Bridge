@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from pathlib import Path
 
 from provider_profiles import ResolvedProviderProfile
@@ -12,10 +14,10 @@ def install_workspace_completion_hooks(
     *,
     provider: str,
     workspace_path: Path,
-    home_root: Path | None,
+    home_root: Optional[Path],
     command: str,
-    resolved_profile: ResolvedProviderProfile | None = None,
-) -> Path | None:
+    resolved_profile: Optional[ResolvedProviderProfile] = None,
+) -> Optional[Path]:
     normalized = str(provider or '').strip().lower()
     del resolved_profile
     if home_root is None:

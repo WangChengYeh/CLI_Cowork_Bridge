@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 import os
 import threading
 from pathlib import Path
@@ -25,7 +27,7 @@ def maybe_auto_extract_old_session(old_session_path: str, work_dir: Path) -> Non
     ).start()
 
 
-def normalize_session_path(old_session_path: str) -> Path | None:
+def normalize_session_path(old_session_path: str) -> Optional[Path]:
     if not old_session_path:
         return None
     try:
@@ -37,7 +39,7 @@ def normalize_session_path(old_session_path: str) -> Path | None:
     return path
 
 
-def normalize_work_dir(work_dir: Path) -> Path | None:
+def normalize_work_dir(work_dir: Path) -> Optional[Path]:
     try:
         return Path(work_dir).expanduser()
     except Exception:

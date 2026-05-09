@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 import os
 from pathlib import Path
 
@@ -7,7 +9,7 @@ from provider_core.runtime_specs import ProviderClientSpec
 from provider_sessions.files import CCB_PROJECT_CONFIG_DIRNAME
 
 
-def _selected_session_file(cli_session_file: str | None, env_session_file: str | None) -> str:
+def _selected_session_file(cli_session_file: Optional[str], env_session_file: Optional[str]) -> str:
     return (cli_session_file or "").strip() or (env_session_file or "").strip()
 
 
@@ -42,10 +44,10 @@ def _work_dir_from_session_path(session_path: Path) -> Path:
 def resolve_work_dir(
     spec: ProviderClientSpec,
     *,
-    cli_session_file: str | None = None,
-    env_session_file: str | None = None,
-    default_cwd: Path | None = None,
-) -> tuple[Path, Path | None]:
+    cli_session_file: Optional[str] = None,
+    env_session_file: Optional[str] = None,
+    default_cwd: Optional[Path] = None,
+) -> tuple[Path, Optional[Path]]:
     raw = _selected_session_file(cli_session_file, env_session_file)
     if not raw:
         return (default_cwd or Path.cwd()), None

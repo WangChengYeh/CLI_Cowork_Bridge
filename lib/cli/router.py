@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 import argparse
 from collections.abc import Callable, Sequence
 from textwrap import dedent
@@ -15,7 +17,7 @@ def dispatch_auxiliary_command(
     argv: Sequence[str],
     *,
     droid_handler: AuxiliaryHandler,
-) -> int | None:
+) -> Optional[int]:
     tokens = list(argv)
     if tokens and tokens[0] == "droid" and len(tokens) > 1 and tokens[1] in {"setup-delegation", "test-delegation"}:
         return droid_handler(tokens[1:])
@@ -29,7 +31,7 @@ def dispatch_management_command(
     version_handler: ManagementHandler,
     uninstall_handler: ManagementHandler,
     reinstall_handler: ManagementHandler,
-) -> int | None:
+) -> Optional[int]:
     tokens = list(argv)
     if not tokens or tokens[0] not in _MANAGEMENT_COMMANDS:
         return None

@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Callable, Mapping
+from typing import Callable, Mapping, Optional
 
 CCBD_RUNTIME_NAME = "ccbd"
 CCBD_RPC_PREFIX = "ask"
@@ -14,7 +14,7 @@ def terminate_provider_daemon(
     specs_by_provider: Mapping[str, object],
     state_file_path_fn: Callable[[str], Path],
     shutdown_daemon_fn: Callable[[str, float, Path], bool],
-    read_state_fn: Callable[[Path], dict | None],
+    read_state_fn: Callable[[Path], Optional[dict]],
     kill_pid_fn: Callable[[int], bool] | Callable[[int, bool], bool],
 ) -> None:
     spec = specs_by_provider.get(provider)

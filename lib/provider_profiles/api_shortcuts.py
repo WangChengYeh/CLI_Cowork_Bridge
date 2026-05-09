@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from urllib.parse import urlsplit, urlunsplit
 
 
@@ -19,7 +21,7 @@ _PROVIDER_API_SHORTCUT_ENV = {
 }
 
 
-def provider_api_shortcut_env(provider: str, *, key: str | None = None, url: str | None = None) -> dict[str, str]:
+def provider_api_shortcut_env(provider: str, *, key: Optional[str] = None, url: Optional[str] = None) -> dict[str, str]:
     normalized_provider = str(provider or '').strip().lower()
     mapping = _PROVIDER_API_SHORTCUT_ENV.get(normalized_provider)
     if mapping is None:

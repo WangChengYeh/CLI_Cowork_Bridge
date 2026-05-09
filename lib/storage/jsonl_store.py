@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
-from typing import Any, Callable, TypeVar
+from typing import Any, Callable, Optional, TypeVar
 
 T = TypeVar('T')
 
@@ -12,7 +12,7 @@ class JsonlStore:
         self,
         path: Path,
         row: T | dict[str, Any],
-        serializer: Callable[[T], dict[str, Any]] | None = None,
+        serializer: Callable[[T], dict[str, Optional[Any]]] = None,
     ) -> None:
         target = Path(path)
         target.parent.mkdir(parents=True, exist_ok=True)
@@ -25,7 +25,7 @@ class JsonlStore:
         with target.open('a', encoding='utf-8') as handle:
             handle.write(json.dumps(payload, ensure_ascii=False) + '\n')
 
-    def read_all(self, path: Path, loader: Callable[[dict[str, Any]], T] | None = None) -> list[T] | list[dict[str, Any]]:
+    def read_all(self, path: Path, loader: Callable[[dict[str, Any]], Optional[T]] = None) -> list[T] | list[dict[str, Any]]:
         target = Path(path)
         if not target.exists():
             return []
@@ -45,7 +45,7 @@ class JsonlStore:
         self,
         path: Path,
         start_line: int = 0,
-        loader: Callable[[dict[str, Any]], T] | None = None,
+        loader: Callable[[dict[str, Any]], Optional[T]] = None,
     ) -> tuple[int, list[T] | list[dict[str, Any]]]:
         if start_line < 0:
             raise ValueError('start_line cannot be negative')

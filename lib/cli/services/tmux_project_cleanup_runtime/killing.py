@@ -1,14 +1,16 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from .backend import build_backend
 
 
 def kill_panes(
     pane_ids: list[str] | tuple[str, ...],
     *,
-    socket_name: str | None,
+    socket_name: Optional[str],
     backend_factory,
-    current_pane_id: str | None,
+    current_pane_id: Optional[str],
 ) -> tuple[str, ...]:
     backend = build_backend(backend_factory, socket_name=socket_name)
     if backend is None:

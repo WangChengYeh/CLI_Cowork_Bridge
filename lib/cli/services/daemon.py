@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from ccbd.keeper import KeeperStateStore
 from ccbd.models import LeaseHealth
 from ccbd.services.mount import MountManager
@@ -190,7 +192,7 @@ def _connect_compatible_daemon(
     inspection,
     *,
     restart_on_mismatch: bool,
-) -> DaemonHandle | None:
+) -> Optional[DaemonHandle]:
     return _connect_compatible_daemon_runtime_impl(
         context,
         inspection,
@@ -302,7 +304,7 @@ def _augment_start_failure(context: CliContext, exc: CcbdServiceError) -> CcbdSe
     return CcbdServiceError(f'{message}; keeper_last_failure: {failure_reason}')
 
 
-def _normalize_request_failure(context: CliContext) -> CcbdServiceError | None:
+def _normalize_request_failure(context: CliContext) -> Optional[CcbdServiceError]:
     try:
         _, _, inspection = inspect_daemon(context)
     except Exception:

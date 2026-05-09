@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import Protocol
+from typing import Optional, Protocol
 
 from ccbd.api_models import JobRecord
 from completion.models import (
@@ -16,13 +16,13 @@ from completion.models import (
 @dataclass(frozen=True)
 class ProviderRuntimeContext:
     agent_name: str
-    workspace_path: str | None
-    backend_type: str | None
-    runtime_ref: str | None
-    session_ref: str | None
-    runtime_pid: int | None = None
-    runtime_health: str | None = None
-    runtime_binding_source: str | None = None
+    workspace_path: Optional[str]
+    backend_type: Optional[str]
+    runtime_ref: Optional[str]
+    session_ref: Optional[str]
+    runtime_pid: Optional[int] = None
+    runtime_health: Optional[str] = None
+    runtime_binding_source: Optional[str] = None
 
 
 @dataclass(frozen=True)
@@ -37,7 +37,7 @@ class ProviderSubmission:
     status: CompletionStatus = CompletionStatus.INCOMPLETE
     reason: str = 'in_progress'
     confidence: CompletionConfidence = CompletionConfidence.OBSERVED
-    diagnostics: dict | None = None
+    diagnostics: Optional[dict] = None
     runtime_state: dict[str, object] = field(default_factory=dict)
 
 
@@ -45,7 +45,7 @@ class ProviderSubmission:
 class ProviderPollResult:
     submission: ProviderSubmission
     items: tuple[CompletionItem, ...] = ()
-    decision: CompletionDecision | None = None
+    decision: Optional[CompletionDecision] = None
 
     def __post_init__(self) -> None:
         if self.decision is not None and not self.decision.terminal:
@@ -55,8 +55,8 @@ class ProviderPollResult:
 class ProviderExecutionAdapter(Protocol):
     provider: str
 
-    def start(self, job: JobRecord, *, context: ProviderRuntimeContext | None, now: str) -> ProviderSubmission:
+    def start(self, job: JobRecord, *, context: Optional[ProviderRuntimeContext], now: str) -> ProviderSubmission:
         ...
 
-    def poll(self, submission: ProviderSubmission, *, now: str) -> ProviderPollResult | None:
+    def poll(self, submission: ProviderSubmission, *, now: str) -> Optional[ProviderPollResult]:
         ...

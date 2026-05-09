@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from cli.services.tmux_cleanup_history import TmuxCleanupEvent
 
 
@@ -7,7 +9,7 @@ def cleanup_stop_tmux_orphans(
     *,
     project_id: str,
     paths,
-    tmux_sockets: set[str | None],
+    tmux_sockets: Optional[set[str]],
     clock,
     actions_taken: list[str],
     cleanup_project_tmux_orphans_by_socket_fn,

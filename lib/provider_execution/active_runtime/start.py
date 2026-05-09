@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Callable
+from typing import Callable, Optional
 
 from ccbd.api_models import JobRecord
 from completion.models import CompletionSourceKind
@@ -22,13 +22,13 @@ def _session_selector_name(job: JobRecord) -> str:
 def prepare_active_start(
     job: JobRecord,
     *,
-    context: ProviderRuntimeContext | None,
+    context: Optional[ProviderRuntimeContext],
     provider: str,
     source_kind: CompletionSourceKind,
     now: str,
     missing_session_reason: str,
-    load_session_fn: Callable[[Path, str], object | None],
-    backend_for_session_fn: Callable[[dict], object | None],
+    load_session_fn: Callable[[Path, str], Optional[object]],
+    backend_for_session_fn: Callable[[dict], Optional[object]],
 ) -> ProviderSubmission | PreparedActiveStart:
     if context is None or not context.workspace_path:
         return error_submission(

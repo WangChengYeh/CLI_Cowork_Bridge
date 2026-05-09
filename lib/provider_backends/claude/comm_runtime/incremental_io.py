@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
-from typing import Any
+from typing import Any, Optional
 
 
 def read_incremental_jsonl(
@@ -23,7 +23,7 @@ def read_incremental_jsonl(
     return entries, {"offset": new_offset, "carry": carry}
 
 
-def _file_size(path: Path) -> int | None:
+def _file_size(path: Path) -> Optional[int]:
     try:
         return path.stat().st_size
     except OSError:
@@ -36,7 +36,7 @@ def _normalized_reader_state(*, size: int, offset: int, carry: bytes) -> tuple[i
     return offset, carry
 
 
-def _read_bytes(path: Path, offset: int) -> bytes | None:
+def _read_bytes(path: Path, offset: int) -> Optional[bytes]:
     try:
         with path.open("rb") as handle:
             handle.seek(offset)
@@ -62,7 +62,7 @@ def _parse_jsonl_entries(lines: list[bytes]) -> list[dict[str, Any]]:
     return entries
 
 
-def _parse_jsonl_entry(raw: bytes) -> dict[str, Any] | None:
+def _parse_jsonl_entry(raw: bytes) -> Optional[dict[str, Any]]:
     line = raw.strip()
     if not line:
         return None

@@ -170,7 +170,7 @@ def _summarize_file_tool_group(name: str, calls: list[dict], *, keys: tuple[str,
     return f"{name} {len(calls)} file(s)"
 
 
-def _tool_basename(tool_call: dict, *, keys: tuple[str, ...]) -> str | None:
+def _tool_basename(tool_call: dict, *, keys: tuple[str, ...]) -> Optional[str]:
     tool_input = tool_call.get("input", {})
     if not isinstance(tool_input, dict):
         return None

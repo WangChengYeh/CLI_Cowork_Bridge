@@ -1,11 +1,13 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from pathlib import Path
 
 from .backend import session_backend
 
 
-def session_runtime_ref(session, *, pane_id_override: str | None = None) -> str | None:
+def session_runtime_ref(session, *, pane_id_override: Optional[str] = None) -> Optional[str]:
     pane_id = str(pane_id_override or getattr(session, 'pane_id', '') or '').strip()
     terminal = str(getattr(session, 'terminal', '') or '').strip() or 'tmux'
     if pane_id:
@@ -13,7 +15,7 @@ def session_runtime_ref(session, *, pane_id_override: str | None = None) -> str 
     return None
 
 
-def session_ref(session, *, session_id_attr: str, session_path_attr: str) -> str | None:
+def session_ref(session, *, session_id_attr: str, session_path_attr: str) -> Optional[str]:
     session_token = str(getattr(session, session_id_attr, '') or '').strip()
     if session_token:
         return session_token
@@ -26,33 +28,33 @@ def session_ref(session, *, session_id_attr: str, session_path_attr: str) -> str
     return None
 
 
-def session_tmux_socket_name(session) -> str | None:
+def session_tmux_socket_name(session) -> Optional[str]:
     if not _session_uses_tmux(session):
         return None
     return _session_data_text(session, 'tmux_socket_name') or _backend_text(session, '_socket_name')
 
 
-def session_tmux_socket_path(session) -> str | None:
+def session_tmux_socket_path(session) -> Optional[str]:
     if not _session_uses_tmux(session):
         return None
     text = _session_data_text(session, 'tmux_socket_path') or _backend_text(session, '_socket_path')
     return _expanded_path_text(text)
 
 
-def session_id(session, *, session_id_attr: str) -> str | None:
+def session_id(session, *, session_id_attr: str) -> Optional[str]:
     value = getattr(session, session_id_attr, None)
     text = str(value or '').strip()
     return text or None
 
 
-def session_file(session) -> str | None:
+def session_file(session) -> Optional[str]:
     session_path = getattr(session, 'session_file', None)
     if session_path is None:
         return None
     return str(Path(session_path).expanduser())
 
 
-def session_runtime_root(session) -> str | None:
+def session_runtime_root(session) -> Optional[str]:
     runtime_dir = getattr(session, 'runtime_dir', None)
     if runtime_dir is not None:
         return str(Path(runtime_dir).expanduser())
@@ -64,7 +66,7 @@ def session_runtime_root(session) -> str | None:
     return None
 
 
-def session_runtime_pid(session, *, provider: str) -> int | None:
+def session_runtime_pid(session, *, provider: str) -> Optional[int]:
     direct_pid = _session_data_pid(session)
     if direct_pid is not None:
         return direct_pid
@@ -78,12 +80,12 @@ def session_runtime_pid(session, *, provider: str) -> int | None:
     return None
 
 
-def session_terminal(session) -> str | None:
+def session_terminal(session) -> Optional[str]:
     text = str(getattr(session, 'terminal', '') or '').strip()
     return text or None
 
 
-def session_pane_title_marker(session) -> str | None:
+def session_pane_title_marker(session) -> Optional[str]:
     text = str(getattr(session, 'pane_title_marker', '') or '').strip()
     if text:
         return text
@@ -94,14 +96,14 @@ def _session_uses_tmux(session) -> bool:
     return str(getattr(session, 'terminal', '') or '').strip().lower() == 'tmux'
 
 
-def _session_data(session) -> dict | None:
+def _session_data(session) -> Optional[dict]:
     data = getattr(session, 'data', None)
     if isinstance(data, dict):
         return data
     return None
 
 
-def _session_data_text(session, key: str) -> str | None:
+def _session_data_text(session, key: str) -> Optional[str]:
     data = _session_data(session)
     if data is None:
         return None
@@ -109,7 +111,7 @@ def _session_data_text(session, key: str) -> str | None:
     return text or None
 
 
-def _backend_text(session, attr_name: str) -> str | None:
+def _backend_text(session, attr_name: str) -> Optional[str]:
     backend = session_backend(session)
     if backend is None:
         return None
@@ -117,13 +119,13 @@ def _backend_text(session, attr_name: str) -> str | None:
     return text or None
 
 
-def _expanded_path_text(text: str | None) -> str | None:
+def _expanded_path_text(text: Optional[str]) -> Optional[str]:
     if not text:
         return None
     return str(Path(text).expanduser())
 
 
-def _session_data_pid(session) -> int | None:
+def _session_data_pid(session) -> Optional[int]:
     data = _session_data(session)
     if data is None:
         return None
@@ -134,7 +136,7 @@ def _session_data_pid(session) -> int | None:
     return None
 
 
-def _runtime_root_path(session) -> Path | None:
+def _runtime_root_path(session) -> Optional[Path]:
     runtime_root = session_runtime_root(session)
     if not runtime_root:
         return None
@@ -147,7 +149,7 @@ def _pid_file_candidates(runtime_root: Path, *, provider: str) -> tuple[Path, ..
     return (preferred, *sorted(runtime_root.glob('*.pid')))
 
 
-def coerce_pid(value: object) -> int | None:
+def coerce_pid(value: object) -> Optional[int]:
     text = str(value or '').strip()
     if not text.isdigit():
         return None
@@ -155,7 +157,7 @@ def coerce_pid(value: object) -> int | None:
     return pid if pid > 0 else None
 
 
-def read_pid_file(path: Path) -> int | None:
+def read_pid_file(path: Path) -> Optional[int]:
     if not path.is_file():
         return None
     try:

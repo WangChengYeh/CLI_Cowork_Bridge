@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from typing import Optional
+
 COMPLETION_STATUS_COMPLETED = "completed"
 COMPLETION_STATUS_CANCELLED = "cancelled"
 COMPLETION_STATUS_FAILED = "failed"
@@ -28,24 +30,24 @@ COMPLETION_STATUS_MARKERS = {
     COMPLETION_STATUS_INCOMPLETE: "[CCB_TASK_INCOMPLETE]",
 }
 
-def normalize_completion_status(status: str | None, *, done_seen: bool = True) -> str:
+def normalize_completion_status(status: Optional[str], *, done_seen: bool = True) -> str:
     raw = (status or "").strip().lower()
     if raw in VALID_COMPLETION_STATUSES:
         return raw
     return COMPLETION_STATUS_COMPLETED if done_seen else COMPLETION_STATUS_INCOMPLETE
 
 
-def completion_status_label(status: str | None, *, done_seen: bool = True) -> str:
+def completion_status_label(status: Optional[str], *, done_seen: bool = True) -> str:
     normalized = normalize_completion_status(status, done_seen=done_seen)
     return COMPLETION_STATUS_LABELS[normalized]
 
 
-def completion_status_marker(status: str | None, *, done_seen: bool = True) -> str:
+def completion_status_marker(status: Optional[str], *, done_seen: bool = True) -> str:
     normalized = normalize_completion_status(status, done_seen=done_seen)
     return COMPLETION_STATUS_MARKERS[normalized]
 
 
-def default_reply_for_status(status: str | None, *, done_seen: bool = True) -> str:
+def default_reply_for_status(status: Optional[str], *, done_seen: bool = True) -> str:
     normalized = normalize_completion_status(status, done_seen=done_seen)
     if normalized == COMPLETION_STATUS_CANCELLED:
         return "Task cancelled or timed out before completion."

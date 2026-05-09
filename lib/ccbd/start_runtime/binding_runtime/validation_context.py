@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from dataclasses import dataclass
 
 from .common import binding_pane_id, matching_project_namespace_record
@@ -8,8 +10,8 @@ from .common import binding_pane_id, matching_project_namespace_record
 @dataclass(frozen=True)
 class BindingValidationContext:
     tmux_socket_path: str
-    tmux_session_name: str | None
-    workspace_window_id: str | None
+    tmux_session_name: Optional[str]
+    workspace_window_id: Optional[str]
     agent_name: str
     project_id: str
     tmux_backend_factory: object
@@ -32,8 +34,8 @@ def is_tmux_binding(binding) -> bool:
 def build_binding_validation_context(
     *,
     tmux_socket_path: str,
-    tmux_session_name: str | None,
-    workspace_window_id: str | None,
+    tmux_session_name: Optional[str],
+    workspace_window_id: Optional[str],
     agent_name: str,
     project_id: str,
     tmux_backend_factory,
@@ -96,7 +98,7 @@ def has_no_provider_runtime_identity_mismatch(binding) -> bool:
     return state != 'mismatch'
 
 
-def declares_current_project_socket(binding_socket_path: str | None, *, context: BindingValidationContext) -> bool:
+def declares_current_project_socket(binding_socket_path: Optional[str], *, context: BindingValidationContext) -> bool:
     return context.same_tmux_socket_path_fn(binding_socket_path, context.tmux_socket_path)
 
 

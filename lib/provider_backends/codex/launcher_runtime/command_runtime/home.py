@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 import json
 import os
 from dataclasses import dataclass
@@ -64,14 +66,14 @@ def prepare_codex_home_overrides(runtime_dir: Path, profile) -> dict[str, str]:
     }
 
 
-def _profile_runtime_home(profile) -> Path | None:
+def _profile_runtime_home(profile) -> Optional[Path]:
     runtime_home = getattr(profile, 'runtime_home', None) if profile is not None else None
     if not runtime_home:
         return None
     return Path(runtime_home).expanduser()
 
 
-def _existing_layout(runtime_dir: Path) -> CodexHomeLayout | None:
+def _existing_layout(runtime_dir: Path) -> Optional[CodexHomeLayout]:
     session_file = session_file_for_runtime_dir(runtime_dir)
     if session_file is None or not session_file.is_file():
         return None
@@ -81,7 +83,7 @@ def _existing_layout(runtime_dir: Path) -> CodexHomeLayout | None:
     return _layout_from_payload(data)
 
 
-def _layout_from_payload(data: dict[str, object]) -> CodexHomeLayout | None:
+def _layout_from_payload(data: dict[str, object]) -> Optional[CodexHomeLayout]:
     codex_home = _path_or_none(data.get('codex_home'))
     session_root = _path_or_none(data.get('codex_session_root'))
     if session_root is None:
@@ -100,7 +102,7 @@ def _layout_from_payload(data: dict[str, object]) -> CodexHomeLayout | None:
     return CodexHomeLayout(codex_home=codex_home, session_root=codex_home / 'sessions')
 
 
-def _session_root_from_commands(data: dict[str, object]) -> Path | None:
+def _session_root_from_commands(data: dict[str, object]) -> Optional[Path]:
     commands = (
         str(data.get('codex_start_cmd') or '').strip(),
         str(data.get('start_cmd') or '').strip(),
@@ -115,7 +117,7 @@ def _session_root_from_commands(data: dict[str, object]) -> Path | None:
     return None
 
 
-def _codex_home_from_commands(data: dict[str, object]) -> Path | None:
+def _codex_home_from_commands(data: dict[str, object]) -> Optional[Path]:
     commands = (
         str(data.get('codex_start_cmd') or '').strip(),
         str(data.get('start_cmd') or '').strip(),
@@ -127,7 +129,7 @@ def _codex_home_from_commands(data: dict[str, object]) -> Path | None:
     return None
 
 
-def _extract_command_path(command: str, env_name: str) -> Path | None:
+def _extract_command_path(command: str, env_name: str) -> Optional[Path]:
     if not command:
         return None
     for match in _ENV_ASSIGNMENT_RE.finditer(command):
@@ -144,7 +146,7 @@ def _unquote_env_value(value: str) -> str:
     return text
 
 
-def _session_root_from_log_path(value: object) -> Path | None:
+def _session_root_from_log_path(value: object) -> Optional[Path]:
     log_path = _path_or_none(value)
     if log_path is None:
         return None
@@ -154,7 +156,7 @@ def _session_root_from_log_path(value: object) -> Path | None:
     return None
 
 
-def _path_or_none(value: object) -> Path | None:
+def _path_or_none(value: object) -> Optional[Path]:
     raw = str(value or '').strip()
     if not raw:
         return None
@@ -225,7 +227,7 @@ def _ensure_session_namespace_authority(runtime_dir: Path, codex_home: Path, ses
     _write_session_namespace_marker(marker_path, current_fingerprint)
 
 
-def _read_session_namespace_marker(marker_path: Path) -> str | None:
+def _read_session_namespace_marker(marker_path: Path) -> Optional[str]:
     try:
         data = json.loads(marker_path.read_text(encoding='utf-8'))
     except Exception:
@@ -237,7 +239,7 @@ def _read_session_namespace_marker(marker_path: Path) -> str | None:
 
 def _session_namespace_requires_reset(
     *,
-    stored_marker: str | None,
+    stored_marker: Optional[str],
     current_fingerprint: str,
     session_data: dict[str, object],
 ) -> bool:
@@ -280,7 +282,7 @@ def _archive_label(label: str) -> str:
     return re.sub(r'[^a-z0-9._-]+', '-', text)[:32] or 'global'
 
 
-def _scrub_project_session_binding(session_file: Path | None) -> None:
+def _scrub_project_session_binding(session_file: Optional[Path]) -> None:
     if session_file is None or not session_file.is_file():
         return
     data = read_session_payload(session_file)

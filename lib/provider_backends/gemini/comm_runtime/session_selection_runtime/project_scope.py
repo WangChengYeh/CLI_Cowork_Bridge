@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from pathlib import Path
 
 from ..project_hash import project_root_marker
@@ -33,7 +35,7 @@ def adopt_project_hash_from_session(reader, session_path: Path) -> None:
     reader._all_known_hashes.add(project_hash)
 
 
-def _coerce_existing_session_path(session_path: Path | str | None) -> Path | None:
+def _coerce_existing_session_path(session_path: Path | Optional[str]) -> Optional[Path]:
     if not session_path:
         return None
     try:

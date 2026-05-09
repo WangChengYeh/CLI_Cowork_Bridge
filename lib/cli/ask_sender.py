@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 import os
 from pathlib import Path
 
@@ -10,7 +12,7 @@ from mailbox_runtime.targets import CMD_ACTOR, USER_ACTOR
 from workspace.actors import resolve_workspace_actor
 
 
-def resolve_ask_sender(context: CliContext, explicit_sender: str | None) -> str:
+def resolve_ask_sender(context: CliContext, explicit_sender: Optional[str]) -> str:
     sender = str(explicit_sender or '').strip()
     if sender:
         return sender
@@ -35,7 +37,7 @@ def resolve_ask_sender(context: CliContext, explicit_sender: str | None) -> str:
     return USER_ACTOR
 
 
-def _resolve_session_actor(context: CliContext, *, allowed_session_actors: frozenset[str]) -> str | None:
+def _resolve_session_actor(context: CliContext, *, allowed_session_actors: frozenset[str]) -> Optional[str]:
     for env_name in ('CCB_CALLER_ACTOR',):
         actor = _normalized_actor_candidate(os.environ.get(env_name))
         if actor in allowed_session_actors:
@@ -54,11 +56,11 @@ def _resolve_session_actor(context: CliContext, *, allowed_session_actors: froze
 
 
 def _actor_from_runtime_dir(
-    value: str | None,
+    value: Optional[str],
     *,
     agents_dir: Path,
     allowed_session_actors: frozenset[str],
-) -> str | None:
+) -> Optional[str]:
     runtime_dir = str(value or '').strip()
     if not runtime_dir:
         return None
@@ -76,7 +78,7 @@ def _actor_from_runtime_dir(
     return None
 
 
-def _actor_from_session_id(value: str | None, *, allowed_session_actors: frozenset[str]) -> str | None:
+def _actor_from_session_id(value: Optional[str], *, allowed_session_actors: frozenset[str]) -> Optional[str]:
     session_id = str(value or '').strip().lower()
     if not session_id.startswith('ccb-'):
         return None
@@ -87,7 +89,7 @@ def _actor_from_session_id(value: str | None, *, allowed_session_actors: frozens
     return max(matches, key=len)
 
 
-def _normalized_actor_candidate(value: str | None) -> str | None:
+def _normalized_actor_candidate(value: Optional[str]) -> Optional[str]:
     text = str(value or '').strip()
     if not text:
         return None

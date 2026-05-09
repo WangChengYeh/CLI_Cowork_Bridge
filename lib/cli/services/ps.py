@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from agents.config_loader import load_project_config
 from agents.store import AgentRuntimeStore
 from cli.context import CliContext
@@ -70,7 +72,7 @@ def _workspace_path(context: CliContext, *, agent_name: str, runtime) -> str:
     return str(context.paths.workspace_path(agent_name))
 
 
-def _session_ref(runtime) -> str | None:
+def _session_ref(runtime) -> Optional[str]:
     if runtime is None:
         return None
     return runtime.session_file or runtime.session_id or runtime.session_ref

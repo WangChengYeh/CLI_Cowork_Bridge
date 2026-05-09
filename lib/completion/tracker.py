@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from dataclasses import dataclass
 from types import SimpleNamespace
 
@@ -45,7 +47,7 @@ class CompletionTrackerService:
         self,
         config: ProjectConfig,
         provider_catalog: ProviderCatalog,
-        registry: CompletionRegistry | None = None,
+        registry: Optional[CompletionRegistry] = None,
         *,
         request_timeout_s: float = _DEFAULT_REQUEST_TIMEOUT_S,
     ) -> None:
@@ -90,7 +92,7 @@ class CompletionTrackerService:
         )
         return self.current(job.job_id)
 
-    def current(self, job_id: str) -> CompletionTrackerView | None:
+    def current(self, job_id: str) -> Optional[CompletionTrackerView]:
         tracker = self._trackers.get(job_id)
         if tracker is None:
             return None

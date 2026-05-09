@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 import json
 import time
 from pathlib import Path
@@ -47,7 +49,7 @@ def _registry_paths(registry_root: Path) -> list[Path]:
         return []
 
 
-def _load_registry_work_dir(path: Path) -> Path | None:
+def _load_registry_work_dir(path: Path) -> Optional[Path]:
     try:
         with path.open("r", encoding="utf-8") as handle:
             data = json.load(handle)

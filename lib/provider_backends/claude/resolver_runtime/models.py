@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -11,8 +13,8 @@ CLAUDE_PROJECTS_ROOT = current_claude_projects_root()
 @dataclass
 class ClaudeSessionResolution:
     data: dict
-    session_file: Path | None
-    registry: dict | None
+    session_file: Optional[Path]
+    registry: Optional[dict]
     source: str
 
 

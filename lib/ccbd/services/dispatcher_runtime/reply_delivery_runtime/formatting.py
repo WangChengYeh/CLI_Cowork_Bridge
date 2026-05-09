@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 
 def format_reply_delivery_body(dispatcher, reply) -> str:
     source_job = _source_job_for_reply(dispatcher, reply)
@@ -83,7 +85,7 @@ def _heartbeat_header(reply, *, source_job) -> str:
     return header
 
 
-def _heartbeat_job_id(diagnostics: dict, *, source_job) -> str | None:
+def _heartbeat_job_id(diagnostics: dict, *, source_job) -> Optional[str]:
     job_id = str(diagnostics.get('job_id') or '').strip()
     if job_id:
         return job_id
@@ -92,7 +94,7 @@ def _heartbeat_job_id(diagnostics: dict, *, source_job) -> str | None:
     return None
 
 
-def _heartbeat_task_id(source_job) -> str | None:
+def _heartbeat_task_id(source_job) -> Optional[str]:
     if source_job is None:
         return None
     task_id = str(source_job.request.task_id or '').strip()

@@ -1,14 +1,14 @@
 from __future__ import annotations
 
 from pathlib import Path
-from typing import TextIO
+from typing import Optional, TextIO
 import sys
 
 from cli.ask_usage import write_ask_usage
 from cli.phase2 import maybe_handle_phase2
 
 
-def main(argv: list[str] | None = None, *, stdout: TextIO | None = None, stderr: TextIO | None = None) -> int:
+def main(argv: Optional[list[str]] = None, *, stdout: Optional[TextIO] = None, stderr: Optional[TextIO] = None) -> int:
     args = list(sys.argv[1:] if argv is None else argv)
     out = stdout or sys.stdout
     err = stderr or sys.stderr

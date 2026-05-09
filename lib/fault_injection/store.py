@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from pathlib import Path
 
 from storage.json_store import JsonStore
@@ -9,7 +11,7 @@ from .models import FaultRule, SCHEMA_VERSION
 
 
 class FaultInjectionStore:
-    def __init__(self, layout: PathLayout, store: JsonStore | None = None) -> None:
+    def __init__(self, layout: PathLayout, store: Optional[JsonStore] = None) -> None:
         self._layout = layout
         self._store = store or JsonStore()
 

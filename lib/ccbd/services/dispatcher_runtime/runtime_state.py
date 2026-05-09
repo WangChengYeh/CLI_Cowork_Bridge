@@ -1,11 +1,13 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from dataclasses import replace
 
 from agents.models import AgentState
 
 
-def sync_runtime(dispatcher, agent_name: str, *, state: AgentState | None = None) -> None:
+def sync_runtime(dispatcher, agent_name: str, *, state: Optional[AgentState] = None) -> None:
     runtime = dispatcher._registry.get(agent_name)
     if runtime is None:
         return

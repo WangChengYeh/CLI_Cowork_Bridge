@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from contextlib import contextmanager
 from pathlib import Path
 
@@ -37,7 +39,7 @@ class OwnershipGuard:
         with file_lock(lock_path):
             yield
 
-    def inspect(self, lease: CcbdLease | None = None) -> LeaseInspection:
+    def inspect(self, lease: Optional[CcbdLease] = None) -> LeaseInspection:
         current = lease if lease is not None else self._mount_manager.load_state()
         if current is None:
             return self._missing_inspection()
@@ -158,7 +160,7 @@ class OwnershipGuard:
 
     def _inspection(
         self,
-        lease: CcbdLease | None,
+        lease: Optional[CcbdLease],
         *,
         health: LeaseHealth,
         pid_alive: bool,

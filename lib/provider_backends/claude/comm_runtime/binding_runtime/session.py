@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
-from typing import Any, Callable
+from typing import Any, Callable, Optional
 
 
 def remember_claude_session_binding(
@@ -11,10 +11,10 @@ def remember_claude_session_binding(
     session_path: Path,
     session_info: dict[str, Any],
     infer_work_dir_from_session_file_fn: Callable[[Path], Path],
-    ensure_claude_session_work_dir_fields_fn: Callable[[dict, Path], Path | None],
-    safe_write_session_fn: Callable[[Path, str], tuple[bool, str | None]],
+    ensure_claude_session_work_dir_fields_fn: Callable[[dict, Path], Optional[Path]],
+    safe_write_session_fn: Callable[[Path, str], tuple[bool, Optional[str]]],
     now_str_fn: Callable[[], str],
-) -> dict[str, Any] | None:
+) -> Optional[dict[str, Any]]:
     if not project_session_file.exists():
         return None
     data = _load_session_payload(project_session_file)

@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from pathlib import Path
 import queue
 import threading
@@ -20,9 +22,9 @@ class CcbdSocketServer:
         self._server = None
         self._connection_queue = queue.Queue()
         self._worker_sentinel = object()
-        self._worker_thread: threading.Thread | None = None
-        self._worker_error: BaseException | None = None
-        self._bound_socket_stat: tuple[int, int] | None = None
+        self._worker_thread: Optional[threading.Thread] = None
+        self._worker_error: Optional[BaseException] = None
+        self._bound_socket_stat: Optional[tuple[int, int]] = None
         self._stop_event = threading.Event()
 
     @property
@@ -47,7 +49,7 @@ class CcbdSocketServer:
         shutdown_server(self)
         stop_worker(self)
 
-    def _handle_connection(self, conn) -> str | None:
+    def _handle_connection(self, conn) -> Optional[str]:
         return handle_connection(self, conn)
 
 

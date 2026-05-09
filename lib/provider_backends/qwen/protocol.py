@@ -6,6 +6,8 @@ without skills injection.
 """
 from __future__ import annotations
 
+from typing import Optional
+
 from dataclasses import dataclass
 
 from provider_core.protocol import (
@@ -27,7 +29,7 @@ class QwenRequest:
     timeout_s: float
     quiet: bool
     message: str
-    req_id: str | None = None
+    req_id: Optional[str] = None
     caller: str = "claude"
 
 
@@ -38,10 +40,10 @@ class QwenResult:
     req_id: str
     session_key: str
     done_seen: bool
-    done_ms: int | None = None
+    done_ms: Optional[int] = None
     anchor_seen: bool = False
     fallback_scan: bool = False
-    anchor_ms: int | None = None
+    anchor_ms: Optional[int] = None
 
 
 __all__ = [

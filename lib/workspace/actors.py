@@ -1,12 +1,14 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from pathlib import Path
 
 from project.discovery import find_workspace_binding
 from workspace.binding import WorkspaceBindingStore
 
 
-def resolve_workspace_actor(cwd: Path, *, project_id: str | None = None) -> str | None:
+def resolve_workspace_actor(cwd: Path, *, project_id: Optional[str] = None) -> Optional[str]:
     current = _resolve_path(cwd)
     binding_path = find_workspace_binding(current)
     if binding_path is None:

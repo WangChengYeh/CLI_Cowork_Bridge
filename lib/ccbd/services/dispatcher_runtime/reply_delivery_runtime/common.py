@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from ccbd.api_models import JobRecord
 from mailbox_kernel import InboundEventType
 from message_bureau.reply_payloads import reply_id_from_payload
@@ -14,7 +16,7 @@ def head_reply_event(dispatcher, agent_name: str):
     return head
 
 
-def project_id_for_agent(dispatcher, agent_name: str) -> str | None:
+def project_id_for_agent(dispatcher, agent_name: str) -> Optional[str]:
     runtime = dispatcher._registry.get(agent_name)
     if runtime is not None and runtime.project_id:
         return runtime.project_id
@@ -24,13 +26,13 @@ def project_id_for_agent(dispatcher, agent_name: str) -> str | None:
     return None
 
 
-def reply_delivery_inbound_event_id(job: JobRecord) -> str | None:
+def reply_delivery_inbound_event_id(job: JobRecord) -> Optional[str]:
     value = job.provider_options.get(REPLY_DELIVERY_INBOUND_EVENT_OPTION)
     text = str(value or '').strip()
     return text or None
 
 
-def reply_delivery_reply_id(job: JobRecord) -> str | None:
+def reply_delivery_reply_id(job: JobRecord) -> Optional[str]:
     value = job.provider_options.get(REPLY_DELIVERY_REPLY_ID_OPTION)
     text = str(value or '').strip()
     return text or None
@@ -42,7 +44,7 @@ def is_reply_delivery_job(job: JobRecord) -> bool:
     return bool(job.provider_options.get(REPLY_DELIVERY_PROVIDER_OPTION))
 
 
-def head_reply_id(head) -> str | None:
+def head_reply_id(head) -> Optional[str]:
     if head is None:
         return None
     return reply_id_from_payload(head.payload_ref)

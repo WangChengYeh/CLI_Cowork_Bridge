@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from dataclasses import dataclass
 
 from .watch_fallback import load_persisted_terminal_watch_payload
@@ -14,14 +16,14 @@ class WatchEventBatch:
     target: str
     job_id: str
     agent_name: str
-    target_kind: str | None
+    target_kind: Optional[str]
     target_name: str
-    provider: str | None
-    provider_instance: str | None
+    provider: Optional[str]
+    provider_instance: Optional[str]
     cursor: int
-    generation: int | None
+    generation: Optional[int]
     terminal: bool
-    status: str | None
+    status: Optional[str]
     reply: str
     events: tuple[dict, ...]
 
@@ -134,7 +136,7 @@ def _connect_handle(
     reconnect_error_classes: tuple[type[BaseException], ...],
     time_fn,
     sleep_fn,
-    deadline: float | None,
+    deadline: Optional[float],
     poll_interval_seconds_fn,
 ):
     poll_interval = poll_interval_seconds_fn()
@@ -153,7 +155,7 @@ def _connect_handle(
         return handle
 
 
-def _persisted_terminal_batch(context, target: str, *, cursor: int) -> WatchEventBatch | None:
+def _persisted_terminal_batch(context, target: str, *, cursor: int) -> Optional[WatchEventBatch]:
     payload = load_persisted_terminal_watch_payload(context, target, cursor=cursor)
     if payload is None:
         return None

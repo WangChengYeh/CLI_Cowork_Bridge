@@ -3,7 +3,7 @@ from __future__ import annotations
 import subprocess
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Callable
+from typing import Callable, Optional
 
 from .dispatcher import RoomDispatchRequest
 from .models import RoomEvent, RoomEventType, RoomSource
@@ -14,12 +14,12 @@ class RoomStreamExecutionError(RuntimeError):
     pass
 
 
-@dataclass(slots=True)
+@dataclass
 class RoomStreamExecutionResult:
     request: RoomDispatchRequest
     returncode: int
     output_events: list[RoomEvent] = field(default_factory=list)
-    terminal_event: RoomEvent | None = None
+    terminal_event: Optional[RoomEvent] = None
 
 
 class RoomAskStreamExecutor:
@@ -27,10 +27,10 @@ class RoomAskStreamExecutor:
         self,
         *,
         project_root: Path,
-        store: RoomEventStore | None = None,
-        ccb_path: Path | None = None,
+        store: Optional[RoomEventStore] = None,
+        ccb_path: Optional[Path] = None,
         popen_fn: Callable[..., subprocess.Popen[str]] = subprocess.Popen,
-        on_event: Callable[[RoomEvent], None] | None = None,
+        on_event: Callable[[RoomEvent], Optional[None]] = None,
     ) -> None:
         self.project_root = project_root
         self.store = store or RoomEventStore(project_root / '.ccb' / 'room')

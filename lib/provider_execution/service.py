@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from ccbd.api_models import JobRecord
 from completion.models import CompletionDecision
 
@@ -25,8 +27,8 @@ class ExecutionService(ExecutionServiceStateMixin):
         registry: ProviderExecutionRegistry,
         *,
         clock,
-        state_store: ExecutionStateStore | None = None,
-        fault_injection: FaultInjectionService | None = None,
+        state_store: Optional[ExecutionStateStore] = None,
+        fault_injection: Optional[FaultInjectionService] = None,
     ) -> None:
         self._runtime_state = ExecutionServiceRuntimeState(
             registry=registry,
@@ -38,7 +40,7 @@ class ExecutionService(ExecutionServiceStateMixin):
             pending_replays={},
         )
 
-    def start(self, job: JobRecord, *, runtime_context: ProviderRuntimeContext | None = None) -> ProviderSubmission | None:
+    def start(self, job: JobRecord, *, runtime_context: Optional[ProviderRuntimeContext] = None) -> Optional[ProviderSubmission]:
         now = self._clock()
         if self._fault_injection is not None:
             injected = self._fault_injection.consume_for_job(job, now=now)
@@ -73,10 +75,10 @@ class ExecutionService(ExecutionServiceStateMixin):
     def acknowledge(self, job_id: str) -> None:
         acknowledge(self, job_id)
 
-    def acknowledge_item(self, job_id: str, *, event_seq: int | None) -> None:
+    def acknowledge_item(self, job_id: str, *, event_seq: Optional[int]) -> None:
         acknowledge_item(self, job_id, event_seq=event_seq)
 
-    def restore(self, job: JobRecord, *, runtime_context: ProviderRuntimeContext | None = None) -> ExecutionRestoreResult:
+    def restore(self, job: JobRecord, *, runtime_context: Optional[ProviderRuntimeContext] = None) -> ExecutionRestoreResult:
         return restore_submission(self, job, runtime_context=runtime_context)
 
     def poll(self) -> tuple[ExecutionUpdate, ...]:

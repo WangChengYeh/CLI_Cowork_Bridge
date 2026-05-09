@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from completion.models import CompletionItemKind
 from provider_execution.base import ProviderSubmission
 from provider_execution.common import build_item
@@ -105,7 +107,7 @@ def chunk_payload(
     poll: ClaudePollState,
     event: dict[str, object],
     cleaned: str,
-    assistant_uuid: str | None,
+    assistant_uuid: Optional[str],
     subagent_id: str,
     subagent_name: str,
 ) -> dict[str, object]:

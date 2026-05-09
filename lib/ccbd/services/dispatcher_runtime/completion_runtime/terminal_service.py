@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from dataclasses import replace
 
 from completion.models import CompletionDecision, CompletionState
@@ -20,7 +22,7 @@ def merge_terminal_decision(job_id: str, decision: CompletionDecision, *, comple
     )
 
 
-def build_terminal_state(decision: CompletionDecision, prior: CompletionState | None) -> CompletionState:
+def build_terminal_state(decision: CompletionDecision, prior: Optional[CompletionState]) -> CompletionState:
     return CompletionState(
         anchor_seen=decision.anchor_seen or _state_flag(prior, 'anchor_seen'),
         reply_started=decision.reply_started or _state_flag(prior, 'reply_started'),
@@ -44,11 +46,11 @@ def _value(current, tracked_state, prior_state, name: str):
     return current or _state_value(tracked_state, name) or _state_value(prior_state, name)
 
 
-def _tracked_reply(tracked) -> str | None:
+def _tracked_reply(tracked) -> Optional[str]:
     return tracked.decision.reply if tracked is not None else None
 
 
-def _prior_reply(prior_snapshot) -> str | None:
+def _prior_reply(prior_snapshot) -> Optional[str]:
     return prior_snapshot.latest_decision.reply if prior_snapshot is not None else None
 
 

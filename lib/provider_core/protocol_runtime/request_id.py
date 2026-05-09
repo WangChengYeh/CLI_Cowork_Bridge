@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from collections.abc import Callable
 
 _req_id_counter = 0
@@ -16,7 +18,7 @@ def make_req_id() -> str:
     return f"{now.strftime('%Y%m%d-%H%M%S')}-{ms:03d}-{os.getpid()}-{_req_id_counter}"
 
 
-def request_anchor_for_job(job_id: str | None, *, fallback_factory: Callable[[], str] | None = None) -> str:
+def request_anchor_for_job(job_id: Optional[str], *, fallback_factory: Callable[[], Optional[str]] = None) -> str:
     anchor = str(job_id or '').strip()
     if anchor:
         return anchor

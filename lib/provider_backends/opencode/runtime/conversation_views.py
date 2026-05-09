@@ -1,11 +1,13 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from opencode_runtime.replies import conversations_from_messages, latest_message_from_messages
 
 from .storage_reader import get_latest_session, read_messages, read_parts
 
 
-def latest_message(reader) -> str | None:
+def latest_message(reader) -> Optional[str]:
     session_id = _latest_session_id(reader)
     if not session_id:
         return None
@@ -28,7 +30,7 @@ def latest_conversations(reader, n: int = 1) -> list[tuple[str, str]]:
     return conversations_from_messages(messages, read_parts=lambda message_id: read_parts(reader, message_id), n=n)
 
 
-def _latest_session_id(reader) -> str | None:
+def _latest_session_id(reader) -> Optional[str]:
     session_entry = get_latest_session(reader)
     if not session_entry:
         return None

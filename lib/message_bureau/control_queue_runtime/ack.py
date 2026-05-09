@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from mailbox_kernel import InboundEventType
 from message_bureau.reply_metadata import (
     reply_heartbeat_silence_seconds,
@@ -14,7 +16,7 @@ from .events import pending_event_records, reply_for_event
 from .views import agent_queue
 
 
-def ack_reply(service, agent_name: str, inbound_event_id: str | None = None) -> dict[str, object]:
+def ack_reply(service, agent_name: str, inbound_event_id: Optional[str] = None) -> dict[str, object]:
     normalized = require_mailbox_target(service, agent_name)
     head = _head_reply_event(service, normalized, inbound_event_id=inbound_event_id)
     reply = reply_for_event(service, head)
@@ -49,7 +51,7 @@ def ack_reply(service, agent_name: str, inbound_event_id: str | None = None) -> 
     )
 
 
-def _head_reply_event(service, agent_name: str, *, inbound_event_id: str | None):
+def _head_reply_event(service, agent_name: str, *, inbound_event_id: Optional[str]):
     records = pending_event_records(service, agent_name)
     head = records[0] if records else None
     if head is None:

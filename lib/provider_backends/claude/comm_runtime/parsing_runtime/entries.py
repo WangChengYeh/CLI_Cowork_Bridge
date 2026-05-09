@@ -1,11 +1,11 @@
 from __future__ import annotations
 
-from typing import Any
+from typing import Any, Optional
 
 from .content import extract_content_text
 
 
-def extract_message(entry: dict[str, Any], role: str) -> str | None:
+def extract_message(entry: dict[str, Any], role: str) -> Optional[str]:
     if not isinstance(entry, dict):
         return None
     entry_type = str(entry.get("type") or "").strip().lower()
@@ -17,7 +17,7 @@ def extract_message(entry: dict[str, Any], role: str) -> str | None:
     return _extract_standard_message(entry, role, entry_type=entry_type)
 
 
-def _extract_response_item_message(entry: dict[str, Any], role: str) -> str | None:
+def _extract_response_item_message(entry: dict[str, Any], role: str) -> Optional[str]:
     payload = entry.get("payload", {})
     if not isinstance(payload, dict) or payload.get("type") != "message":
         return None
@@ -26,7 +26,7 @@ def _extract_response_item_message(entry: dict[str, Any], role: str) -> str | No
     return extract_content_text(payload.get("content"))
 
 
-def _extract_event_message(entry: dict[str, Any], role: str) -> str | None:
+def _extract_event_message(entry: dict[str, Any], role: str) -> Optional[str]:
     payload = entry.get("payload", {})
     if not isinstance(payload, dict):
         return None
@@ -42,7 +42,7 @@ def _extract_event_message(entry: dict[str, Any], role: str) -> str | None:
     return None
 
 
-def _extract_standard_message(entry: dict[str, Any], role: str, *, entry_type: str) -> str | None:
+def _extract_standard_message(entry: dict[str, Any], role: str, *, entry_type: str) -> Optional[str]:
     message = entry.get("message")
     if isinstance(message, dict):
         msg_role = str(message.get("role") or entry_type).strip().lower()

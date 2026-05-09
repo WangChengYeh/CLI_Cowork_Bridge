@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from pathlib import Path
 
 from .binding import usable_project_binding
@@ -14,9 +16,9 @@ def prepare_agents(
     context,
     project_root: Path,
     project_id: str,
-    tmux_socket_path: str | None,
-    tmux_session_name: str | None,
-    workspace_window_id: str | None,
+    tmux_socket_path: Optional[str],
+    tmux_session_name: Optional[str],
+    workspace_window_id: Optional[str],
 ):
     return deps.prepare_start_agents_fn(
         targets=targets,

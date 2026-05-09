@@ -15,15 +15,15 @@ REGISTRY_SUFFIX = ".json"
 REGISTRY_TTL_SECONDS = 7 * 24 * 60 * 60
 
 
-def registry_dir(work_dir: str | Path | None = None) -> Path:
+def registry_dir(work_dir: str | Optional[Path] = None) -> Path:
     return project_registry_dir(Path.cwd() if work_dir is None else work_dir)
 
 
-def registry_path_for_session(session_id: str, *, work_dir: str | Path | None = None) -> Path:
+def registry_path_for_session(session_id: str, *, work_dir: str | Optional[Path] = None) -> Path:
     return registry_dir(work_dir=work_dir) / f"{REGISTRY_PREFIX}{session_id}{REGISTRY_SUFFIX}"
 
 
-def iter_registry_files(*, work_dir: str | Path | None = None) -> Iterable[Path]:
+def iter_registry_files(*, work_dir: str | Optional[Path] = None) -> Iterable[Path]:
     current_dir = registry_dir(work_dir=work_dir)
     if not current_dir.exists():
         return []

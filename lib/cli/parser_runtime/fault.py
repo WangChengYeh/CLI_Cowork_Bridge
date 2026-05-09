@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional, Union
+
 import argparse
 
 from cli.models import ParsedFaultArmCommand, ParsedFaultClearCommand, ParsedFaultListCommand
@@ -11,9 +13,9 @@ from .common import parse_args, require_no_extra
 def parse_fault(
     tokens: list[str],
     *,
-    project: str | None,
+    project: Optional[str],
     error_type,
-) -> ParsedFaultListCommand | ParsedFaultArmCommand | ParsedFaultClearCommand:
+) -> Union[ParsedFaultListCommand, ParsedFaultArmCommand, ParsedFaultClearCommand]:
     if not tokens:
         raise error_type('fault requires one of: list, arm, clear')
     action = tokens[0]

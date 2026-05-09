@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from ccbd.api_models import TargetKind
 
 from ..records import get_job
@@ -54,7 +56,7 @@ def _claim_reply_delivery(dispatcher, slot: QueuedTargetSlot, queued_ids: set[st
     return None
 
 
-def _claim_request_job_id(dispatcher, slot: QueuedTargetSlot, queued_ids: set[str]) -> str | None:
+def _claim_request_job_id(dispatcher, slot: QueuedTargetSlot, queued_ids: set[str]) -> Optional[str]:
     for candidate in dispatcher._message_bureau.claimable_request_job_ids(slot.target_name):
         if candidate not in queued_ids:
             continue

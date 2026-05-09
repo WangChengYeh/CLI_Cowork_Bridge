@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from pathlib import Path
 
 from provider_core.contracts import ProviderRuntimeIdentity
@@ -9,7 +11,7 @@ from provider_backends.codex.session_switch.models import STATE_AUTO_REBOUND
 from ..start_cmd import extract_resume_session_id
 
 
-def live_runtime_identity(session) -> ProviderRuntimeIdentity | None:
+def live_runtime_identity(session) -> Optional[ProviderRuntimeIdentity]:
     expected_session_id = str(getattr(session, 'codex_session_id', '') or '').strip()
     if not expected_session_id:
         return None
@@ -51,7 +53,7 @@ def _rotated_in_process(session, *, expected_session_id: str) -> bool:
     return bool(candidate_path and bound_path and candidate_path == bound_path)
 
 
-def _session_runtime_dir(session) -> Path | None:
+def _session_runtime_dir(session) -> Optional[Path]:
     value = getattr(session, 'runtime_dir', None)
     if value is None:
         data = getattr(session, 'data', None)
@@ -75,7 +77,7 @@ def _session_backend(session):
         return None
 
 
-def _pane_pid(backend, pane_id: str) -> int | None:
+def _pane_pid(backend, pane_id: str) -> Optional[int]:
     reader = getattr(backend, 'pane_pid', None)
     if callable(reader):
         try:
@@ -120,7 +122,7 @@ def _linux_process_parent_map() -> dict[int, int]:
     return parents
 
 
-def _linux_process_parent_pid(stat_path: Path) -> int | None:
+def _linux_process_parent_pid(stat_path: Path) -> Optional[int]:
     try:
         raw = stat_path.read_text(encoding='utf-8', errors='replace')
     except Exception:
@@ -159,7 +161,7 @@ def _linux_process_cmdline(pid: int) -> str:
     return ' '.join(text.split())
 
 
-def _positive_int(value: object) -> int | None:
+def _positive_int(value: object) -> Optional[int]:
     text = str(value or '').strip()
     if not text.isdigit():
         return None

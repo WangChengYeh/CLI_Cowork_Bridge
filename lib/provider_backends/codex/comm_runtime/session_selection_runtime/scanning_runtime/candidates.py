@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from pathlib import Path
 
 from ...debug import debug_log_reader
@@ -42,7 +44,7 @@ def _matches_work_dir(reader, path: Path) -> bool:
     return bool(cwd and cwd == reader._work_dir)
 
 
-def _read_mtime(path: Path) -> float | None:
+def _read_mtime(path: Path) -> Optional[float]:
     try:
         return path.stat().st_mtime
     except OSError:

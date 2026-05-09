@@ -1,7 +1,9 @@
 from __future__ import annotations
 
+from typing import Optional
 
-def named_agent_instance(agent_name: str, *, primary_agent: str) -> str | None:
+
+def named_agent_instance(agent_name: str, *, primary_agent: str) -> Optional[str]:
     del primary_agent
     normalized_agent = str(agent_name or "").strip().lower()
     return normalized_agent or None

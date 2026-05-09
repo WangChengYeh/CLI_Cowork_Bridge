@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Callable
+from typing import Callable, Optional
 
 from provider_core.tmux_ownership import inspect_tmux_pane_ownership, ownership_error_text
 
@@ -18,7 +18,7 @@ def tmux_rebound_pane(
     *,
     now_str_fn: Callable[[], str],
     attach_pane_log_fn: Callable[[object, object, str], None],
-) -> tuple[bool, str] | None:
+) -> Optional[tuple[bool, str]]:
     start_cmd = session.start_cmd
     respawn = getattr(backend, 'respawn_pane', None)
     create_pane = getattr(backend, 'create_pane', None)
@@ -59,7 +59,7 @@ def respawn_existing_pane(
     respawn,
     now_str_fn: Callable[[], str],
     attach_pane_log_fn: Callable[[object, object, str], None],
-) -> str | None:
+) -> Optional[str]:
     if not callable(respawn) or not pane_id or not str(pane_id).startswith('%'):
         return 'respawn unavailable'
     if not pane_exists(backend, str(pane_id)):
@@ -92,7 +92,7 @@ def create_replacement_pane(
     create_pane,
     now_str_fn: Callable[[], str],
     attach_pane_log_fn: Callable[[object, object, str], None],
-) -> str | None:
+) -> Optional[str]:
     if not callable(create_pane):
         return None
     data = getattr(session, 'data', None)

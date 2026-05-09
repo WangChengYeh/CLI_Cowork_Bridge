@@ -1,12 +1,14 @@
 from __future__ import annotations
 
+from typing import Optional
+
 import platform
 import shutil
 from dataclasses import dataclass
 from pathlib import Path
 
 
-@dataclass(slots=True)
+@dataclass
 class IMessageDoctorResult:
     platform_supported: bool
     osascript_available: bool
@@ -20,9 +22,9 @@ class IMessageDoctorResult:
 
 def run_imessage_doctor(
     *,
-    platform_name: str | None = None,
-    osascript_available: bool | None = None,
-    chat_db_exists: bool | None = None,
+    platform_name: Optional[str] = None,
+    osascript_available: Optional[bool] = None,
+    chat_db_exists: Optional[bool] = None,
 ) -> IMessageDoctorResult:
     notes: list[str] = []
 

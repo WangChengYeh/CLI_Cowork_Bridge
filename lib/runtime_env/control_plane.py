@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 import os
 
 from runtime_env.user_session import USER_SESSION_TRANSPORT_ENV_KEYS
@@ -77,7 +79,7 @@ _CONTROL_PLANE_BLOCKED_EXACT = {
 }
 
 
-def control_plane_env(*, extra: dict[str, str] | None = None) -> dict[str, str]:
+def control_plane_env(*, extra: Optional[dict[str, str]] = None) -> dict[str, str]:
     env: dict[str, str] = {}
     for key, value in os.environ.items():
         if key in _CONTROL_PLANE_BLOCKED_EXACT:

@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -17,8 +19,8 @@ class PreparedStartAgent:
     agent_name: str
     spec: object
     plan: object
-    raw_binding: object | None
-    binding: object | None
+    raw_binding: Optional[object]
+    binding: Optional[object]
     stale_binding: bool
 
 
@@ -30,9 +32,9 @@ def prepare_start_agents(
     context,
     project_root: Path,
     project_id: str,
-    tmux_socket_path: str | None,
-    tmux_session_name: str | None,
-    workspace_window_id: str | None,
+    tmux_socket_path: Optional[str],
+    tmux_session_name: Optional[str],
+    workspace_window_id: Optional[str],
     resolve_agent_binding_fn,
     project_binding_filter_fn,
     restore_state_builder,

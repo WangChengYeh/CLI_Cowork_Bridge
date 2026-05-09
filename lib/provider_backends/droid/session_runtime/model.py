@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -23,7 +25,7 @@ class DroidProjectSession(PaneLogProjectSessionBase):
 
         return session_module.get_backend_for_session(self.data)
 
-    def update_droid_binding(self, *, session_path: Path | None, session_id: str | None) -> None:
+    def update_droid_binding(self, *, session_path: Optional[Path], session_id: Optional[str]) -> None:
         _update_droid_binding_impl(self, session_path=session_path, session_id=session_id)
 
 

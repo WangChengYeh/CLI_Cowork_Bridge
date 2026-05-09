@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from pathlib import Path
 
 from project.discovery import (
@@ -21,7 +23,7 @@ _PROVIDER = "claude"
 _BASE_FILENAME = ".claude-session"
 
 
-def load_claude_session(work_dir: Path) -> object | None:
+def load_claude_session(work_dir: Path) -> Optional[object]:
     session_file = find_bound_session_file(
         provider=_PROVIDER,
         base_filename=_BASE_FILENAME,
@@ -34,7 +36,7 @@ def load_claude_session(work_dir: Path) -> object | None:
     return load_project_session(work_dir, instance)
 
 
-def find_claude_session_file(work_dir: Path) -> Path | None:
+def find_claude_session_file(work_dir: Path) -> Optional[Path]:
     session_file = find_bound_session_file(
         provider=_PROVIDER,
         base_filename=_BASE_FILENAME,
@@ -60,7 +62,7 @@ def find_claude_session_file(work_dir: Path) -> Path | None:
     return project_ccb_dir(project_root) / filename
 
 
-def _instance_from_session_file(session_file: Path) -> str | None:
+def _instance_from_session_file(session_file: Path) -> Optional[str]:
     agent_name = agent_name_from_session_filename(
         provider=_PROVIDER,
         base_filename=_BASE_FILENAME,
@@ -69,7 +71,7 @@ def _instance_from_session_file(session_file: Path) -> str | None:
     return named_agent_instance(agent_name or "", primary_agent=_PROVIDER)
 
 
-def _project_root_for_work_dir(work_dir: Path) -> Path | None:
+def _project_root_for_work_dir(work_dir: Path) -> Optional[Path]:
     try:
         current = Path(work_dir).expanduser().resolve()
     except Exception:

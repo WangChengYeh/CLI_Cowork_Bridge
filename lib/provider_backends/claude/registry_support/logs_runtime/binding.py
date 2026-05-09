@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from pathlib import Path
 
 from provider_backends.claude.session import ClaudeProjectSession
@@ -12,7 +14,7 @@ from .discovery import (
 from .indexing import parse_sessions_index
 
 
-def should_overwrite_binding(current: Path | None, candidate: Path) -> bool:
+def should_overwrite_binding(current: Optional[Path], candidate: Path) -> bool:
     if not current or not current.exists():
         return True
     try:
@@ -67,7 +69,7 @@ def refresh_claude_log_binding(
     )
 
 
-def _current_log_path(session: ClaudeProjectSession) -> Path | None:
+def _current_log_path(session: ClaudeProjectSession) -> Optional[Path]:
     current_log_str = session.claude_session_path
     if not current_log_str:
         return None
@@ -83,14 +85,14 @@ def _intended_log_binding(
     session: ClaudeProjectSession,
     *,
     root: Path,
-) -> tuple[Path | None, str | None]:
+) -> Optional[tuple[Path], Optional[str]]:
     intended_sid = extract_session_id_from_start_cmd(_start_cmd(session))
     if not intended_sid:
         return None, None
     return find_log_for_session_id(intended_sid, root=root), intended_sid
 
 
-def _indexed_log_binding(session: ClaudeProjectSession, *, root: Path) -> Path | None:
+def _indexed_log_binding(session: ClaudeProjectSession, *, root: Path) -> Optional[Path]:
     return parse_sessions_index(Path(session.work_dir), root=root)
 
 
@@ -99,7 +101,7 @@ def _scanned_log_binding(
     *,
     root: Path,
     scan_limit: int,
-) -> tuple[Path | None, str | None]:
+) -> Optional[tuple[Path], Optional[str]]:
     return scan_latest_log_for_work_dir(
         Path(session.work_dir),
         root=root,
@@ -107,20 +109,20 @@ def _scanned_log_binding(
     )
 
 
-def _binding_exists(candidate: Path | None) -> bool:
+def _binding_exists(candidate: Optional[Path]) -> bool:
     return candidate is not None and candidate.exists()
 
 
-def _need_scan(*, force_scan: bool, intended_log: Path | None, index_log: Path | None) -> bool:
+def _need_scan(*, force_scan: bool, intended_log: Optional[Path], index_log: Optional[Path]) -> bool:
     return bool(force_scan or (not intended_log and not index_log))
 
 
 def _refresh_from_candidate(
     session: ClaudeProjectSession,
     *,
-    current_log: Path | None,
+    current_log: Optional[Path],
     candidate_log: Path,
-    candidate_sid: str | None,
+    candidate_sid: Optional[str],
 ) -> bool:
     if not _should_update_session_binding(
         session,
@@ -136,9 +138,9 @@ def _refresh_from_candidate(
 def _should_update_session_binding(
     session: ClaudeProjectSession,
     *,
-    current_log: Path | None,
+    current_log: Optional[Path],
     candidate_log: Path,
-    candidate_sid: str | None,
+    candidate_sid: Optional[str],
 ) -> bool:
     if should_overwrite_binding(current_log, candidate_log):
         return True

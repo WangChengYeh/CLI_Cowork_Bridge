@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 import json
 import re
 
@@ -82,7 +84,7 @@ def _render_toml_value(value: object) -> str:
     raise TypeError(f'unsupported TOML value type: {type(value).__name__}')
 
 
-def _build_hybrid_overlay_payload(config) -> dict[str, object] | None:
+def _build_hybrid_overlay_payload(config) -> Optional[dict[str, object]]:
     compact_agent_defaults = _compact_agent_defaults_by_name(_render_hybrid_layout(config))
     overlay_agents: dict[str, dict[str, object]] = {}
     ordered_names = list(config.default_agents) + [name for name in config.agents if name not in config.default_agents]

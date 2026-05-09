@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from dataclasses import replace
 from pathlib import Path
 
@@ -28,7 +30,7 @@ def stop_all_project(
     cleanup_project_tmux_orphans_by_socket_fn=cleanup_project_tmux_orphans_by_socket,
     tmux_cleanup_history_store_cls=TmuxCleanupHistoryStore,
 ) -> StopAllExecution:
-    tmux_sockets: set[str | None] = set()
+    tmux_sockets: Optional[set[str]] = set()
     pid_candidates: dict[int, list[Path]] = {}
     stopped_agents: list[str] = []
     runtime_store = AgentRuntimeStore(paths)

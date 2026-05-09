@@ -1,10 +1,12 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from .models import ProjectNamespace, ProjectNamespaceDestroySummary
 from ..project_namespace_state import ProjectNamespaceEvent, ProjectNamespaceState
 
 
-def normalized_layout_signature(layout_signature: str | None) -> str | None:
+def normalized_layout_signature(layout_signature: Optional[str]) -> Optional[str]:
     return str(layout_signature or '').strip() or None
 
 
@@ -16,14 +18,14 @@ def build_active_state(
     tmux_socket_path: str,
     tmux_session_name: str,
     layout_version: int,
-    layout_signature: str | None,
-    control_window_name: str | None,
-    control_window_id: str | None,
-    workspace_window_name: str | None,
-    workspace_window_id: str | None,
+    layout_signature: Optional[str],
+    control_window_name: Optional[str],
+    control_window_id: Optional[str],
+    workspace_window_name: Optional[str],
+    workspace_window_id: Optional[str],
     workspace_epoch: int,
     ui_attachable: bool,
-    last_started_at: str | None,
+    last_started_at: Optional[str],
 ):
     return ProjectNamespaceState(
         project_id=project_id,
@@ -74,8 +76,8 @@ def build_destroyed_state(
     tmux_socket_path: str,
     tmux_session_name: str,
     layout_version: int,
-    control_window_name: str | None,
-    workspace_window_name: str | None,
+    control_window_name: Optional[str],
+    workspace_window_name: Optional[str],
 ):
     if current is not None:
         return current.with_destroyed(occurred_at=occurred_at, reason=reason)
@@ -118,7 +120,7 @@ def build_destroyed_event(
 def build_destroy_summary(
     *,
     project_id: str,
-    namespace_epoch: int | None,
+    namespace_epoch: Optional[int],
     tmux_socket_path: str,
     tmux_session_name: str,
     destroyed: bool,

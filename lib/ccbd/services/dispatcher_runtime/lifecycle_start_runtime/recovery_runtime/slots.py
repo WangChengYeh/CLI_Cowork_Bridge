@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from dataclasses import replace
 
 from agents.models import AgentState
@@ -43,7 +45,7 @@ def _refreshed_slot(slot: QueuedTargetSlot, refreshed):
     return replace(slot, runtime=refreshed)
 
 
-def refresh_slot_runtime_for_start(dispatcher, slot: QueuedTargetSlot) -> QueuedTargetSlot | None:
+def refresh_slot_runtime_for_start(dispatcher, slot: QueuedTargetSlot) -> Optional[QueuedTargetSlot]:
     runtime = slot.runtime
     if slot.target_kind is not TargetKind.AGENT or runtime is None:
         return slot

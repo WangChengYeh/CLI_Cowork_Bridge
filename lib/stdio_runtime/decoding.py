@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 import locale
 import os
 import sys
@@ -33,7 +35,7 @@ def decode_stdin_bytes(data: bytes) -> str:
     return data.decode("utf-8", errors="replace")
 
 
-def _decode_with_bom(data: bytes) -> str | None:
+def _decode_with_bom(data: bytes) -> Optional[str]:
     if data.startswith(b"\xef\xbb\xbf"):
         return data.decode("utf-8-sig", errors="strict")
     if data.startswith(b"\xff\xfe"):
@@ -43,7 +45,7 @@ def _decode_with_bom(data: bytes) -> str | None:
     return None
 
 
-def _forced_stdin_encoding() -> str | None:
+def _forced_stdin_encoding() -> Optional[str]:
     value = (os.environ.get("CCB_STDIN_ENCODING") or "").strip()
     return value or None
 
@@ -55,14 +57,14 @@ def _decode_forced(data: bytes, encoding: str) -> str:
         return data.decode(encoding, errors="replace")
 
 
-def _decode_utf8_strict(data: bytes) -> str | None:
+def _decode_utf8_strict(data: bytes) -> Optional[str]:
     try:
         return data.decode("utf-8", errors="strict")
     except UnicodeDecodeError:
         return None
 
 
-def _decode_preferred_locale(data: bytes) -> str | None:
+def _decode_preferred_locale(data: bytes) -> Optional[str]:
     preferred = (locale.getpreferredencoding(False) or "").strip()
     if not preferred:
         return None
@@ -72,7 +74,7 @@ def _decode_preferred_locale(data: bytes) -> str | None:
         return None
 
 
-def _decode_windows_mbcs(data: bytes) -> str | None:
+def _decode_windows_mbcs(data: bytes) -> Optional[str]:
     if sys.platform != "win32":
         return None
     try:

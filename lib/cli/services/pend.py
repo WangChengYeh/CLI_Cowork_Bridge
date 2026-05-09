@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from ccbd.socket_client import CcbdClientError
 from cli.context import CliContext
 from cli.models import ParsedPendCommand
@@ -37,7 +39,7 @@ def _pend_target_with_client(client, target: str) -> dict:
     return payload
 
 
-def _safe_inbox_head(client, agent_name: str) -> dict | None:
+def _safe_inbox_head(client, agent_name: str) -> Optional[dict]:
     inbox_fn = getattr(client, 'inbox', None)
     if not callable(inbox_fn):
         return None

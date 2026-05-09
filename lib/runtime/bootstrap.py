@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -24,7 +26,7 @@ DEFAULT_PARTICIPANTS = {
 }
 
 
-@dataclass(slots=True)
+@dataclass
 class RuntimeBootstrap:
     project_root: Path
     store: RoomEventStore
@@ -40,7 +42,7 @@ def bootstrap_runtime(
     *,
     project_root: Path,
     enable_imessage: bool = False,
-    imessage_allow_senders: set[str] | None = None,
+    imessage_allow_senders: Optional[set[str]] = None,
 ) -> RuntimeBootstrap:
     project_root = Path(project_root)
 

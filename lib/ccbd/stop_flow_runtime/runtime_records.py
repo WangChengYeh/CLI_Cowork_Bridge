@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from pathlib import Path
 
 from agents.store import AgentRuntimeStore
@@ -30,7 +32,7 @@ def best_effort_runtime(*, agent_name: str, configured_agent_names: tuple[str, .
     return runtime_store.load_best_effort(agent_name)
 
 
-def snapshot_for_runtime(runtime) -> CcbdRuntimeSnapshot | None:
+def snapshot_for_runtime(runtime) -> Optional[CcbdRuntimeSnapshot]:
     if runtime is None:
         return None
     try:

@@ -1,10 +1,10 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from enum import StrEnum
+from enum import Enum
 
 
-class RuntimeLifecycleState(StrEnum):
+class RuntimeLifecycleState(str, Enum):
     STOPPED = 'stopped'
     STARTING = 'starting'
     RUNNING = 'running'
@@ -14,7 +14,7 @@ class RuntimeLifecycleState(StrEnum):
     FAILED = 'failed'
 
 
-class RuntimeLifecycleEvent(StrEnum):
+class RuntimeLifecycleEvent(str, Enum):
     START_REQUESTED = 'start_requested'
     STARTED = 'started'
     HEALTH_DEGRADED = 'health_degraded'
@@ -70,7 +70,7 @@ TRANSITIONS: dict[
 }
 
 
-@dataclass(slots=True)
+@dataclass
 class RuntimeLifecycleStateMachine:
     state: RuntimeLifecycleState = RuntimeLifecycleState.STOPPED
 

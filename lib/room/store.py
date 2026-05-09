@@ -3,7 +3,7 @@ from __future__ import annotations
 import json
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Iterable
+from typing import Iterable, Optional
 
 from .models import RoomEvent
 
@@ -12,7 +12,7 @@ class RoomStoreError(RuntimeError):
     pass
 
 
-@dataclass(slots=True)
+@dataclass
 class RoomEventStore:
     root: Path
 
@@ -66,7 +66,7 @@ class RoomEventStore:
                     )
                     continue
 
-    def list_events(self, *, limit: int | None = None) -> list[RoomEvent]:
+    def list_events(self, *, limit: Optional[int] = None) -> list[RoomEvent]:
         events = list(self.iter_events())
         if limit is None:
             return events
@@ -74,7 +74,7 @@ class RoomEventStore:
             raise RoomStoreError('limit cannot be negative')
         return events[-limit:]
 
-    def load_event(self, event_id: str) -> RoomEvent | None:
+    def load_event(self, event_id: str) -> Optional[RoomEvent]:
         for event in self.iter_events():
             if event.event_id == event_id:
                 return event
@@ -99,7 +99,7 @@ class RoomEventStore:
             encoding='utf-8',
         )
 
-    def tail_from_cursor(self, name: str, *, limit: int | None = None) -> tuple[list[RoomEvent], int]:
+    def tail_from_cursor(self, name: str, *, limit: Optional[int] = None) -> tuple[list[RoomEvent], int]:
         offset = self.read_cursor(name)
         events = self.list_events()
         selected = events[offset:]

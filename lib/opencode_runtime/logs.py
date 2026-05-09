@@ -1,12 +1,14 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from datetime import datetime, timezone
 from pathlib import Path
 
 from .paths import OPENCODE_LOG_ROOT
 
 
-def latest_opencode_log_file(root: Path = OPENCODE_LOG_ROOT) -> Path | None:
+def latest_opencode_log_file(root: Path = OPENCODE_LOG_ROOT) -> Optional[Path]:
     try:
         if not root.exists():
             return None
@@ -35,7 +37,7 @@ def is_cancel_log_line(line: str, *, session_id: str) -> bool:
     return False
 
 
-def parse_opencode_log_epoch_s(line: str) -> float | None:
+def parse_opencode_log_epoch_s(line: str) -> Optional[float]:
     try:
         parts = (line or "").split()
         if len(parts) < 2:

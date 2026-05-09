@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Any
+from typing import Any, Optional
 
 from ccbd.models_runtime.common import API_VERSION, SCHEMA_VERSION, CcbdModelError
 
@@ -20,16 +20,16 @@ class CcbdStartupReport:
     desired_agents: tuple[str, ...]
     restore_requested: bool
     auto_permission: bool
-    daemon_generation: int | None = None
-    daemon_started: bool | None = None
-    config_signature: str | None = None
-    inspection: dict[str, Any] | None = None
-    socket_placement: dict[str, Any] | None = None
-    restore_summary: dict[str, Any] | None = None
+    daemon_generation: Optional[int] = None
+    daemon_started: Optional[bool] = None
+    config_signature: Optional[str] = None
+    inspection: Optional[dict[str, Any]] = None
+    socket_placement: Optional[dict[str, Any]] = None
+    restore_summary: Optional[dict[str, Any]] = None
     actions_taken: tuple[str, ...] = ()
     cleanup_summaries: tuple[CcbdTmuxCleanupSummary, ...] = ()
     agent_results: tuple[CcbdStartupAgentResult, ...] = ()
-    failure_reason: str | None = None
+    failure_reason: Optional[str] = None
     api_version: int = API_VERSION
 
     def __post_init__(self) -> None:

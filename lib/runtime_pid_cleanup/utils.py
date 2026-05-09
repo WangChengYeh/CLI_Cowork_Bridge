@@ -1,9 +1,11 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from pathlib import Path
 
 
-def coerce_pid(value: object) -> int | None:
+def coerce_pid(value: object) -> Optional[int]:
     text = str(value or '').strip()
     if not text.isdigit():
         return None

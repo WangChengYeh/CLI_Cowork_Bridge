@@ -100,7 +100,7 @@ def write_session_payload(session_file: Path, payload: dict[str, object]) -> boo
     return ok
 
 
-def maybe_extract_replaced_session(*, old_path: str, new_path: str, work_dir_path: Path | None) -> None:
+def maybe_extract_replaced_session(*, old_path: str, new_path: str, work_dir_path: Optional[Path]) -> None:
     if not old_path or old_path == new_path or work_dir_path is None:
         return
     maybe_auto_extract_old_session(old_path, work_dir_path)

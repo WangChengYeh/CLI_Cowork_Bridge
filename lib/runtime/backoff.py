@@ -4,17 +4,17 @@ import json
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any
+from typing import Any, Optional
 
 
-@dataclass(slots=True)
+@dataclass
 class RestartBackoffDecision:
     allowed: bool
     reason: str
     restart_count: int
 
 
-@dataclass(slots=True)
+@dataclass
 class RestartBackoffPolicy:
     max_restarts: int = 3
     window_seconds: int = 300
@@ -54,7 +54,7 @@ class RestartBackoffStore:
             }
         )
 
-    def record_restart(self, *, now: datetime | None = None) -> dict[str, Any]:
+    def record_restart(self, *, now: Optional[datetime] = None) -> dict[str, Any]:
         record = self.read()
         count = int(record.get('restart_count') or 0) + 1
         now = now or datetime.now(timezone.utc)
@@ -67,7 +67,7 @@ class RestartBackoffStore:
         )
 
 
-def parse_timestamp(value: str | None) -> datetime | None:
+def parse_timestamp(value: Optional[str]) -> Optional[datetime]:
     if not value:
         return None
 
@@ -80,8 +80,8 @@ def parse_timestamp(value: str | None) -> datetime | None:
 def evaluate_restart_backoff(
     *,
     store: RestartBackoffStore,
-    policy: RestartBackoffPolicy | None = None,
-    now: datetime | None = None,
+    policy: Optional[RestartBackoffPolicy] = None,
+    now: Optional[datetime] = None,
 ) -> RestartBackoffDecision:
     policy = policy or RestartBackoffPolicy()
     now = now or datetime.now(timezone.utc)

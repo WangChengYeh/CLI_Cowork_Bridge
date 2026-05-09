@@ -12,7 +12,7 @@ from .project_hash import read_gemini_session_id
 
 def find_gemini_session_file(
     *,
-    cwd: Path | None = None,
+    cwd: Optional[Path] = None,
     finder: Callable[[Path], Optional[Path]],
 ) -> Optional[Path]:
     del finder
@@ -69,7 +69,7 @@ def _merge_session_file_data(result: dict[str, object], session_file: Path) -> N
         result["gemini_session_id"] = _session_id_from_file_data(file_data)
 
 
-def _session_id_from_file_data(file_data: dict[str, object]) -> str | None:
+def _session_id_from_file_data(file_data: dict[str, object]) -> Optional[str]:
     session_id = file_data.get("gemini_session_id")
     if isinstance(session_id, str) and session_id.strip():
         return session_id
@@ -91,7 +91,7 @@ def _project_session_info(*, session_finder: Callable[[], Optional[Path]]):
     return data
 
 
-def _load_json(path: Path) -> dict | None:
+def _load_json(path: Path) -> Optional[dict]:
     try:
         with open(path, "r", encoding="utf-8") as handle:
             data = json.load(handle)
@@ -100,9 +100,9 @@ def _load_json(path: Path) -> dict | None:
     return data if isinstance(data, dict) else None
 
 
-def _active_project_session(data: dict | None) -> bool:
+def _active_project_session(data: Optional[dict]) -> bool:
     return isinstance(data, dict) and bool(data.get("active", False))
 
 
-def _explicitly_inactive_project_session(data: dict | None) -> bool:
+def _explicitly_inactive_project_session(data: Optional[dict]) -> bool:
     return isinstance(data, dict) and data.get('active') is False

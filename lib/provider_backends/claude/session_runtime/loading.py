@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from pathlib import Path
 
 from project.identity import compute_ccb_project_id, compute_worktree_scope_id
@@ -35,14 +37,14 @@ def _build_session(
         session._write_back()
     return session
 
-def _load_session_from_file(session_file: Path, *, fallback_work_dir: Path) -> ClaudeProjectSession | None:
+def _load_session_from_file(session_file: Path, *, fallback_work_dir: Path) -> Optional[ClaudeProjectSession]:
     data = read_json(session_file)
     if not data:
         return None
     return _build_session(session_file=session_file, data=data, fallback_work_dir=fallback_work_dir)
 
 
-def _resolved_session_file(work_dir: Path, *, session_file: Path | None) -> Path | None:
+def _resolved_session_file(work_dir: Path, *, session_file: Optional[Path]) -> Optional[Path]:
     if session_file is not None:
         return session_file
     return find_bound_session_file(
@@ -52,7 +54,7 @@ def _resolved_session_file(work_dir: Path, *, session_file: Path | None) -> Path
     )
 
 
-def _load_resolved_session(work_dir: Path) -> ClaudeProjectSession | None:
+def _load_resolved_session(work_dir: Path) -> Optional[ClaudeProjectSession]:
     resolution = resolve_claude_session(work_dir)
     if not resolution:
         return None
@@ -67,7 +69,7 @@ def _load_resolved_session(work_dir: Path) -> ClaudeProjectSession | None:
     return _build_session(session_file=session_file, data=data, fallback_work_dir=work_dir)
 
 
-def load_project_session(work_dir: Path, instance: str | None = None) -> ClaudeProjectSession | None:
+def load_project_session(work_dir: Path, instance: Optional[str] = None) -> Optional[ClaudeProjectSession]:
     # Named agents must bind only to their own instance-scoped session file.
     # Falling back to the primary session incorrectly aliases agent runtimes.
     if instance:
@@ -86,7 +88,7 @@ def load_project_session(work_dir: Path, instance: str | None = None) -> ClaudeP
     return _load_resolved_session(work_dir)
 
 
-def compute_session_key(session: ClaudeProjectSession, instance: str | None = None) -> str:
+def compute_session_key(session: ClaudeProjectSession, instance: Optional[str] = None) -> str:
     project_id = str(session.data.get("ccb_project_id") or "").strip()
     if not project_id:
         try:

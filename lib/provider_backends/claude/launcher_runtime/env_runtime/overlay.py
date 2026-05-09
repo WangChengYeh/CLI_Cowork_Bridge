@@ -1,10 +1,12 @@
 from __future__ import annotations
 
+from typing import Optional
+
 import json
 from pathlib import Path
 
 
-def write_claude_settings_overlay(runtime_dir: Path, *, profile=None) -> Path | None:
+def write_claude_settings_overlay(runtime_dir: Path, *, profile=None) -> Optional[Path]:
     payload = read_agent_settings_payload(profile)
     if payload is None:
         return None
@@ -17,11 +19,11 @@ def write_claude_settings_overlay(runtime_dir: Path, *, profile=None) -> Path | 
     return settings_path
 
 
-def read_user_settings_payload(user_settings_path: Path) -> dict[str, object] | None:
+def read_user_settings_payload(user_settings_path: Path) -> Optional[dict[str, object]]:
     return read_settings_payload(user_settings_path)
 
 
-def read_settings_payload(path: Path) -> dict[str, object] | None:
+def read_settings_payload(path: Path) -> Optional[dict[str, object]]:
     try:
         payload = json.loads(path.read_text(encoding="utf-8"))
     except Exception:
@@ -31,14 +33,14 @@ def read_settings_payload(path: Path) -> dict[str, object] | None:
     return payload
 
 
-def read_agent_settings_payload(profile) -> dict[str, object] | None:
+def read_agent_settings_payload(profile) -> Optional[dict[str, object]]:
     settings_path = agent_settings_path(profile)
     if settings_path is None:
         return None
     return read_settings_payload(settings_path)
 
 
-def agent_settings_path(profile) -> Path | None:
+def agent_settings_path(profile) -> Optional[Path]:
     if profile is None:
         return None
     profile_root = getattr(profile, 'profile_root_path', None)

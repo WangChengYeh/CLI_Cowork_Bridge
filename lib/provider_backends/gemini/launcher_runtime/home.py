@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 import json
 from pathlib import Path
 import shutil
@@ -36,14 +38,14 @@ def prepare_gemini_home_overrides(runtime_dir: Path, profile) -> dict[str, str]:
     }
 
 
-def _profile_runtime_home(profile) -> Path | None:
+def _profile_runtime_home(profile) -> Optional[Path]:
     runtime_home = getattr(profile, 'runtime_home', None) if profile is not None else None
     if not runtime_home:
         return None
     return Path(runtime_home).expanduser()
 
 
-def _existing_layout(runtime_dir: Path, *, managed_home: Path) -> GeminiHomeLayout | None:
+def _existing_layout(runtime_dir: Path, *, managed_home: Path) -> Optional[GeminiHomeLayout]:
     session_file = session_file_for_runtime_dir(runtime_dir)
     if session_file is None or not session_file.is_file():
         return None
@@ -75,7 +77,7 @@ def _is_within_home_root(candidate: Path, managed_home: Path) -> bool:
         return False
 
 
-def _normalize_path(value: object) -> Path | None:
+def _normalize_path(value: object) -> Optional[Path]:
     try:
         return Path(value).expanduser().resolve()
     except Exception:
@@ -100,7 +102,7 @@ def _ensure_json_file(path: Path) -> None:
     path.write_text('{}\n', encoding='utf-8')
 
 
-def materialize_gemini_home_config(target_home: Path, *, profile=None, source_home: Path | None = None) -> GeminiHomeLayout:
+def materialize_gemini_home_config(target_home: Path, *, profile=None, source_home: Optional[Path] = None) -> GeminiHomeLayout:
     layout = gemini_layout_for_home(target_home)
     _prepare_managed_home(layout)
     source_root = Path(source_home).expanduser() if source_home is not None else _system_home_root()
@@ -148,7 +150,7 @@ def _materialize_auth(source_home: Path, layout: GeminiHomeLayout, *, profile) -
         _sync_file(source_home / '.gemini' / filename, layout.gemini_dir / filename)
 
 
-def _projected_settings_payload(source_settings_path: Path, *, profile) -> dict[str, object] | None:
+def _projected_settings_payload(source_settings_path: Path, *, profile) -> Optional[dict[str, object]]:
     source_payload = _read_json_object(source_settings_path)
     if not source_payload:
         return {} if _needs_settings_stub(profile) else None
@@ -180,10 +182,10 @@ def _projected_settings_payload(source_settings_path: Path, *, profile) -> dict[
 
 
 def _merge_settings_payload(
-    projected: dict[str, object] | None,
+    projected: Optional[dict[str, object]],
     *,
-    existing: dict[str, object] | None,
-) -> dict[str, object] | None:
+    existing: Optional[dict[str, object]],
+) -> Optional[dict[str, object]]:
     projected_payload = dict(projected or {})
     existing_payload = dict(existing or {})
     merged = dict(projected_payload)
@@ -198,16 +200,16 @@ def _merge_settings_payload(
 
 
 def _merge_object_payload(
-    projected: dict[str, object] | None,
+    projected: Optional[dict[str, object]],
     *,
-    existing: dict[str, object] | None,
-) -> dict[str, object] | None:
+    existing: Optional[dict[str, object]],
+) -> Optional[dict[str, object]]:
     merged = dict(projected or {})
     merged.update(dict(existing or {}))
     return merged if merged else None
 
 
-def _read_json_object(path: Path) -> dict[str, object] | None:
+def _read_json_object(path: Path) -> Optional[dict[str, object]]:
     try:
         payload = json.loads(path.read_text(encoding='utf-8'))
     except Exception:
@@ -249,7 +251,7 @@ def _read_env_file(path: Path) -> dict[str, str]:
     return payload
 
 
-def _parse_env_line(line: str) -> tuple[str, str] | None:
+def _parse_env_line(line: str) -> Optional[tuple[str, str]]:
     raw = str(line or '').strip()
     if not raw or raw.startswith('#'):
         return None
@@ -315,7 +317,7 @@ def _should_project_login_auth(source_settings_path: Path, *, profile) -> bool:
     return selected_type in {'oauth-personal'}
 
 
-def _selected_auth_type(payload: dict[str, object] | None) -> str | None:
+def _selected_auth_type(payload: Optional[dict[str, object]]) -> Optional[str]:
     if not isinstance(payload, dict):
         return None
     security = payload.get('security')
@@ -328,7 +330,7 @@ def _selected_auth_type(payload: dict[str, object] | None) -> str | None:
     return raw or None
 
 
-def _projected_auth_selected_type(selected_type: str | None, *, profile) -> str | None:
+def _projected_auth_selected_type(selected_type: Optional[str], *, profile) -> Optional[str]:
     normalized = str(selected_type or '').strip()
     if not normalized:
         return None

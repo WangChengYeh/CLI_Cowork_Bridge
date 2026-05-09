@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from dataclasses import replace
 
 from ccbd.api_models import JobStatus
@@ -15,7 +17,7 @@ def with_retry_failure_reply(
     *,
     attempt_number: int,
     max_attempts: int,
-    scheduling_error: str | None = None,
+    scheduling_error: Optional[str] = None,
 ):
     detail = retry_failure_detail(decision)
     is_fault_drill = str(decision.diagnostics.get('error_type') or '').strip().lower() == 'fault_injection'

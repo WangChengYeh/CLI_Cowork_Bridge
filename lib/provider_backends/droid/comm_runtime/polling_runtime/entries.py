@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 import json
 from pathlib import Path
 
@@ -9,9 +11,9 @@ from ..parsing import extract_message
 def read_new_messages(
     session: Path,
     state: dict[str, object],
-) -> tuple[str | None, dict[str, object]]:
+) -> Optional[tuple[str], dict[str, object]]:
     entries, new_state = read_new_entries(session, state)
-    latest: str | None = None
+    latest: Optional[str] = None
     for entry in entries:
         msg = extract_message(entry, 'assistant')
         if msg:
@@ -51,7 +53,7 @@ def read_new_entries(
     return entries, new_state
 
 
-def _entry_event(entry: dict[str, object]) -> tuple[str, str] | None:
+def _entry_event(entry: dict[str, object]) -> Optional[tuple[str, str]]:
     user_msg = extract_message(entry, 'user')
     if user_msg:
         return 'user', user_msg
@@ -65,7 +67,7 @@ def _reader_state(state: dict[str, object]) -> tuple[int, bytes]:
     return int(state.get('offset') or 0), state.get('carry') or b''
 
 
-def _session_size(session: Path) -> int | None:
+def _session_size(session: Path) -> Optional[int]:
     try:
         return session.stat().st_size
     except OSError:
@@ -78,7 +80,7 @@ def _normalized_reader_state(*, size: int, offset: int, carry: bytes) -> tuple[i
     return offset, carry
 
 
-def _read_bytes(session: Path, offset: int) -> bytes | None:
+def _read_bytes(session: Path, offset: int) -> Optional[bytes]:
     try:
         with session.open('rb') as handle:
             handle.seek(offset)
@@ -104,7 +106,7 @@ def _parse_jsonl_entries(lines: list[bytes]) -> list[dict[str, object]]:
     return entries
 
 
-def _parse_jsonl_entry(raw: bytes) -> dict[str, object] | None:
+def _parse_jsonl_entry(raw: bytes) -> Optional[dict[str, object]]:
     line = raw.strip()
     if not line:
         return None

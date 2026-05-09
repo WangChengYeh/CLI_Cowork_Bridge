@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 
 def should_validate_session(session) -> bool:
     if session_attr_text(session, 'pane_id'):
@@ -26,7 +28,7 @@ def binding_evidence_keys() -> tuple[str, ...]:
     return ('pane_id', 'tmux_session', 'pane_title_marker', 'runtime_dir', 'start_cmd', 'codex_start_cmd')
 
 
-def ensured_pane_id(session) -> str | None:
+def ensured_pane_id(session) -> Optional[str]:
     ensure = getattr(session, 'ensure_pane', None)
     if not callable(ensure):
         return None

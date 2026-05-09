@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from pathlib import Path
 
 
@@ -9,8 +11,8 @@ def usable_project_binding(
     *,
     cmd_enabled: bool,
     tmux_socket_path: str,
-    tmux_session_name: str | None,
-    workspace_window_id: str | None,
+    tmux_session_name: Optional[str],
+    workspace_window_id: Optional[str],
     agent_name: str,
     project_id: str,
 ):
@@ -34,8 +36,8 @@ def launch_binding_hint(
     binding,
     raw_binding,
     stale_binding: bool,
-    assigned_pane_id: str | None,
-    tmux_socket_path: str | None,
+    assigned_pane_id: Optional[str],
+    tmux_socket_path: Optional[str],
 ):
     return deps.launch_binding_hint_impl(
         binding=binding,
@@ -54,9 +56,9 @@ def relabel_project_namespace_pane(
     agent_name: str,
     project_id: str,
     style_index: int,
-    tmux_socket_path: str | None,
-    namespace_epoch: int | None,
-) -> str | None:
+    tmux_socket_path: Optional[str],
+    namespace_epoch: Optional[int],
+) -> Optional[str]:
     return deps.relabel_project_namespace_pane_impl(
         binding=binding,
         agent_name=agent_name,
@@ -76,9 +78,9 @@ def bootstrap_project_namespace_cmd_pane(
     pane_id: str,
     project_root: Path,
     project_id: str,
-    tmux_socket_path: str | None,
-    namespace_epoch: int | None,
-) -> str | None:
+    tmux_socket_path: Optional[str],
+    namespace_epoch: Optional[int],
+) -> Optional[str]:
     return deps.bootstrap_project_namespace_cmd_pane_impl(
         pane_id=pane_id,
         project_root=project_root,

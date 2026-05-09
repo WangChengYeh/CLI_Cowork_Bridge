@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from dataclasses import replace
 
 from agents.models import AgentState, RuntimeMode
@@ -40,7 +42,7 @@ def align_runtime_authority(ctx: RuntimeSupervisionContext, runtime):
     )
 
 
-def authority_adopt_required(runtime, *, next_generation: int | None) -> bool:
+def authority_adopt_required(runtime, *, next_generation: Optional[int]) -> bool:
     if next_generation is None:
         return False
     if runtime.state not in {AgentState.IDLE, AgentState.BUSY, AgentState.DEGRADED}:
@@ -138,7 +140,7 @@ def project_namespace_reflow_safe(ctx: RuntimeSupervisionContext, agent_name: st
     return not other_project_agent_busy(ctx, agent_name)
 
 
-def resolved_reconcile_state(runtime) -> str | None:
+def resolved_reconcile_state(runtime) -> Optional[str]:
     reconcile_state = runtime.reconcile_state
     if runtime.state is AgentState.STOPPED:
         return 'stopped'
@@ -181,7 +183,7 @@ def recovered_pane_replaced(runtime, recovered) -> bool:
     return previous_pane_id != current_pane_id
 
 
-def runtime_active_pane_id(runtime) -> str | None:
+def runtime_active_pane_id(runtime) -> Optional[str]:
     for field_name in ('active_pane_id', 'pane_id'):
         pane_id = str(getattr(runtime, field_name, None) or '').strip()
         if pane_id.startswith('%'):

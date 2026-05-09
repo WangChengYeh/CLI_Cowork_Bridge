@@ -1,13 +1,13 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Any
+from typing import Any, Optional
 
 
 @dataclass(frozen=True)
 class AgentApiSpec:
-    key: str | None = None
-    url: str | None = None
+    key: Optional[str] = None
+    url: Optional[str] = None
 
     def __post_init__(self) -> None:
         object.__setattr__(self, 'key', _normalize_text(self.key))
@@ -22,7 +22,7 @@ class AgentApiSpec:
         return record
 
 
-def _normalize_text(value: object) -> str | None:
+def _normalize_text(value: object) -> Optional[str]:
     if value is None:
         return None
     normalized = str(value).strip()

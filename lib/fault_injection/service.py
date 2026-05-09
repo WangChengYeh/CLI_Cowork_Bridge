@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from dataclasses import dataclass, replace
 from uuid import uuid4
 
@@ -38,7 +40,7 @@ class FaultInjectionService:
         layout: PathLayout,
         *,
         clock,
-        store: FaultInjectionStore | None = None,
+        store: Optional[FaultInjectionStore] = None,
     ) -> None:
         self._layout = layout
         self._clock = clock
@@ -59,7 +61,7 @@ class FaultInjectionService:
         task_id: str,
         reason: str,
         count: int,
-        error_message: str | None = None,
+        error_message: Optional[str] = None,
     ) -> FaultRule:
         now = self._clock()
         rule = FaultRule(
@@ -97,7 +99,7 @@ class FaultInjectionService:
         self._store.save_rules(tuple(kept))
         return tuple(cleared)
 
-    def consume_for_job(self, job: JobRecord, *, now: str | None = None) -> ConsumedFault | None:
+    def consume_for_job(self, job: JobRecord, *, now: Optional[str] = None) -> Optional[ConsumedFault]:
         task_id = str(job.request.task_id or '').strip()
         if not task_id:
             return None

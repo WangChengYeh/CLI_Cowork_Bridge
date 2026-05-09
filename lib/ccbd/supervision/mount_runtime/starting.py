@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from dataclasses import replace
 
 from agents.models import AgentState
@@ -66,7 +68,7 @@ def build_starting_runtime(
     return registry.upsert_authority(candidate)
 
 
-def authority_adopt_required(runtime, *, generation: int | None) -> bool:
+def authority_adopt_required(runtime, *, generation: Optional[int]) -> bool:
     if generation is None:
         return False
     if runtime.state not in {AgentState.IDLE, AgentState.BUSY, AgentState.DEGRADED}:

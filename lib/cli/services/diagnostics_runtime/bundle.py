@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from pathlib import Path
 import tempfile
-from typing import Any
+from typing import Any, Optional
 
 from ccbd.system import utc_now
 
@@ -49,7 +49,7 @@ def export_diagnostic_bundle(context, command) -> DiagnosticBundleSummary:
     return _bundle_summary(context, output_path=output_path, bundle_id=bundle_id, doctor_error=doctor_error, entries=entries)
 
 
-def _doctor_payload(context) -> tuple[dict[str, Any], str | None]:
+def _doctor_payload(context) -> tuple[dict[str, Any], Optional[str]]:
     try:
         return doctor_summary(context), None
     except Exception as exc:
@@ -74,7 +74,7 @@ def resolve_output_path(context, command, *, bundle_id: str) -> Path:
     return context.paths.support_bundle_path(bundle_id)
 
 
-def _write_generated_payloads(stage_root: Path, *, context, bundle_id: str, generated_at: str, doctor_payload: dict[str, Any], doctor_error: str | None) -> None:
+def _write_generated_payloads(stage_root: Path, *, context, bundle_id: str, generated_at: str, doctor_payload: dict[str, Any], doctor_error: Optional[str]) -> None:
     write_json(stage_root / 'generated' / 'doctor.json', doctor_payload)
     write_json(
         stage_root / 'generated' / 'bundle-metadata.json',
@@ -88,7 +88,7 @@ def _write_generated_payloads(stage_root: Path, *, context, bundle_id: str, gene
     )
 
 
-def _bundle_manifest(*, context, generated_at: str, bundle_id: str, doctor_error: str | None, entries: list[DiagnosticBundleEntry]) -> dict[str, Any]:
+def _bundle_manifest(*, context, generated_at: str, bundle_id: str, doctor_error: Optional[str], entries: list[DiagnosticBundleEntry]) -> dict[str, Any]:
     return {
         'schema_version': 1,
         'record_type': 'ccbd_diagnostic_bundle',
@@ -112,7 +112,7 @@ def _bundle_manifest(*, context, generated_at: str, bundle_id: str, doctor_error
     }
 
 
-def _bundle_summary(context, *, output_path: Path, bundle_id: str, doctor_error: str | None, entries: list[DiagnosticBundleEntry]) -> DiagnosticBundleSummary:
+def _bundle_summary(context, *, output_path: Path, bundle_id: str, doctor_error: Optional[str], entries: list[DiagnosticBundleEntry]) -> DiagnosticBundleSummary:
     included_count = sum(1 for entry in entries if entry.status == 'included')
     missing_count = sum(1 for entry in entries if entry.status == 'missing')
     truncated_count = sum(1 for entry in entries if entry.truncated)

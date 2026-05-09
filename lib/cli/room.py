@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from pathlib import Path
 
 from room.models import RoomEvent, RoomEventType, RoomSource
@@ -19,7 +21,7 @@ def send_room_message(
     text: str,
     *,
     project_root: Path,
-    participants: set[str] | None = None,
+    participants: Optional[set[str]] = None,
     sender: str = 'you',
     source: RoomSource = RoomSource.CLI,
 ) -> RoomEvent:
@@ -59,7 +61,7 @@ def send_room_message(
 def list_room_events(
     *,
     project_root: Path,
-    limit: int | None = None,
+    limit: Optional[int] = None,
 ) -> list[RoomEvent]:
     return room_store_for_project(project_root).list_events(limit=limit)
 

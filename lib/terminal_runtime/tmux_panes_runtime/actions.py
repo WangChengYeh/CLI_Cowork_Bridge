@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 import subprocess
 
 
@@ -54,8 +56,8 @@ def set_pane_style(
     service,
     pane_id: str,
     *,
-    border_style: str | None = None,
-    active_border_style: str | None = None,
+    border_style: Optional[str] = None,
+    active_border_style: Optional[str] = None,
 ) -> None:
     if not pane_id:
         return
@@ -113,7 +115,7 @@ def split_window_error_text(
     )
 
 
-def set_pane_option(service, pane_id: str, option: str, value: str | None) -> None:
+def set_pane_option(service, pane_id: str, option: str, value: Optional[str]) -> None:
     if not value:
         return
     service.tmux_run_fn(["set-option", "-p", "-t", pane_id, option, value], check=False, capture=True)

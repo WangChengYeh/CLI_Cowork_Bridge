@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from datetime import datetime, timezone
 from pathlib import Path
 import os
@@ -40,7 +42,7 @@ def read_boot_id() -> str:
     return platform.node() or 'unknown-boot'
 
 
-def process_exists(pid: int | None) -> bool:
+def process_exists(pid: Optional[int]) -> bool:
     if pid is None or pid <= 0:
         return False
     try:

@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from dataclasses import dataclass
 
 from agents.models import ProjectConfig, ProjectLayoutPlan, build_project_layout_plan
@@ -10,7 +12,7 @@ from terminal_runtime.tmux_identity import apply_ccb_pane_identity
 
 @dataclass(frozen=True)
 class TmuxStartLayout:
-    cmd_pane_id: str | None
+    cmd_pane_id: Optional[str]
     agent_panes: dict[str, str]
 
 
@@ -20,8 +22,8 @@ def prepare_tmux_start_layout(
     config: ProjectConfig,
     targets: tuple[str, ...],
     tmux_backend=None,
-    root_pane_id: str | None = None,
-    layout_plan: ProjectLayoutPlan | None = None,
+    root_pane_id: Optional[str] = None,
+    layout_plan: Optional[ProjectLayoutPlan] = None,
 ) -> TmuxStartLayout:
     if not targets:
         return TmuxStartLayout(cmd_pane_id=None, agent_panes={})
@@ -115,9 +117,9 @@ def _label_pane(
     title: str,
     agent_label: str,
     project_id: str,
-    order_index: int | None = None,
+    order_index: Optional[int] = None,
     is_cmd: bool = False,
-    slot_key: str | None = None,
+    slot_key: Optional[str] = None,
 ) -> None:
     apply_ccb_pane_identity(
         backend,

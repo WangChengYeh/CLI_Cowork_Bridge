@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from completion.models import CompletionCursor, CompletionItem, CompletionItemKind
 
 from provider_execution.base import ProviderSubmission
@@ -12,7 +14,7 @@ def build_item(
     timestamp: str,
     seq: int,
     payload: dict[str, object],
-    cursor_kwargs: dict[str, object] | None = None,
+    cursor_kwargs: Optional[dict[str, object]] = None,
 ) -> CompletionItem:
     cursor_payload = {'source_kind': submission.source_kind, 'event_seq': seq, 'updated_at': timestamp}
     if cursor_kwargs:
@@ -28,7 +30,7 @@ def build_item(
     )
 
 
-def request_anchor_from_runtime_state(runtime_state: dict[str, object] | None, *, fallback: str | None = None) -> str:
+def request_anchor_from_runtime_state(runtime_state: Optional[dict[str, object]], *, fallback: Optional[str] = None) -> str:
     if not isinstance(runtime_state, dict):
         return str(fallback or '').strip()
     return str(runtime_state.get('request_anchor') or runtime_state.get('req_id') or fallback or '').strip()

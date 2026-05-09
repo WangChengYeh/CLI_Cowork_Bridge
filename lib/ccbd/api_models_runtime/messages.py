@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Any
+from typing import Any, Optional
 
 from agents.models import normalize_agent_name
 from mailbox_runtime.targets import normalize_actor_name
@@ -15,8 +15,8 @@ class MessageEnvelope:
     to_agent: str
     from_actor: str
     body: str
-    task_id: str | None
-    reply_to: str | None
+    task_id: Optional[str]
+    reply_to: Optional[str]
     message_type: str
     delivery_scope: DeliveryScope
     silence_on_success: bool = False

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Any
+from typing import Any, Optional
 
 from agents.models import normalize_agent_name
 
@@ -37,12 +37,12 @@ class ProviderHealthSnapshot:
     provider: str
     agent_name: str
     runtime_alive: bool
-    session_reachable: bool | None
+    session_reachable: Optional[bool]
     progress_state: ProgressState
     completion_state: ProviderCompletionState
-    last_progress_at: str | None
+    last_progress_at: Optional[str]
     observed_at: str
-    degraded_reason: str | None = None
+    degraded_reason: Optional[str] = None
     diagnostics: dict[str, Any] = field(default_factory=dict)
 
     def __post_init__(self) -> None:

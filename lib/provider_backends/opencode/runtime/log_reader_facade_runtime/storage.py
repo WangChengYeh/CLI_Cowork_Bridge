@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Any
+from typing import Any, Optional
 
 from opencode_runtime.storage import OpenCodeStorageAccessor
 
@@ -30,7 +30,7 @@ class OpenCodeStorageMixin:
     def _opencode_db_candidates(self) -> list[Path]:
         return self._storage.opencode_db_candidates()
 
-    def _resolve_opencode_db_path(self) -> Path | None:
+    def _resolve_opencode_db_path(self) -> Optional[Path]:
         return self._storage.resolve_opencode_db_path()
 
     def _fetch_opencode_db_rows(self, query: str, params: tuple[object, ...]) -> list:

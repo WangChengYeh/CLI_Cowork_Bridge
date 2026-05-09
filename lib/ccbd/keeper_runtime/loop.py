@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from pathlib import Path
 
 from agents.config_identity import project_config_identity_payload
@@ -120,7 +122,7 @@ def ensure_project_lifecycle(app, *, inspection, now: str):
     return lifecycle
 
 
-def reconcile_connectable_daemon(app, *, state: KeeperState, inspection, lifecycle, now: str) -> KeeperState | None:
+def reconcile_connectable_daemon(app, *, state: KeeperState, inspection, lifecycle, now: str) -> Optional[KeeperState]:
     if not inspection.socket_connectable:
         return None
     try:
@@ -157,7 +159,7 @@ def reconcile_connectable_daemon(app, *, state: KeeperState, inspection, lifecyc
         return state.with_failure(occurred_at=now, reason=failure_reason)
 
 
-def restart_state_from_inspection(app, *, state: KeeperState, inspection, occurred_at: str) -> KeeperState | None:
+def restart_state_from_inspection(app, *, state: KeeperState, inspection, occurred_at: str) -> Optional[KeeperState]:
     stale = stale_restart_state(app, state=state, inspection=inspection, occurred_at=occurred_at)
     if stale is not None:
         return stale
@@ -166,7 +168,7 @@ def restart_state_from_inspection(app, *, state: KeeperState, inspection, occurr
     return None
 
 
-def stale_restart_state(app, *, state: KeeperState, inspection, occurred_at: str) -> KeeperState | None:
+def stale_restart_state(app, *, state: KeeperState, inspection, occurred_at: str) -> Optional[KeeperState]:
     if inspection.health is not LeaseHealth.STALE or not inspection.pid_alive or inspection.lease is None:
         return None
     pid = int(inspection.lease.ccbd_pid or 0)
@@ -198,7 +200,7 @@ def request_shutdown(app) -> None:
             app._terminate_pid_tree(int(inspection.lease.ccbd_pid or 0), timeout_s=1.0)
 
 
-def current_config_signature(app) -> str | None:
+def current_config_signature(app) -> Optional[str]:
     try:
         config = load_project_config(app.project_root).config
     except Exception:
@@ -206,7 +208,7 @@ def current_config_signature(app) -> str | None:
     return str(project_config_identity_payload(config)['config_signature'])
 
 
-def _current_namespace_epoch(app, *, fallback: int | None) -> int | None:
+def _current_namespace_epoch(app, *, fallback: Optional[int]) -> Optional[int]:
     try:
         state = ProjectNamespaceStateStore(app.paths).load()
     except Exception:

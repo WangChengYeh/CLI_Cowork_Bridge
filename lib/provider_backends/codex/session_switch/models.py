@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -51,7 +53,7 @@ class SwitchEvidence:
 class SwitchDecision:
     state: str
     reason: str
-    candidate: SwitchCandidate | None
+    candidate: Optional[SwitchCandidate]
     evidence: SwitchEvidence
 
     def to_record(self) -> dict[str, object]:

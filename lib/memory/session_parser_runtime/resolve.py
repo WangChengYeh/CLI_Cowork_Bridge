@@ -120,7 +120,7 @@ def _project_path_matches(session: dict, work_dir_str: str) -> bool:
     return bool(project_path and work_dir_str.startswith(project_path))
 
 
-def _latest_index_session_id(candidates: list[dict]) -> str | None:
+def _latest_index_session_id(candidates: list[dict]) -> Optional[str]:
     if not candidates:
         return None
     candidates.sort(key=lambda item: item.get("lastModified", 0), reverse=True)

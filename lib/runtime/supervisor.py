@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -10,7 +12,7 @@ from .event_loop import RuntimeEventLoop, RuntimeLoopResult
 from .worker import RuntimeWorker, RuntimeWorkerRegistry
 
 
-@dataclass(slots=True)
+@dataclass
 class SupervisorStatus:
     worker_count: int
     cursor_name: str
@@ -21,8 +23,8 @@ class RuntimeSupervisor:
         self,
         *,
         project_root: Path,
-        store: RoomEventStore | None = None,
-        event_loop: RuntimeEventLoop | None = None,
+        store: Optional[RoomEventStore] = None,
+        event_loop: Optional[RuntimeEventLoop] = None,
     ) -> None:
         self.project_root = project_root
         self.store = store or RoomEventStore(project_root / '.ccb' / 'room')

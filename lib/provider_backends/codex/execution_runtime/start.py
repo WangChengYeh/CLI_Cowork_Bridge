@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from dataclasses import replace
 from pathlib import Path
-from typing import Callable
+from typing import Callable, Optional
 
 from ccbd.api_models import JobRecord
 from completion.models import CompletionSourceKind
@@ -16,12 +16,12 @@ def start_active_submission(
     adapter,
     job: JobRecord,
     *,
-    context: ProviderRuntimeContext | None,
+    context: Optional[ProviderRuntimeContext],
     now: str,
-    load_session_fn: Callable[[Path, str], object | None],
-    backend_for_session_fn: Callable[[dict], object | None],
-    reader_factory: Callable[[object, Path | None], object],
-    request_anchor_fn: Callable[[str | None], str],
+    load_session_fn: Callable[[Path, str], Optional[object]],
+    backend_for_session_fn: Callable[[dict], Optional[object]],
+    reader_factory: Callable[[object, Optional[Path]], object],
+    request_anchor_fn: Optional[Callable[[str]], str],
     wrap_prompt_fn: Callable[[str, str], str],
 ) -> ProviderSubmission:
     prepared = prepare_active_start(
@@ -79,11 +79,11 @@ def resume_submission(
     job: JobRecord,
     submission: ProviderSubmission,
     *,
-    context: ProviderRuntimeContext | None,
-    load_session_fn: Callable[[Path, str], object | None],
-    backend_for_session_fn: Callable[[dict], object | None],
-    reader_factory: Callable[[object, Path | None], object],
-) -> ProviderSubmission | None:
+    context: Optional[ProviderRuntimeContext],
+    load_session_fn: Callable[[Path, str], Optional[object]],
+    backend_for_session_fn: Callable[[dict], Optional[object]],
+    reader_factory: Callable[[object, Optional[Path]], object],
+) -> Optional[ProviderSubmission]:
     if context is None or not context.workspace_path:
         return None
     state = dict(submission.runtime_state)
@@ -124,7 +124,7 @@ def load_session(load_project_session_fn, work_dir: Path, *, agent_name: str):
     return load_project_session_fn(work_dir)
 
 
-def preferred_log_path(state: dict[str, object]) -> Path | None:
+def preferred_log_path(state: dict[str, object]) -> Optional[Path]:
     raw = state.get('session_path') or state_session_path(state.get('state') or {})
     session_path = normalize_session_path(raw)
     if not session_path:

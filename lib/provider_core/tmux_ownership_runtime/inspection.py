@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from dataclasses import dataclass
 
 from .session import session_user_option_lookup
@@ -8,11 +10,11 @@ from .session import session_user_option_lookup
 @dataclass(frozen=True)
 class TmuxPaneOwnership:
     state: str
-    pane_id: str | None = None
-    pane_title: str | None = None
+    pane_id: Optional[str] = None
+    pane_title: Optional[str] = None
     expected_options: tuple[tuple[str, str], ...] = ()
     actual_options: tuple[tuple[str, str], ...] = ()
-    reason: str | None = None
+    reason: Optional[str] = None
 
     @property
     def is_owned(self) -> bool:
@@ -54,7 +56,7 @@ def inspect_described_pane(
     backend,
     pane_id: str,
     expected_items: tuple[tuple[str, str], ...],
-) -> TmuxPaneOwnership | None:
+) -> Optional[TmuxPaneOwnership]:
     described = describe_pane(backend, pane_id, expected_items)
     if not isinstance(described, dict):
         return None
@@ -99,7 +101,7 @@ def inspect_listed_panes(
     backend,
     pane_id: str,
     expected_items: tuple[tuple[str, str], ...],
-) -> TmuxPaneOwnership | None:
+) -> Optional[TmuxPaneOwnership]:
     matches = listed_pane_matches(backend, expected_items)
     if matches is None:
         return None
@@ -122,7 +124,7 @@ def inspect_listed_panes(
 def listed_pane_matches(
     backend,
     expected_items: tuple[tuple[str, str], ...],
-) -> tuple[str, ...] | None:
+) -> Optional[tuple[str, ...]]:
     lister = getattr(backend, 'list_panes_by_user_options', None)
     if not callable(lister):
         return None

@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from pathlib import Path
 
 
@@ -8,7 +10,7 @@ def normalize_session_path(value: object) -> str:
     return str(normalized) if normalized is not None else ''
 
 
-def preferred_session_path(session_path: str, session_ref: str | None) -> Path | None:
+def preferred_session_path(session_path: str, session_ref: Optional[str]) -> Optional[Path]:
     preferred = expand_path(session_path)
     if preferred is not None:
         return preferred
@@ -18,7 +20,7 @@ def preferred_session_path(session_path: str, session_ref: str | None) -> Path |
     return expand_path(ref)
 
 
-def expand_path(value: object) -> Path | None:
+def expand_path(value: object) -> Optional[Path]:
     if isinstance(value, Path):
         return value.expanduser()
     if not isinstance(value, str) or not value.strip():

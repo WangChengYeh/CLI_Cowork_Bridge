@@ -1,12 +1,14 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from .backend import build_backend
 
 
 def list_project_tmux_panes(
     *,
     project_id: str,
-    socket_name: str | None,
+    socket_name: Optional[str],
     backend_factory,
     tmux_available_fn,
 ) -> tuple[str, ...]:

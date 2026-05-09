@@ -3,7 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass, replace
 import os
 from pathlib import Path
-from typing import Any
+from typing import Any, Optional
 
 from ccbd.models import MountState, SCHEMA_VERSION
 from storage.json_store import JsonStore
@@ -15,12 +15,12 @@ _DESIRED_STATES = {'running', 'stopped'}
 _PHASES = {'unmounted', 'starting', 'mounted', 'stopping', 'failed'}
 
 
-def _clean_text(value: object) -> str | None:
+def _clean_text(value: object) -> Optional[str]:
     text = str(value or '').strip()
     return text or None
 
 
-def _clean_positive_int(value: object) -> int | None:
+def _clean_positive_int(value: object) -> Optional[int]:
     if value is None:
         return None
     text = str(value).strip()
@@ -39,19 +39,19 @@ class CcbdLifecycle:
     phase: str
     generation: int
     phase_started_at: str
-    startup_id: str | None = None
-    startup_stage: str | None = None
-    last_progress_at: str | None = None
-    startup_deadline_at: str | None = None
-    keeper_pid: int | None = None
-    owner_pid: int | None = None
-    owner_daemon_instance_id: str | None = None
-    config_signature: str | None = None
-    socket_path: str | None = None
-    socket_inode: int | None = None
-    namespace_epoch: int | None = None
-    last_failure_reason: str | None = None
-    shutdown_intent: str | None = None
+    startup_id: Optional[str] = None
+    startup_stage: Optional[str] = None
+    last_progress_at: Optional[str] = None
+    startup_deadline_at: Optional[str] = None
+    keeper_pid: Optional[int] = None
+    owner_pid: Optional[int] = None
+    owner_daemon_instance_id: Optional[str] = None
+    config_signature: Optional[str] = None
+    socket_path: Optional[str] = None
+    socket_inode: Optional[int] = None
+    namespace_epoch: Optional[int] = None
+    last_failure_reason: Optional[str] = None
+    shutdown_intent: Optional[str] = None
 
     def __post_init__(self) -> None:
         if not str(self.project_id or '').strip():
@@ -132,11 +132,11 @@ class CcbdLifecycle:
 
 
 class CcbdLifecycleStore:
-    def __init__(self, layout: PathLayout, store: JsonStore | None = None) -> None:
+    def __init__(self, layout: PathLayout, store: Optional[JsonStore] = None) -> None:
         self._layout = layout
         self._store = store or JsonStore()
 
-    def load(self) -> CcbdLifecycle | None:
+    def load(self) -> Optional[CcbdLifecycle]:
         path = self._layout.ccbd_lifecycle_path
         if not path.exists():
             return None
@@ -153,19 +153,19 @@ def build_lifecycle(
     desired_state: str,
     phase: str,
     generation: int,
-    startup_id: str | None = None,
-    startup_stage: str | None = None,
-    last_progress_at: str | None = None,
-    startup_deadline_at: str | None = None,
-    keeper_pid: int | None = None,
-    owner_pid: int | None = None,
-    owner_daemon_instance_id: str | None = None,
-    config_signature: str | None = None,
-    socket_path: str | Path | None = None,
-    socket_inode: int | None = None,
-    namespace_epoch: int | None = None,
-    last_failure_reason: str | None = None,
-    shutdown_intent: str | None = None,
+    startup_id: Optional[str] = None,
+    startup_stage: Optional[str] = None,
+    last_progress_at: Optional[str] = None,
+    startup_deadline_at: Optional[str] = None,
+    keeper_pid: Optional[int] = None,
+    owner_pid: Optional[int] = None,
+    owner_daemon_instance_id: Optional[str] = None,
+    config_signature: Optional[str] = None,
+    socket_path: str | Optional[Path] = None,
+    socket_inode: Optional[int] = None,
+    namespace_epoch: Optional[int] = None,
+    last_failure_reason: Optional[str] = None,
+    shutdown_intent: Optional[str] = None,
 ) -> CcbdLifecycle:
     return CcbdLifecycle(
         project_id=project_id,
@@ -194,8 +194,8 @@ def lifecycle_from_inspection(
     project_id: str,
     inspection,
     occurred_at: str,
-    config_signature: str | None = None,
-    keeper_pid: int | None = None,
+    config_signature: Optional[str] = None,
+    keeper_pid: Optional[int] = None,
 ) -> CcbdLifecycle:
     lease = getattr(inspection, 'lease', None)
     if lease is None:
@@ -233,7 +233,7 @@ def lifecycle_from_inspection(
     )
 
 
-def current_socket_inode(path: str | Path | None) -> int | None:
+def current_socket_inode(path: str | Optional[Path]) -> Optional[int]:
     if not path:
         return None
     try:

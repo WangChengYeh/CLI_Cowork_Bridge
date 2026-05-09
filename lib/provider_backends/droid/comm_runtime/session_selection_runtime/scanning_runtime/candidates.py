@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 import heapq
 from pathlib import Path
 
@@ -20,8 +22,8 @@ def top_recent_candidates(reader) -> list[Path]:
     return [Path(path_str) for _, path_str in sorted(heap, key=lambda item: item[0], reverse=True)]
 
 
-def latest_candidate_any_project(reader) -> Path | None:
-    latest: Path | None = None
+def latest_candidate_any_project(reader) -> Optional[Path]:
+    latest: Optional[Path] = None
     latest_mtime = -1.0
     for path in _iter_log_paths(reader):
         mtime = _read_mtime(path)
@@ -53,7 +55,7 @@ def _iter_log_paths(reader):
         return
 
 
-def _read_mtime(path: Path) -> float | None:
+def _read_mtime(path: Path) -> Optional[float]:
     try:
         return path.stat().st_mtime
     except OSError:

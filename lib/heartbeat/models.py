@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from enum import Enum
-from typing import Any
+from typing import Any, Optional
 
 
 SCHEMA_VERSION = 1
@@ -19,7 +19,7 @@ class HeartbeatAction(str, Enum):
 class HeartbeatPolicy:
     silence_start_after_s: float
     repeat_interval_s: float
-    max_notice_count: int | None = None
+    max_notice_count: Optional[int] = None
 
     def __post_init__(self) -> None:
         if float(self.silence_start_after_s) < 0:
@@ -36,8 +36,8 @@ class HeartbeatState:
     subject_id: str
     owner: str
     last_progress_at: str
-    last_notice_at: str | None
-    heartbeat_started_at: str | None
+    last_notice_at: Optional[str]
+    heartbeat_started_at: Optional[str]
     notice_count: int
     updated_at: str
 
@@ -94,7 +94,7 @@ class HeartbeatDecision:
     subject_id: str
     owner: str
     last_progress_at: str
-    last_notice_at: str | None
+    last_notice_at: Optional[str]
     silence_seconds: float
     notice_count: int
 

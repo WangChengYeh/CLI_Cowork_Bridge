@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import json
-from typing import Any
+from typing import Any, Optional
 
 from ..session_selection import latest_session
 from .context import build_cursor, current_state_payload
@@ -15,7 +15,7 @@ def read_since(
     state: dict[str, Any],
     timeout: float,
     block: bool,
-) -> tuple[str | None, dict[str, Any]]:
+) -> Optional[tuple[str], dict[str, Any]]:
     cursor = build_cursor(state, timeout=timeout)
 
     while True:

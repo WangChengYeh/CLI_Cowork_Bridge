@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from ccbd.api_models import TargetKind
 
 
@@ -17,7 +19,7 @@ class DispatcherStateQueueMixin:
     def enqueue_for(self, target_kind: TargetKind | str, target_name: str, job_id: str) -> None:
         self._ensure_queue(self._normalize_slot(target_kind, target_name)).push(job_id)
 
-    def pop_next_for(self, target_kind: TargetKind | str, target_name: str) -> str | None:
+    def pop_next_for(self, target_kind: TargetKind | str, target_name: str) -> Optional[str]:
         return self._ensure_queue(self._normalize_slot(target_kind, target_name)).pop()
 
     def queued_items_for(self, target_kind: TargetKind | str, target_name: str) -> tuple[str, ...]:

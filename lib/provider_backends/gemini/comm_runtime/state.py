@@ -2,12 +2,12 @@ from __future__ import annotations
 
 import os
 from pathlib import Path
-from typing import Any
+from typing import Any, Optional
 
 from .project_hash import get_project_hash, normalize_project_path, project_hash_candidates
 
 
-def initialize_reader(reader, *, root: Path, work_dir: Path | None) -> None:
+def initialize_reader(reader, *, root: Path, work_dir: Optional[Path]) -> None:
     reader.root = Path(root).expanduser()
     reader.work_dir = work_dir or Path.cwd()
     reader._work_dir_norm = normalize_project_path(reader.work_dir)
@@ -34,13 +34,13 @@ def initialize_reader(reader, *, root: Path, work_dir: Path | None) -> None:
 
 def state_payload(
     *,
-    session: Path | None,
+    session: Optional[Path],
     msg_count: int,
     mtime: float,
     mtime_ns: int,
     size: int,
-    last_gemini_id: str | None,
-    last_gemini_hash: str | None,
+    last_gemini_id: Optional[str],
+    last_gemini_hash: Optional[str],
     last_tool_call_count: int = 0,
     last_thought_count: int = 0,
 ) -> dict[str, Any]:

@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TextIO
+from typing import Optional, TextIO
 import os
 
 
@@ -24,8 +24,8 @@ def write_ask_usage(
     out: TextIO,
     *,
     command_name: str,
-    error: str | None = None,
-    alias_note: str | None = None,
+    error: Optional[str] = None,
+    alias_note: Optional[str] = None,
 ) -> None:
     if error:
         print(f"error: {error}", file=out)

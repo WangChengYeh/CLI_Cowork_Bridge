@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 import json
 
 from ccbd.api_models import RpcRequest, RpcResponse
@@ -8,7 +10,7 @@ _REQUEST_READ_TIMEOUT_S = 0.5
 _MAX_REQUEST_BYTES = 1024 * 1024
 
 
-def handle_connection(server, conn) -> str | None:
+def handle_connection(server, conn) -> Optional[str]:
     request = None
     try:
         conn.settimeout(_REQUEST_READ_TIMEOUT_S)

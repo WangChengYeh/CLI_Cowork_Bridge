@@ -3,7 +3,7 @@ from __future__ import annotations
 import os
 import time
 from pathlib import Path
-from typing import Any
+from typing import Any, Optional
 
 from runtime_env import env_float
 from terminal_runtime import get_backend_for_session, get_pane_id_from_session
@@ -66,7 +66,7 @@ class CodexCommunicator:
     def _ensure_log_reader(self) -> None:
         _ensure_log_reader_impl(self, log_reader_cls=_codex_log_reader_cls())
 
-    def _find_session_file(self) -> Path | None:
+    def _find_session_file(self) -> Optional[Path]:
         return find_codex_session_file()
 
     def _load_session_info(self):
@@ -105,7 +105,7 @@ class CodexCommunicator:
     def ask_async(self, question: str) -> bool:
         return _ask_async_impl(self, question)
 
-    def ask_sync(self, question: str, timeout: int | None = None) -> str | None:
+    def ask_sync(self, question: str, timeout: Optional[int] = None) -> Optional[str]:
         return _ask_sync_impl(self, question, timeout=timeout)
 
     def consume_pending(self, display: bool = True, n: int = 1):
@@ -121,7 +121,7 @@ class CodexCommunicator:
     def get_status(self) -> dict[str, Any]:
         return _get_status_impl(self)
 
-    def _remember_codex_session(self, log_path: Path | None) -> None:
+    def _remember_codex_session(self, log_path: Optional[Path]) -> None:
         _remember_codex_session_impl(
             self,
             log_path,
@@ -131,7 +131,7 @@ class CodexCommunicator:
         )
 
     @staticmethod
-    def _extract_session_id(log_path: Path) -> str | None:
+    def _extract_session_id(log_path: Path) -> Optional[str]:
         from .. import comm as codex_comm_module
 
         return codex_comm_module._extract_session_id(log_path)

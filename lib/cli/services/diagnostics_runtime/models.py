@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from dataclasses import dataclass
 
 
@@ -11,7 +13,7 @@ class DiagnosticBundleEntry:
     status: str
     truncated: bool = False
     byte_count: int = 0
-    error: str | None = None
+    error: Optional[str] = None
 
 
 @dataclass(frozen=True)
@@ -24,7 +26,7 @@ class DiagnosticBundleSummary:
     included_count: int
     missing_count: int
     truncated_count: int
-    doctor_error: str | None = None
+    doctor_error: Optional[str] = None
 
 
 __all__ = ['DiagnosticBundleEntry', 'DiagnosticBundleSummary']

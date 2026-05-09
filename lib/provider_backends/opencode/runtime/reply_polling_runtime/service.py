@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Any
+from typing import Any, Optional
 
 from opencode_runtime.replies import find_new_assistant_reply_with_state
 
@@ -13,7 +13,7 @@ def find_new_assistant_reply_with_reader_state(
     reader,
     session_id: str,
     state: dict[str, Any],
-) -> tuple[str | None, dict[str, Any] | None]:
+) -> Optional[tuple[str], Optional[dict[str, Any]]]:
     messages = read_messages(reader, session_id)
     reply, reply_state = find_new_assistant_reply_with_state(
         messages,
@@ -24,7 +24,7 @@ def find_new_assistant_reply_with_reader_state(
     return reply, reply_state
 
 
-def read_since(reader, state: dict[str, Any], timeout: float, block: bool) -> tuple[str | None, dict[str, Any]]:
+def read_since(reader, state: dict[str, Any], timeout: float, block: bool) -> Optional[tuple[str], dict[str, Any]]:
     return read_since_impl(
         reader,
         state,

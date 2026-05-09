@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -13,18 +15,18 @@ from terminal_runtime.tmux_readiness import (
 @dataclass(frozen=True)
 class ProjectNamespacePaneRecord:
     pane_id: str
-    session_name: str | None = None
-    window_id: str | None = None
-    window_name: str | None = None
-    role: str | None = None
-    slot_key: str | None = None
-    project_id: str | None = None
-    managed_by: str | None = None
-    namespace_epoch: int | None = None
+    session_name: Optional[str] = None
+    window_id: Optional[str] = None
+    window_name: Optional[str] = None
+    role: Optional[str] = None
+    slot_key: Optional[str] = None
+    project_id: Optional[str] = None
+    managed_by: Optional[str] = None
+    namespace_epoch: Optional[int] = None
     alive: bool = False
 
     @staticmethod
-    def _matches_field(actual: str | None, expected: str, *, allow_missing: bool = False) -> bool:
+    def _matches_field(actual: Optional[str], expected: str, *, allow_missing: bool = False) -> bool:
         if allow_missing and actual is None:
             return True
         return str(actual or '').strip() == str(expected or '').strip()
@@ -35,9 +37,9 @@ class ProjectNamespacePaneRecord:
         tmux_session_name: str,
         project_id: str,
         role: str,
-        slot_key: str | None = None,
-        managed_by: str | None = 'ccbd',
-        window_id: str | None = None,
+        slot_key: Optional[str] = None,
+        managed_by: Optional[str] = 'ccbd',
+        window_id: Optional[str] = None,
     ) -> bool:
         if not self._matches_field(
             self.session_name,
@@ -58,7 +60,7 @@ class ProjectNamespacePaneRecord:
         return bool(self.alive)
 
 
-def inspect_project_namespace_pane(backend, pane_id: str) -> ProjectNamespacePaneRecord | None:
+def inspect_project_namespace_pane(backend, pane_id: str) -> Optional[ProjectNamespacePaneRecord]:
     pane_text = str(pane_id or '').strip()
     if not pane_text.startswith('%'):
         return None
@@ -81,7 +83,7 @@ def inspect_project_namespace_pane(backend, pane_id: str) -> ProjectNamespacePan
     )
 
 
-def same_tmux_socket_path(left: str | None, right: str | None) -> bool:
+def same_tmux_socket_path(left: Optional[str], right: Optional[str]) -> bool:
     left_text = str(left or '').strip()
     right_text = str(right or '').strip()
     if not left_text or not right_text:
@@ -99,7 +101,7 @@ def backend_socket_matches(backend, tmux_socket_path: str) -> bool:
     return same_tmux_socket_path(backend_socket_path, tmux_socket_path)
 
 
-def _describe_pane_via_tmux(backend, pane_id: str) -> dict[str, str] | None:
+def _describe_pane_via_tmux(backend, pane_id: str) -> Optional[dict[str, str]]:
     runner = getattr(backend, '_tmux_run', None)
     if not callable(runner):
         return None
@@ -148,7 +150,7 @@ def _describe_pane_via_tmux(backend, pane_id: str) -> dict[str, str] | None:
     return _decode_tmux_pane_description(line)
 
 
-def _decode_tmux_pane_description(line: str) -> dict[str, str] | None:
+def _decode_tmux_pane_description(line: str) -> Optional[dict[str, str]]:
     parts = line.split('\t')
     if len(parts) == 7:
         return {
@@ -179,7 +181,7 @@ def _decode_tmux_pane_description(line: str) -> dict[str, str] | None:
     }
 
 
-def _describe_pane_via_backend(backend, pane_id: str) -> dict[str, str] | None:
+def _describe_pane_via_backend(backend, pane_id: str) -> Optional[dict[str, str]]:
     descriptor = getattr(backend, 'describe_pane', None)
     if not callable(descriptor):
         return None
@@ -202,12 +204,12 @@ def _stringify_details(described: dict[object, object]) -> dict[str, str]:
     return {str(key): str(value) for key, value in described.items()}
 
 
-def _clean(value: object) -> str | None:
+def _clean(value: object) -> Optional[str]:
     text = str(value or '').strip()
     return text or None
 
 
-def _clean_int(value: object) -> int | None:
+def _clean_int(value: object) -> Optional[int]:
     text = str(value or '').strip()
     if not text:
         return None

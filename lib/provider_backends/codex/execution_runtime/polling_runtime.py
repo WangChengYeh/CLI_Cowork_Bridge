@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from provider_execution.active import prepare_active_poll
 from provider_execution.base import ProviderPollResult, ProviderSubmission
 
@@ -16,7 +18,7 @@ from .state_machine import (
 )
 
 
-def poll_submission(submission: ProviderSubmission, *, now: str) -> ProviderPollResult | None:
+def poll_submission(submission: ProviderSubmission, *, now: str) -> Optional[ProviderPollResult]:
     prepared = prepare_active_poll(submission, now=now)
     if prepared is None or isinstance(prepared, ProviderPollResult):
         return prepared

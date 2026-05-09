@@ -1,19 +1,21 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from pathlib import Path
 
 
 def tmux_base(
-    socket_name: str | None = None,
+    socket_name: Optional[str] = None,
     *,
-    socket_path: str | None = None,
+    socket_path: Optional[str] = None,
 ) -> list[str]:
     cmd = ["tmux"]
     cmd.extend(socket_base_args(socket_name=socket_name, socket_path=socket_path))
     return cmd
 
 
-def socket_base_args(*, socket_name: str | None, socket_path: str | None) -> list[str]:
+def socket_base_args(*, socket_name: Optional[str], socket_path: Optional[str]) -> list[str]:
     if socket_path:
         return ["-S", str(Path(socket_path).expanduser())]
     if socket_name:
@@ -21,14 +23,14 @@ def socket_base_args(*, socket_name: str | None, socket_path: str | None) -> lis
     return []
 
 
-def normalize_socket_name(value: str | None) -> str | None:
+def normalize_socket_name(value: Optional[str]) -> Optional[str]:
     text = (value or "").strip()
     if not text:
         return None
     return None if text == "default" else text
 
 
-def socket_name_from_tmux_env(value: str | None) -> str | None:
+def socket_name_from_tmux_env(value: Optional[str]) -> Optional[str]:
     text = (value or "").strip()
     if not text:
         return None
@@ -58,7 +60,7 @@ def normalize_split_direction(direction: str) -> tuple[str, str]:
     raise ValueError(f"unsupported direction: {direction!r} (use 'right' or 'bottom')")
 
 
-def pane_id_by_title_marker_output(stdout: str, marker: str) -> str | None:
+def pane_id_by_title_marker_output(stdout: str, marker: str) -> Optional[str]:
     marker = normalized_marker(marker)
     if not marker:
         return None
@@ -99,7 +101,7 @@ def record_pane_title_match(
         prefix_matches.append(pid)
 
 
-def select_marker_match(exact_matches: list[str], prefix_matches: list[str]) -> str | None:
+def select_marker_match(exact_matches: list[str], prefix_matches: list[str]) -> Optional[str]:
     if len(exact_matches) == 1:
         return exact_matches[0]
     if exact_matches:
@@ -117,7 +119,7 @@ def normalized_marker(marker: str) -> str:
     return (marker or "").strip()
 
 
-def parse_pane_title_line(line: str) -> tuple[str, str] | None:
+def parse_pane_title_line(line: str) -> Optional[tuple[str, str]]:
     if not line.strip():
         return None
     pid, title = split_pane_title_line(line)

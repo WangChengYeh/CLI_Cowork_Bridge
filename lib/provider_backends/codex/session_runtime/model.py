@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from dataclasses import dataclass
 
 from provider_backends.pane_log_support.session import PaneLogProjectSessionBase
@@ -35,7 +37,7 @@ class CodexProjectSession(PaneLogProjectSessionBase):
 
         return session_module.get_backend_for_session(self.data)
 
-    def update_codex_log_binding(self, *, log_path: str | None, session_id: str | None) -> None:
+    def update_codex_log_binding(self, *, log_path: Optional[str], session_id: Optional[str]) -> None:
         _update_codex_log_binding_impl(self, log_path=log_path, session_id=session_id)
 
 

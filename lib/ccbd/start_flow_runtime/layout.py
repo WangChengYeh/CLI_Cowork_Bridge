@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from cli.services.tmux_cleanup_history import TmuxCleanupHistoryStore
 from cli.services.tmux_project_cleanup import ProjectTmuxCleanupSummary
 from cli.services.tmux_start_layout import TmuxStartLayout
@@ -13,7 +15,7 @@ def prepare_start_layout(
     targets: tuple[str, ...],
     layout_plan=None,
     tmux_backend=None,
-    root_pane_id: str | None = None,
+    root_pane_id: Optional[str] = None,
 ) -> TmuxStartLayout:
     return deps.prepare_start_layout_impl(
         context,
@@ -30,10 +32,10 @@ def prepare_start_layout(
 def session_root_pane(
     deps,
     backend,
-    session_name: str | None,
+    session_name: Optional[str],
     *,
-    workspace_window_name: str | None = None,
-) -> str | None:
+    workspace_window_name: Optional[str] = None,
+) -> Optional[str]:
     return deps.session_root_pane_impl(
         backend,
         session_name,
@@ -46,9 +48,9 @@ def cleanup_start_tmux_orphans(
     *,
     project_id: str,
     paths,
-    active_panes_by_socket: dict[str | None, list[str]],
+    active_panes_by_socket: Optional[dict[str], list[str]],
     project_socket_active_panes: list[str],
-    tmux_socket_path: str | None,
+    tmux_socket_path: Optional[str],
     clock,
 ) -> tuple[ProjectTmuxCleanupSummary, ...]:
     return deps.cleanup_start_tmux_orphans_impl(

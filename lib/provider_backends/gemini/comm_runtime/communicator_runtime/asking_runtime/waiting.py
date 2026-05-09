@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 import time
 
 from ui_text import t
@@ -7,7 +9,7 @@ from ui_text import t
 from .common import ensure_session_health, remember_session_path
 
 
-def ask_sync(comm, question: str, timeout: int | None = None) -> str | None:
+def ask_sync(comm, question: str, timeout: Optional[int] = None) -> Optional[str]:
     try:
         ensure_session_health(comm)
         print(f"🔔 {t('sending_to', provider='Gemini')}", flush=True)
@@ -25,7 +27,7 @@ def ask_sync(comm, question: str, timeout: int | None = None) -> str | None:
         return None
 
 
-def _wait_indefinitely(comm, state) -> str | None:
+def _wait_indefinitely(comm, state) -> Optional[str]:
     start_time = time.time()
     last_hint = 0
     while True:
@@ -38,7 +40,7 @@ def _wait_indefinitely(comm, state) -> str | None:
             print(f"⏳ Still waiting... ({elapsed}s)")
 
 
-def _wait_once(comm, state, timeout: float) -> str | None:
+def _wait_once(comm, state, timeout: float) -> Optional[str]:
     message, _ = _wait_for_message(comm, state, timeout=timeout)
     if message:
         return _display_reply(message)

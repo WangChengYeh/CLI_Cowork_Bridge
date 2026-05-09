@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from dataclasses import dataclass, field
 from pathlib import Path
 
@@ -16,10 +18,10 @@ class WorkspacePlan:
     agent_name: str
     workspace_mode: WorkspaceMode
     workspace_path: Path
-    binding_path: Path | None
+    binding_path: Optional[Path]
     source_root: Path
-    branch_name: str | None
-    branch_template: str | None
+    branch_name: Optional[str]
+    branch_template: Optional[str]
     unsafe_shared_workspace: bool
 
     def __post_init__(self) -> None:
@@ -35,8 +37,8 @@ class WorkspacePlan:
 class WorkspaceRef:
     workspace_mode: WorkspaceMode
     workspace_path: Path
-    binding_path: Path | None
-    branch_name: str | None = None
+    binding_path: Optional[Path]
+    branch_name: Optional[str] = None
 
     def __post_init__(self) -> None:
         object.__setattr__(self, 'workspace_path', Path(self.workspace_path).expanduser().resolve())
@@ -51,7 +53,7 @@ class WorkspaceBinding:
     agent_name: str
     workspace_mode: WorkspaceMode
     workspace_path: str
-    branch_name: str | None = None
+    branch_name: Optional[str] = None
     schema_version: int = SCHEMA_VERSION
     record_type: str = 'workspace_binding'
 

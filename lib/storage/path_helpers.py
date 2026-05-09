@@ -6,7 +6,7 @@ from pathlib import Path
 import os
 import re
 import tempfile
-from typing import Any, Literal
+from typing import Any, Literal, Optional
 
 from agents.models import normalize_agent_name
 from ccbd.api_models import TargetKind
@@ -24,8 +24,8 @@ class SocketPlacement:
     preferred_path: Path
     effective_path: Path
     root_kind: Literal['project', 'runtime']
-    fallback_reason: str | None = None
-    filesystem_hint: str | None = None
+    fallback_reason: Optional[str] = None
+    filesystem_hint: Optional[str] = None
 
 
 @dataclass(frozen=True)
@@ -33,8 +33,8 @@ class RuntimeStatePlacement:
     anchor_path: Path
     effective_path: Path
     root_kind: Literal['project', 'relocated']
-    relocation_reason: str | None = None
-    filesystem_hint: str | None = None
+    relocation_reason: Optional[str] = None
+    filesystem_hint: Optional[str] = None
 
 
 def normalized_segment(value: str, *, label: str) -> str:
@@ -123,7 +123,7 @@ def is_wsl() -> bool:
         return False
 
 
-def socket_filesystem_hint(path: Path) -> str | None:
+def socket_filesystem_hint(path: Path) -> Optional[str]:
     normalized = str(Path(path).expanduser()).replace('\\', '/')
     if is_wsl() and _WSL_MOUNTED_DRIVE_RE.match(normalized):
         return 'wsl_drvfs'
@@ -232,7 +232,7 @@ def runtime_root_ref_path(anchor_path: Path) -> Path:
     return Path(anchor_path).expanduser() / RUNTIME_ROOT_REF_FILENAME
 
 
-def runtime_state_root_from_anchor_ref(anchor_path: Path, *, project_id: str | None = None) -> Path | None:
+def runtime_state_root_from_anchor_ref(anchor_path: Path, *, project_id: Optional[str] = None) -> Optional[Path]:
     payload = _read_json_object(runtime_root_ref_path(anchor_path))
     if not payload:
         return None
@@ -246,12 +246,12 @@ def runtime_state_root_from_anchor_ref(anchor_path: Path, *, project_id: str | N
     return Path(raw).expanduser()
 
 
-def runtime_state_root_from_anchor(anchor_path: Path, *, project_id: str | None = None) -> Path:
+def runtime_state_root_from_anchor(anchor_path: Path, *, project_id: Optional[str] = None) -> Path:
     ref_root = runtime_state_root_from_anchor_ref(anchor_path, project_id=project_id)
     return ref_root if ref_root is not None else Path(anchor_path).expanduser()
 
 
-def runtime_project_anchor_from_path(path: Path) -> Path | None:
+def runtime_project_anchor_from_path(path: Path) -> Optional[Path]:
     marker_path = find_runtime_root_marker_path(path)
     if marker_path is None:
         return None
@@ -265,7 +265,7 @@ def runtime_project_anchor_from_path(path: Path) -> Path | None:
     return None
 
 
-def runtime_project_root_from_path(path: Path) -> Path | None:
+def runtime_project_root_from_path(path: Path) -> Optional[Path]:
     marker_path = find_runtime_root_marker_path(path)
     if marker_path is None:
         return None
@@ -276,7 +276,7 @@ def runtime_project_root_from_path(path: Path) -> Path | None:
     return Path(project_root).expanduser()
 
 
-def find_runtime_root_marker_path(path: Path) -> Path | None:
+def find_runtime_root_marker_path(path: Path) -> Optional[Path]:
     current = Path(path).expanduser()
     for candidate in (current, *current.parents):
         marker = candidate / RUNTIME_ROOT_MARKER_FILENAME
@@ -293,7 +293,7 @@ def _runtime_socket_placement(
     preferred_path: Path,
     project_socket_key: str,
     fallback_reason: str,
-    filesystem_hint: str | None,
+    filesystem_hint: Optional[str],
 ) -> SocketPlacement:
     stem = preferred_path.stem
     effective_root = runtime_socket_root()

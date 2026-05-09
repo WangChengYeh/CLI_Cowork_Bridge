@@ -1,12 +1,14 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from message_bureau import AttemptStore, MessageStore
 
 from .models import AutomaticRetryPlan, RetryableFailureContext
 from .policy import is_retryable_failure, provider_supports_resume, safe_int
 
 
-def automatic_retry_plan(dispatcher, job, decision) -> AutomaticRetryPlan | None:
+def automatic_retry_plan(dispatcher, job, decision) -> Optional[AutomaticRetryPlan]:
     context = retryable_failure_context(dispatcher, job, decision)
     if context is None or context.attempt_number >= context.max_attempts:
         return None
@@ -23,7 +25,7 @@ def retryable_failure_context(
     dispatcher,
     job,
     decision,
-) -> RetryableFailureContext | None:
+) -> Optional[RetryableFailureContext]:
     attempt = AttemptStore(dispatcher._layout).get_latest_by_job_id(job.job_id)
     if attempt is None:
         return None

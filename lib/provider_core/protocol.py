@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from dataclasses import dataclass
 from re import Pattern
 
@@ -29,7 +31,7 @@ class CodexRequest:
     timeout_s: float
     quiet: bool
     message: str
-    req_id: str | None = None
+    req_id: Optional[str] = None
     caller: str = 'claude'
 
 
@@ -39,12 +41,12 @@ class CodexResult:
     reply: str
     req_id: str
     session_key: str
-    log_path: str | None
+    log_path: Optional[str]
     anchor_seen: bool
     done_seen: bool
     fallback_scan: bool
-    anchor_ms: int | None = None
-    done_ms: int | None = None
+    anchor_ms: Optional[int] = None
+    done_ms: Optional[int] = None
 
 
 __all__ = [

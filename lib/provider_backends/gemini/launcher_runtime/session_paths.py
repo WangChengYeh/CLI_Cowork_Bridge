@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 import json
 from pathlib import Path
 
@@ -7,7 +9,7 @@ from provider_core.pathing import session_filename_for_agent
 from storage.path_helpers import runtime_project_anchor_from_path
 
 
-def session_file_for_runtime_dir(runtime_dir: Path) -> Path | None:
+def session_file_for_runtime_dir(runtime_dir: Path) -> Optional[Path]:
     ccb_dir = find_project_ccb_dir(runtime_dir)
     if ccb_dir is None:
         return None
@@ -21,7 +23,7 @@ def session_file_for_runtime_dir(runtime_dir: Path) -> Path | None:
     return ccb_dir / session_filename_for_agent('gemini', agent_name)
 
 
-def state_dir_for_runtime_dir(runtime_dir: Path) -> Path | None:
+def state_dir_for_runtime_dir(runtime_dir: Path) -> Optional[Path]:
     current = Path(runtime_dir)
     normalized_provider = str(current.name or '').strip().lower()
     if not normalized_provider:
@@ -35,7 +37,7 @@ def state_dir_for_runtime_dir(runtime_dir: Path) -> Path | None:
     return agent_dir / 'provider-state' / normalized_provider
 
 
-def find_project_ccb_dir(runtime_dir: Path) -> Path | None:
+def find_project_ccb_dir(runtime_dir: Path) -> Optional[Path]:
     current = Path(runtime_dir)
     for parent in (current, *current.parents):
         if parent.name == '.ccb':
@@ -43,7 +45,7 @@ def find_project_ccb_dir(runtime_dir: Path) -> Path | None:
     return runtime_project_anchor_from_path(current)
 
 
-def read_session_payload(session_path: Path) -> dict[str, object] | None:
+def read_session_payload(session_path: Path) -> Optional[dict[str, object]]:
     try:
         data = json.loads(session_path.read_text(encoding='utf-8'))
     except Exception:

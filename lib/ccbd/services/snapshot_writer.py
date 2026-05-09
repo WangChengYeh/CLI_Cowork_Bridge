@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from ccbd.system import utc_now
 from completion.models import CompletionDecision, CompletionFamily, CompletionSnapshot, CompletionState
 from completion.snapshot_store import CompletionSnapshotStore
@@ -10,7 +12,7 @@ class SnapshotWriter:
     def __init__(
         self,
         layout: PathLayout,
-        store: CompletionSnapshotStore | None = None,
+        store: Optional[CompletionSnapshotStore] = None,
         *,
         clock=utc_now,
         preview_limit: int = 240,
@@ -20,7 +22,7 @@ class SnapshotWriter:
         self._clock = clock
         self._preview_limit = preview_limit
 
-    def load(self, job_id: str) -> CompletionSnapshot | None:
+    def load(self, job_id: str) -> Optional[CompletionSnapshot]:
         return self._store.load(job_id)
 
     def write_completion(
@@ -31,8 +33,8 @@ class SnapshotWriter:
         profile_family: CompletionFamily,
         state: CompletionState,
         decision: CompletionDecision,
-        updated_at: str | None = None,
-        reply_preview: str | None = None,
+        updated_at: Optional[str] = None,
+        reply_preview: Optional[str] = None,
     ) -> CompletionSnapshot:
         timestamp = updated_at or self._clock()
         preview = reply_preview if reply_preview is not None else self._preview(decision.reply)

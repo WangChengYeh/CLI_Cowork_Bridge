@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from dataclasses import replace
 
 from agents.models import AgentState
@@ -17,7 +19,7 @@ def persist_terminal_completion(
     decision: CompletionDecision,
     *,
     finished_at: str,
-) -> tuple[JobRecord, CompletionDecision, object | None]:
+) -> tuple[JobRecord, CompletionDecision, Optional[object]]:
     prior_snapshot = dispatcher._snapshot_writer.load(current.job_id)
     terminal_decision = merge_terminal_decision(
         current.job_id,

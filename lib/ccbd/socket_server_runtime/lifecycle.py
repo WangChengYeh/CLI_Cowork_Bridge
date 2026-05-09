@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 import os
 import socket
 import time
@@ -36,7 +38,7 @@ def shutdown_server(server) -> None:
     server._bound_socket_stat = None
 
 
-def _bound_socket_stat(path) -> tuple[int, int] | None:
+def _bound_socket_stat(path) -> Optional[tuple[int, int]]:
     try:
         stat = os.stat(path)
     except OSError:
@@ -47,7 +49,7 @@ def _bound_socket_stat(path) -> tuple[int, int] | None:
 def _unlink_bound_socket_path(
     server,
     *,
-    bound_socket_stat: tuple[int, int] | None,
+    bound_socket_stat: Optional[tuple[int, int]],
     timeout_s: float = 0.2,
 ) -> None:
     if bound_socket_stat is None:

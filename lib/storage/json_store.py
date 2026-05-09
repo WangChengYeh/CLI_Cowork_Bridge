@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
-from typing import Any, Callable, TypeVar
+from typing import Any, Callable, Optional, TypeVar
 
 from storage.atomic import atomic_write_text
 
@@ -10,7 +10,7 @@ T = TypeVar('T')
 
 
 class JsonStore:
-    def load(self, path: Path, loader: Callable[[dict[str, Any]], T] | None = None) -> T | dict[str, Any]:
+    def load(self, path: Path, loader: Callable[[dict[str, Any]], Optional[T]] = None) -> T | dict[str, Any]:
         payload = json.loads(Path(path).read_text(encoding='utf-8'))
         if not isinstance(payload, dict):
             raise ValueError(f'{path}: expected JSON object')
@@ -22,7 +22,7 @@ class JsonStore:
         self,
         path: Path,
         value: T | dict[str, Any],
-        serializer: Callable[[T], dict[str, Any]] | None = None,
+        serializer: Callable[[T], dict[str, Optional[Any]]] = None,
     ) -> None:
         if serializer is None:
             if not isinstance(value, dict):

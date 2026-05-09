@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from opencode_runtime.replies import extract_req_id_from_text as _extract_req_id_from_text
 from opencode_runtime.replies import is_aborted_error as _is_aborted_error
 
@@ -15,7 +17,7 @@ class OpenCodeCancelMixin:
         return _is_aborted_error(error_obj)
 
     @staticmethod
-    def _extract_req_id_from_text(text: str) -> str | None:
+    def _extract_req_id_from_text(text: str) -> Optional[str]:
         return _extract_req_id_from_text(text, REQ_ID_RE)
 
     def detect_cancelled_since(self, state: dict[str, object], *, req_id: str) -> tuple[bool, dict[str, object]]:

@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from pathlib import Path
 
 from provider_core.session_binding_evidence import session_terminal
@@ -9,7 +11,7 @@ from .models import ProviderPaneAssessment
 from .tmux import pane_outside_project_namespace, session_backend, tmux_pane_state
 
 
-def assess_provider_pane(*, runtime, registry, session_bindings, namespace_state_store) -> ProviderPaneAssessment | None:
+def assess_provider_pane(*, runtime, registry, session_bindings, namespace_state_store) -> Optional[ProviderPaneAssessment]:
     if not _is_tmux_runtime(runtime):
         return None
     binding = _resolve_binding(runtime=runtime, registry=registry, session_bindings=session_bindings)
@@ -66,7 +68,7 @@ def _workspace_path(runtime) -> str:
     return str(runtime.workspace_path or '').strip()
 
 
-def _session_terminal_name(session) -> str | None:
+def _session_terminal_name(session) -> Optional[str]:
     return str(session_terminal(session) or '').strip().lower() or None
 
 
@@ -91,8 +93,8 @@ def _build_assessment(
     binding,
     health: str,
     session=None,
-    terminal: str | None = None,
-    pane_state: str | None = None,
+    terminal: Optional[str] = None,
+    pane_state: Optional[str] = None,
 ) -> ProviderPaneAssessment:
     return ProviderPaneAssessment(
         binding=binding,

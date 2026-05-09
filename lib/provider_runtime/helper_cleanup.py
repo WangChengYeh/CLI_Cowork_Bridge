@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 import os
 import signal
 import time
@@ -126,7 +128,7 @@ def _is_pid_alive(pid: int) -> bool:
     return True
 
 
-def _safe_getpgrp() -> int | None:
+def _safe_getpgrp() -> Optional[int]:
     try:
         return os.getpgrp()
     except Exception:

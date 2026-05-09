@@ -1,10 +1,12 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from agents.models_runtime.enums import AgentState, normalize_runtime_binding_source
 from agents.models_runtime.names import AgentValidationError
 
 
-def normalized_text(value: str | None) -> str | None:
+def normalized_text(value: Optional[str]) -> Optional[str]:
     text = str(value or '').strip()
     return text or None
 

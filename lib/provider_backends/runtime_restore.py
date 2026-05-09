@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -13,9 +15,9 @@ class ProviderRestoreTarget:
 
 @dataclass(frozen=True)
 class ProviderRestoreContext:
-    project_root: Path | None
+    project_root: Optional[Path]
     workspace_path: Path
-    session_instance: str | None
+    session_instance: Optional[str]
 
 
 def resolve_restore_context(
@@ -23,7 +25,7 @@ def resolve_restore_context(
     *,
     provider: str,
     agent_name: str,
-    workspace_path: Path | None = None,
+    workspace_path: Optional[Path] = None,
 ) -> ProviderRestoreContext:
     ccb_dir = _find_ccb_dir(runtime_dir)
     default_workspace = runtime_dir
@@ -41,7 +43,7 @@ def resolve_restore_context(
     )
 
 
-def _find_ccb_dir(start: Path) -> Path | None:
+def _find_ccb_dir(start: Path) -> Optional[Path]:
     current = Path(start)
     for parent in (current, *current.parents):
         if parent.name == '.ccb':

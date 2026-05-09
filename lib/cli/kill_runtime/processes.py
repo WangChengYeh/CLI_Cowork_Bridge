@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 import os
 import signal
 import subprocess
@@ -114,14 +116,14 @@ def _wait_for_pid_exit(pid: int, *, timeout_s: float, is_pid_alive_fn: Callable[
     return not is_pid_alive_fn(pid)
 
 
-def _safe_getpgid(pid: int) -> int | None:
+def _safe_getpgid(pid: int) -> Optional[int]:
     try:
         return os.getpgid(pid)
     except Exception:
         return None
 
 
-def _safe_getpgrp() -> int | None:
+def _safe_getpgrp() -> Optional[int]:
     try:
         return os.getpgrp()
     except Exception:

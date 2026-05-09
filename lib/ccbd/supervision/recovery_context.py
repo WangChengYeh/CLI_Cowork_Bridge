@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Callable
+from typing import Callable, Optional
 
 
 @dataclass(frozen=True)
@@ -11,7 +11,7 @@ class RecoveryContext:
     runtime: object
     registry: object
     runtime_service: object
-    remount_project_fn: object | None
+    remount_project_fn: Optional[object]
     clock: Callable[[], str]
     event_store: object
     align_runtime_authority_fn: Callable[[object], object]

@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional, Union
+
 from pathlib import Path
 import os
 import uuid
@@ -43,7 +45,7 @@ JOB_HEARTBEAT_SILENCE_START_AFTER_S = 600.0
 JOB_HEARTBEAT_REPEAT_INTERVAL_S = 600.0
 
 
-def initialize_app(app, project_root: str | Path, *, clock, pid: int | None) -> None:
+def initialize_app(app, project_root: Union[str, Path], *, clock, pid: Optional[int]) -> None:
     app.project_root = Path(project_root).expanduser().resolve()
     app.project_id = compute_project_id(app.project_root)
     app.paths = PathLayout(app.project_root)

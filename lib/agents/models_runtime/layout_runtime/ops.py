@@ -1,11 +1,11 @@
 from __future__ import annotations
 
-from typing import Iterable
+from typing import Iterable, Optional
 
 from .nodes import LayoutLeaf, LayoutNode
 
 
-def prune_layout(node: LayoutNode, *, include_names: Iterable[str]) -> LayoutNode | None:
+def prune_layout(node: LayoutNode, *, include_names: Iterable[str]) -> Optional[LayoutNode]:
     include = {str(name).strip() for name in include_names if str(name).strip()}
     if node.kind == 'leaf':
         assert node.leaf is not None
@@ -26,8 +26,8 @@ def prune_layout(node: LayoutNode, *, include_names: Iterable[str]) -> LayoutNod
 def build_balanced_layout(
     agent_names: Iterable[str],
     *,
-    providers_by_agent: dict[str, str] | None = None,
-    workspace_modes_by_agent: dict[str, str] | None = None,
+    providers_by_agent: Optional[dict[str, str]] = None,
+    workspace_modes_by_agent: Optional[dict[str, str]] = None,
     cmd_enabled: bool = False,
 ) -> LayoutNode:
     ordered_agents = [str(name).strip() for name in agent_names if str(name).strip()]
@@ -73,7 +73,7 @@ def layout_leaves(
     return leaves
 
 
-def stack_vertical(leaves: list[LayoutNode]) -> LayoutNode | None:
+def stack_vertical(leaves: list[LayoutNode]) -> Optional[LayoutNode]:
     if not leaves:
         return None
     node = leaves[0]

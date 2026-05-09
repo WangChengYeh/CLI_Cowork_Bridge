@@ -1,11 +1,13 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from dataclasses import dataclass
 
 
 @dataclass(frozen=True)
 class ProjectTmuxCleanupSummary:
-    socket_name: str | None
+    socket_name: Optional[str]
     owned_panes: tuple[str, ...]
     active_panes: tuple[str, ...]
     orphaned_panes: tuple[str, ...]

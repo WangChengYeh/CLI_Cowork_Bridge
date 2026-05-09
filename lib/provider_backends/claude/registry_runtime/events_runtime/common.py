@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Any
+from typing import Any, Optional
 
 from ..session_updates import update_session_file_direct
 
@@ -22,7 +22,7 @@ def update_session_file(registry: Any, work_dir: Path, *, session_path: Path, se
         update_session_file_direct(session_file, session_path, session_id)
 
 
-def load_session_for_entry(registry: Any, entry) -> Any | None:
+def load_session_for_entry(registry: Any, entry) -> Optional[Any]:
     if entry is None:
         return None
     if entry.session is not None:

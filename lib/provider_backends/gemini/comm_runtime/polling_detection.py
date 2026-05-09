@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import hashlib
-from typing import Any
+from typing import Any, Optional
 
 from .session_content import last_gemini_details
 from .state import state_payload
@@ -53,8 +53,8 @@ def new_message_from_growth(
     current_mtime: float,
     current_mtime_ns: int,
     current_size: int,
-    prev_last_gemini_id: str | None,
-    prev_last_gemini_hash: str | None,
+    prev_last_gemini_id: Optional[str],
+    prev_last_gemini_hash: Optional[str],
 ):
     last_gemini_content = None
     last_gemini_id = None

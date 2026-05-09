@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 import argparse
 
 from cli.models import (
@@ -25,40 +27,40 @@ from .common import parse_args, require_no_extra
 from .constants import WAIT_COMMAND_TO_MODE
 
 
-def parse_cancel(tokens: list[str], *, project: str | None, error_type) -> ParsedCancelCommand:
+def parse_cancel(tokens: list[str], *, project: Optional[str], error_type) -> ParsedCancelCommand:
     if len(tokens) != 1:
         raise error_type('cancel requires <job_id>')
     return ParsedCancelCommand(project=project, job_id=tokens[0])
 
 
-def parse_kill(tokens: list[str], *, project: str | None, error_type) -> ParsedKillCommand:
+def parse_kill(tokens: list[str], *, project: Optional[str], error_type) -> ParsedKillCommand:
     parser = argparse.ArgumentParser(prog='ccb kill', add_help=False)
     parser.add_argument('-f', '--force', action='store_true')
     namespace = parse_args(parser, tokens, error_message='invalid kill command', error_type=error_type)
     return ParsedKillCommand(project=project, force=bool(namespace.force))
 
 
-def parse_ps(tokens: list[str], *, project: str | None, error_type) -> ParsedPsCommand:
+def parse_ps(tokens: list[str], *, project: Optional[str], error_type) -> ParsedPsCommand:
     require_no_extra(tokens, command='ps', error_type=error_type)
     return ParsedPsCommand(project=project)
 
 
-def parse_ping(tokens: list[str], *, project: str | None, error_type) -> ParsedPingCommand:
+def parse_ping(tokens: list[str], *, project: Optional[str], error_type) -> ParsedPingCommand:
     if len(tokens) != 1:
         raise error_type('ping requires <agent_name|all>')
     return ParsedPingCommand(project=project, target=tokens[0])
 
 
-def parse_watch(tokens: list[str], *, project: str | None, error_type) -> ParsedWatchCommand:
+def parse_watch(tokens: list[str], *, project: Optional[str], error_type) -> ParsedWatchCommand:
     if len(tokens) != 1:
         raise error_type('watch requires <agent_name|job_id>')
     return ParsedWatchCommand(project=project, target=tokens[0])
 
 
-def parse_pend(tokens: list[str], *, project: str | None, error_type) -> ParsedPendCommand:
+def parse_pend(tokens: list[str], *, project: Optional[str], error_type) -> ParsedPendCommand:
     if not tokens or len(tokens) > 2:
         raise error_type('pend requires <agent_name|job_id> [N]')
-    count: int | None = None
+    count: Optional[int] = None
     if len(tokens) == 2:
         try:
             count = int(tokens[1])
@@ -69,31 +71,31 @@ def parse_pend(tokens: list[str], *, project: str | None, error_type) -> ParsedP
     return ParsedPendCommand(project=project, target=tokens[0], count=count)
 
 
-def parse_queue(tokens: list[str], *, project: str | None, error_type) -> ParsedQueueCommand:
+def parse_queue(tokens: list[str], *, project: Optional[str], error_type) -> ParsedQueueCommand:
     if len(tokens) != 1:
         raise error_type('queue requires <agent_name|all>')
     return ParsedQueueCommand(project=project, target=tokens[0])
 
 
-def parse_trace(tokens: list[str], *, project: str | None, error_type) -> ParsedTraceCommand:
+def parse_trace(tokens: list[str], *, project: Optional[str], error_type) -> ParsedTraceCommand:
     if len(tokens) != 1:
         raise error_type('trace requires <submission_id|message_id|attempt_id|reply_id|job_id>')
     return ParsedTraceCommand(project=project, target=tokens[0])
 
 
-def parse_resubmit(tokens: list[str], *, project: str | None, error_type) -> ParsedResubmitCommand:
+def parse_resubmit(tokens: list[str], *, project: Optional[str], error_type) -> ParsedResubmitCommand:
     if len(tokens) != 1:
         raise error_type('resubmit requires <message_id>')
     return ParsedResubmitCommand(project=project, message_id=tokens[0])
 
 
-def parse_retry(tokens: list[str], *, project: str | None, error_type) -> ParsedRetryCommand:
+def parse_retry(tokens: list[str], *, project: Optional[str], error_type) -> ParsedRetryCommand:
     if len(tokens) != 1:
         raise error_type('retry requires <job_id|attempt_id>')
     return ParsedRetryCommand(project=project, target=tokens[0])
 
 
-def parse_wait(command_name: str, tokens: list[str], *, project: str | None, error_type) -> ParsedWaitCommand:
+def parse_wait(command_name: str, tokens: list[str], *, project: Optional[str], error_type) -> ParsedWaitCommand:
     parser = argparse.ArgumentParser(prog=f'ccb {command_name}', add_help=False)
     parser.add_argument('--timeout', type=float, default=None)
     if command_name == 'wait-quorum':
@@ -117,26 +119,26 @@ def parse_wait(command_name: str, tokens: list[str], *, project: str | None, err
     )
 
 
-def parse_inbox(tokens: list[str], *, project: str | None, error_type) -> ParsedInboxCommand:
+def parse_inbox(tokens: list[str], *, project: Optional[str], error_type) -> ParsedInboxCommand:
     if len(tokens) != 1:
         raise error_type('inbox requires <agent_name>')
     return ParsedInboxCommand(project=project, agent_name=tokens[0])
 
 
-def parse_ack(tokens: list[str], *, project: str | None, error_type) -> ParsedAckCommand:
+def parse_ack(tokens: list[str], *, project: Optional[str], error_type) -> ParsedAckCommand:
     if not tokens or len(tokens) > 2:
         raise error_type('ack requires <agent_name> [inbound_event_id]')
     inbound_event_id = tokens[1] if len(tokens) == 2 else None
     return ParsedAckCommand(project=project, agent_name=tokens[0], inbound_event_id=inbound_event_id)
 
 
-def parse_logs(tokens: list[str], *, project: str | None, error_type) -> ParsedLogsCommand:
+def parse_logs(tokens: list[str], *, project: Optional[str], error_type) -> ParsedLogsCommand:
     if len(tokens) != 1:
         raise error_type('logs requires <agent_name>')
     return ParsedLogsCommand(project=project, agent_name=tokens[0])
 
 
-def parse_doctor(tokens: list[str], *, project: str | None, error_type) -> ParsedDoctorCommand:
+def parse_doctor(tokens: list[str], *, project: Optional[str], error_type) -> ParsedDoctorCommand:
     parser = argparse.ArgumentParser(prog='ccb doctor', add_help=False)
     parser.add_argument('--output', dest='output_path', nargs='?', const='', default=None)
     try:
@@ -150,7 +152,7 @@ def parse_doctor(tokens: list[str], *, project: str | None, error_type) -> Parse
     return ParsedDoctorCommand(project=project, bundle=bundle, output_path=output_path)
 
 
-def parse_config(tokens: list[str], *, project: str | None, error_type) -> ParsedConfigValidateCommand:
+def parse_config(tokens: list[str], *, project: Optional[str], error_type) -> ParsedConfigValidateCommand:
     if tokens != ['validate']:
         raise error_type('config only supports: ccb config validate')
     return ParsedConfigValidateCommand(project=project)

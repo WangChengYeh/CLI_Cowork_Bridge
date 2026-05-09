@@ -52,7 +52,7 @@ class TmuxBackendPaneQueryMixin:
         pane_id: str,
         *,
         user_options: tuple[str, ...] = (),
-    ) -> dict[str, str] | None:
+    ) -> Optional[dict[str, str]]:
         return self._services.pane_service.describe_pane(
             pane_id,
             user_options=user_options,
@@ -86,8 +86,8 @@ class TmuxBackendPaneMutationMixin:
         self,
         pane_id: str,
         *,
-        border_style: str | None = None,
-        active_border_style: str | None = None,
+        border_style: Optional[str] = None,
+        active_border_style: Optional[str] = None,
     ) -> None:
         self._services.pane_service.set_pane_style(
             pane_id,

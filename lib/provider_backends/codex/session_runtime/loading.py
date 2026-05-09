@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from pathlib import Path
 import shutil
 
@@ -10,7 +12,7 @@ from .pathing import find_project_session_file, read_json, write_back
 from .follow_policy import codex_home_path, codex_session_root_path
 
 
-def load_project_session(work_dir: Path, instance: str | None = None) -> CodexProjectSession | None:
+def load_project_session(work_dir: Path, instance: Optional[str] = None) -> Optional[CodexProjectSession]:
     session_file = find_project_session_file(work_dir, instance)
     if not session_file:
         return None
@@ -24,7 +26,7 @@ def load_project_session(work_dir: Path, instance: str | None = None) -> CodexPr
     return session
 
 
-def compute_session_key(session: CodexProjectSession, instance: str | None = None) -> str:
+def compute_session_key(session: CodexProjectSession, instance: Optional[str] = None) -> str:
     return compute_session_key_for_provider(session, provider="codex", instance=instance)
 
 
@@ -52,7 +54,7 @@ def _migrate_legacy_codex_layout(data: dict[str, object]) -> bool:
     return updated
 
 
-def _target_home_for_layout(*, codex_home: Path | None, session_root: Path) -> Path:
+def _target_home_for_layout(*, codex_home: Optional[Path], session_root: Path) -> Path:
     normalized_home = _normalize_path(codex_home)
     normalized_root = _normalize_path(session_root)
     if normalized_home is not None and normalized_root is not None and normalized_root == normalized_home / "sessions":
@@ -90,7 +92,7 @@ def _migrate_root_tree(session_root: Path, target_root: Path) -> None:
         normalized_target.mkdir(parents=True, exist_ok=True)
 
 
-def _migrated_log_path(session_path: Path, *, session_root: Path, target_root: Path) -> Path | None:
+def _migrated_log_path(session_path: Path, *, session_root: Path, target_root: Path) -> Optional[Path]:
     normalized_session = _normalize_path(session_path)
     normalized_root = _normalize_path(session_root)
     normalized_target = _normalize_path(target_root)
@@ -103,7 +105,7 @@ def _migrated_log_path(session_path: Path, *, session_root: Path, target_root: P
     return normalized_target / relative
 
 
-def _normalize_path(value: object) -> Path | None:
+def _normalize_path(value: object) -> Optional[Path]:
     if value is None:
         return None
     try:

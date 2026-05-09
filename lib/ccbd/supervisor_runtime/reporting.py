@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from ccbd.models import CcbdShutdownReport, CcbdStartupReport, cleanup_summaries_from_objects
 from ccbd.stop_flow import build_shutdown_runtime_snapshots
 from storage.path_helpers import socket_placement_payload
@@ -15,7 +17,7 @@ def record_startup_report(
     actions_taken: tuple[str, ...],
     cleanup_summaries,
     agent_results,
-    failure_reason: str | None,
+    failure_reason: Optional[str],
 ) -> None:
     try:
         inspection = supervisor._ownership_guard.inspect()
@@ -58,7 +60,7 @@ def record_shutdown_report(
     stopped_agents: tuple[str, ...],
     actions_taken: tuple[str, ...],
     cleanup_summaries,
-    failure_reason: str | None,
+    failure_reason: Optional[str],
 ) -> None:
     try:
         inspection = supervisor._ownership_guard.inspect()

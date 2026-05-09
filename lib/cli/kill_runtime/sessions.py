@@ -5,16 +5,16 @@ from pathlib import Path
 import shutil
 import subprocess
 import time
-from typing import Callable
+from typing import Callable, Optional
 
 
 def terminate_provider_session(
     provider: str,
     *,
     cwd: Path,
-    session_finder: Callable[[Path, str], Path | None],
+    session_finder: Callable[[Path, str], Optional[Path]],
     tmux_backend_factory: Callable[[], object],
-    safe_write_session: Callable[[Path, str], tuple[bool, str | None]],
+    safe_write_session: Callable[[Path, str], tuple[bool, Optional[str]]],
 ) -> None:
     session_file = session_finder(cwd, f".{provider}-session")
     if not _session_file_exists(session_file):
@@ -31,7 +31,7 @@ def terminate_provider_session(
         _print_termination_error(provider, exc)
 
 
-def _session_file_exists(session_file: Path | None) -> bool:
+def _session_file_exists(session_file: Optional[Path]) -> bool:
     return bool(session_file and session_file.exists())
 
 

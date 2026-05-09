@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 import queue
 import socket
 import threading
@@ -121,7 +123,7 @@ def worker_loop(server, *, interval: float, on_tick) -> None:
         server._stop_event.set()
 
 
-def handle_worker_connection(server, conn) -> str | None:
+def handle_worker_connection(server, conn) -> Optional[str]:
     try:
         with conn:
             return server._handle_connection(conn)
@@ -129,7 +131,7 @@ def handle_worker_connection(server, conn) -> str | None:
         return None
 
 
-def next_timeout(*, next_tick_at: float, on_tick) -> float | None:
+def next_timeout(*, next_tick_at: float, on_tick) -> Optional[float]:
     if on_tick is None:
         return _ACCEPT_POLL_TIMEOUT_S
     return max(0.0, next_tick_at - time.monotonic())
@@ -144,7 +146,7 @@ def run_tick_if_needed(*, on_tick, next_tick_at: float, interval: float) -> floa
 
 def post_request_tick(
     *,
-    handled_op: str | None,
+    handled_op: Optional[str],
     on_tick,
     next_tick_at: float,
     interval: float,

@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 import re
 from pathlib import Path
 
@@ -29,8 +31,8 @@ def session_path_from_id(
     work_dir: Path,
     *,
     include_env_pwd: bool = True,
-    projects_root: Path | None = None,
-) -> Path | None:
+    projects_root: Optional[Path] = None,
+) -> Optional[Path]:
     sid = str(session_id or "").strip()
     if not sid:
         return None
@@ -74,7 +76,7 @@ def candidate_work_dirs(work_dir: Path, *, include_env_pwd: bool = True) -> list
     return candidates
 
 
-def binding_path(data: dict) -> Path | None:
+def binding_path(data: dict) -> Optional[Path]:
     path_value = str(data.get("claude_session_path") or "").strip()
     if not path_value:
         return None
@@ -84,14 +86,14 @@ def binding_path(data: dict) -> Path | None:
         return None
 
 
-def binding_projects_root(data: dict) -> Path | None:
+def binding_projects_root(data: dict) -> Optional[Path]:
     layout = claude_layout_from_session_data(data)
     if layout is None:
         return None
     return layout.projects_root
 
 
-def existing_binding_path(path: Path | None) -> bool:
+def existing_binding_path(path: Optional[Path]) -> bool:
     return bool(path and path.exists())
 
 
@@ -101,7 +103,7 @@ def synchronize_existing_binding(
     sid: str,
     path: Path,
     work_dir: Path,
-    projects_root: Path | None,
+    projects_root: Optional[Path],
 ) -> None:
     if sid and path.stem != sid:
         candidate = session_path_from_id(sid, work_dir, projects_root=projects_root)
@@ -119,7 +121,7 @@ def adopt_session_path_if_present(
     *,
     sid: str,
     work_dir: Path,
-    projects_root: Path | None,
+    projects_root: Optional[Path],
 ) -> None:
     candidate = session_path_from_id(sid, work_dir, projects_root=projects_root)
     if candidate and candidate.exists():

@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from pathlib import Path
 
 from ..session import find_project_session_file as find_droid_project_session_file
@@ -12,7 +14,7 @@ def _load_project_session(work_dir: Path):
     return load_project_session(work_dir)
 
 
-def _load_bound_project_session(work_dir: Path, instance: str | None):
+def _load_bound_project_session(work_dir: Path, instance: Optional[str]):
     from ..session import load_project_session
 
     return load_project_session(work_dir, instance)

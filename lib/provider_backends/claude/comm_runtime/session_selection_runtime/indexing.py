@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from pathlib import Path
 
 from ...session_index_runtime import candidate_paths_for_work_dir, load_index_entries, project_index_location, select_best_session_path
@@ -7,7 +9,7 @@ from ...session_index_runtime import candidate_paths_for_work_dir, load_index_en
 from .membership import project_dir, session_belongs_to_current_project
 
 
-def parse_sessions_index(reader) -> Path | None:
+def parse_sessions_index(reader) -> Optional[Path]:
     if not reader._use_sessions_index:
         return None
     location = project_index_location(root=Path(), project_dir=project_dir(reader))

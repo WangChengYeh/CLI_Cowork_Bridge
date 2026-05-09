@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from dataclasses import dataclass
 
 
@@ -27,7 +29,7 @@ class DispatcherRuntimeState:
     terminal_event_by_status: dict
     running_status: object
     last_restore_entries: tuple = ()
-    last_restore_generated_at: str | None = None
+    last_restore_generated_at: Optional[str] = None
 
 
 class DispatcherRuntimeStateMixin:

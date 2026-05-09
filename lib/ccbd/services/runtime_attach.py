@@ -1,14 +1,16 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from pathlib import Path
 
 from agents.models import AgentRuntime, AgentState, RuntimeBindingSource, normalize_runtime_binding_source
 
 
 def binding_source_for_attach(
-    existing: AgentRuntime | None,
+    existing: Optional[AgentRuntime],
     *,
-    explicit: str | RuntimeBindingSource | None,
+    explicit: str | Optional[RuntimeBindingSource],
 ) -> RuntimeBindingSource:
     if explicit is not None:
         return normalize_runtime_binding_source(explicit)
@@ -18,9 +20,9 @@ def binding_source_for_attach(
 
 
 def health_for_attach(
-    existing: AgentRuntime | None,
+    existing: Optional[AgentRuntime],
     *,
-    explicit: str | None,
+    explicit: Optional[str],
     binding_source: RuntimeBindingSource,
 ) -> str:
     normalized = normalized_text(explicit)
@@ -34,7 +36,7 @@ def health_for_attach(
     return current
 
 
-def state_for_attach(existing_state: AgentState | None, next_health: str) -> AgentState:
+def state_for_attach(existing_state: Optional[AgentState], next_health: str) -> AgentState:
     if next_health in {'healthy', 'restored'}:
         if existing_state in {AgentState.DEGRADED, AgentState.STOPPED, AgentState.FAILED} or existing_state is None:
             return AgentState.IDLE
@@ -42,7 +44,7 @@ def state_for_attach(existing_state: AgentState | None, next_health: str) -> Age
     return AgentState.DEGRADED
 
 
-def terminal_backend_from_runtime_ref(runtime_ref: str | None) -> str | None:
+def terminal_backend_from_runtime_ref(runtime_ref: Optional[str]) -> Optional[str]:
     text = str(runtime_ref or '').strip()
     if ':' not in text:
         return None
@@ -51,7 +53,7 @@ def terminal_backend_from_runtime_ref(runtime_ref: str | None) -> str | None:
     return backend or None
 
 
-def pane_id_from_runtime_ref(runtime_ref: str | None) -> str | None:
+def pane_id_from_runtime_ref(runtime_ref: Optional[str]) -> Optional[str]:
     text = str(runtime_ref or '').strip()
     if ':' not in text:
         return None
@@ -60,21 +62,21 @@ def pane_id_from_runtime_ref(runtime_ref: str | None) -> str | None:
     return pane_id or None
 
 
-def normalized_text(value: str | None) -> str | None:
+def normalized_text(value: Optional[str]) -> Optional[str]:
     text = str(value or '').strip()
     return text or None
 
 
 def resolve_session_fields(
-    existing: AgentRuntime | None,
+    existing: Optional[AgentRuntime],
     *,
-    session_ref: str | None,
-    session_file: str | None,
-    session_id: str | None,
+    session_ref: Optional[str],
+    session_file: Optional[str],
+    session_id: Optional[str],
     session_ref_explicit: bool,
     session_file_explicit: bool,
     session_id_explicit: bool,
-) -> tuple[str | None, str | None, str | None]:
+) -> Optional[tuple[str], Optional[str], Optional[str]]:
     normalized_session_file = normalized_text(session_file)
     normalized_session_id = normalized_text(session_id)
     normalized_session_ref = normalized_text(session_ref)
@@ -110,18 +112,18 @@ def resolve_session_fields(
     return next_session_file, next_session_id, next_session_ref
 
 
-def looks_like_path(value: str | None) -> bool:
+def looks_like_path(value: Optional[str]) -> bool:
     text = str(value or '').strip()
     return bool(text) and (text.startswith('/') or text.startswith('~') or '/' in text or '\\' in text)
 
 
 def _session_field_value(
-    existing: AgentRuntime | None,
+    existing: Optional[AgentRuntime],
     *,
     field_name: str,
-    explicit_value: str | None,
+    explicit_value: Optional[str],
     explicit: bool,
-) -> str | None:
+) -> Optional[str]:
     if explicit:
         return explicit_value
     if existing is None:
@@ -130,14 +132,14 @@ def _session_field_value(
 
 
 def _clear_implicit_session_fields(
-    session_file: str | None,
-    session_id: str | None,
+    session_file: Optional[str],
+    session_id: Optional[str],
     *,
     session_ref_explicit: bool,
-    normalized_session_ref: str | None,
+    normalized_session_ref: Optional[str],
     session_file_explicit: bool,
     session_id_explicit: bool,
-) -> tuple[str | None, str | None]:
+) -> Optional[tuple[str], Optional[str]]:
     if not session_ref_explicit or normalized_session_ref is not None:
         return session_file, session_id
     next_session_file = session_file if session_file_explicit else None
@@ -146,27 +148,27 @@ def _clear_implicit_session_fields(
 
 
 def _derived_session_ref(
-    session_ref: str | None,
+    session_ref: Optional[str],
     *,
-    session_file: str | None,
-    session_id: str | None,
-) -> str | None:
+    session_file: Optional[str],
+    session_id: Optional[str],
+) -> Optional[str]:
     return session_ref or session_file or session_id
 
 
-def _derived_session_file(session_file: str | None, *, session_ref: str | None) -> str | None:
+def _derived_session_file(session_file: Optional[str], *, session_ref: Optional[str]) -> Optional[str]:
     if session_file is not None or not looks_like_path(session_ref):
         return session_file
     return session_ref
 
 
-def _derived_session_id(session_id: str | None, *, session_ref: str | None) -> str | None:
+def _derived_session_id(session_id: Optional[str], *, session_ref: Optional[str]) -> Optional[str]:
     if session_id is not None or session_ref is None or looks_like_path(session_ref):
         return session_id
     return session_ref
 
 
-def coerce_pid(value: object) -> int | None:
+def coerce_pid(value: object) -> Optional[int]:
     text = str(value or '').strip()
     if not text.isdigit():
         return None
@@ -174,7 +176,7 @@ def coerce_pid(value: object) -> int | None:
     return pid if pid > 0 else None
 
 
-def read_pid_file(path: Path) -> int | None:
+def read_pid_file(path: Path) -> Optional[int]:
     if not path.is_file():
         return None
     try:

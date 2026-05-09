@@ -1,17 +1,19 @@
 from __future__ import annotations
 
+from typing import Optional
+
 import inspect
 
 
 def ensure_project_namespace(
     project_namespace,
     *,
-    layout_signature: str | None,
+    layout_signature: Optional[str],
     recreate_namespace: bool,
     reflow_workspace: bool,
-    recreate_reason: str | None,
+    recreate_reason: Optional[str],
     background_maintenance: bool = False,
-    terminal_size: tuple[int, int] | None = None,
+    terminal_size: Optional[tuple[int, int]] = None,
 ):
     if reflow_workspace:
         return _reflow_project_workspace(
@@ -52,11 +54,11 @@ def ensure_project_namespace(
 
 def _namespace_kwargs_requested(
     *,
-    layout_signature: str | None,
+    layout_signature: Optional[str],
     recreate_namespace: bool,
-    recreate_reason: str | None,
+    recreate_reason: Optional[str],
     background_maintenance: bool,
-    terminal_size: tuple[int, int] | None,
+    terminal_size: Optional[tuple[int, int]],
 ) -> bool:
     return bool(
         recreate_namespace
@@ -70,8 +72,8 @@ def _namespace_kwargs_requested(
 def _reflow_project_workspace(
     project_namespace,
     *,
-    layout_signature: str | None,
-    recreate_reason: str | None,
+    layout_signature: Optional[str],
+    recreate_reason: Optional[str],
     background_maintenance: bool,
 ):
     reflow_fn = getattr(project_namespace, 'reflow_workspace', None)
@@ -105,11 +107,11 @@ def _reflow_project_workspace(
 
 def _ensure_kwargs(
     *,
-    layout_signature: str | None,
+    layout_signature: Optional[str],
     recreate_namespace: bool,
-    recreate_reason: str | None,
+    recreate_reason: Optional[str],
     background_maintenance: bool,
-    terminal_size: tuple[int, int] | None,
+    terminal_size: Optional[tuple[int, int]],
 ) -> dict[str, object]:
     return {
         'layout_signature': layout_signature,

@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 import re
 
 
@@ -9,7 +11,7 @@ SESSION_ID_PATTERN = re.compile(
 )
 
 
-def extract_session_id_from_start_cmd(start_cmd: str) -> str | None:
+def extract_session_id_from_start_cmd(start_cmd: str) -> Optional[str]:
     if not start_cmd:
         return None
     match = SESSION_ID_PATTERN.search(start_cmd)

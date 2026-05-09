@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 import json
 import time
 from pathlib import Path
@@ -8,7 +10,7 @@ from provider_core.pathing import find_session_file_for_work_dir, session_filena
 from provider_sessions.files import safe_write_session
 
 
-def find_project_session_file(work_dir: Path, instance: str | None = None) -> Path | None:
+def find_project_session_file(work_dir: Path, instance: Optional[str] = None) -> Optional[Path]:
     filename = session_filename_for_instance(".gemini-session", instance)
     return find_session_file_for_work_dir(work_dir, filename)
 

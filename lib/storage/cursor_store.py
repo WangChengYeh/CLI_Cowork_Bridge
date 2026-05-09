@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from pathlib import Path
 
 from completion.models import CompletionCursor
@@ -8,11 +10,11 @@ from storage.paths import PathLayout
 
 
 class CursorStore:
-    def __init__(self, layout: PathLayout, store: JsonStore | None = None) -> None:
+    def __init__(self, layout: PathLayout, store: Optional[JsonStore] = None) -> None:
         self._layout = layout
         self._store = store or JsonStore()
 
-    def load(self, job_id: str) -> CompletionCursor | None:
+    def load(self, job_id: str) -> Optional[CompletionCursor]:
         path = self._layout.cursor_path(job_id)
         if not path.exists():
             return None

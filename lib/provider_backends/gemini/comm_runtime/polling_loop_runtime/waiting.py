@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 import time
 from pathlib import Path
 
@@ -10,7 +12,7 @@ def wait_or_timeout(
     reader,
     *,
     cursor: GeminiPollingCursor,
-    session: Path | None,
+    session: Optional[Path],
 ):
     time.sleep(reader._poll_interval)
     if time.time() < cursor.deadline:

@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from pathlib import Path
 import platform
 import re
@@ -63,7 +65,7 @@ def cmd_update(args, *, script_root: Path) -> int:
     return 0
 
 
-def _resolve_target_version(args) -> str | bool | None:
+def _resolve_target_version(args) -> str | Optional[bool]:
     if not hasattr(args, "target") or not args.target:
         return None
     target_spec = args.target.lstrip("v")
@@ -86,7 +88,7 @@ def _resolve_target_version(args) -> str | bool | None:
     return target_version
 
 
-def _supported_update_platform() -> tuple[bool, str | None]:
+def _supported_update_platform() -> tuple[bool, Optional[str]]:
     system_name = platform.system()
     if system_name in {"Linux", "Darwin"}:
         return True, None
@@ -97,12 +99,12 @@ def _supported_update_platform() -> tuple[bool, str | None]:
     )
 
 
-def _resolve_latest_release_version() -> str | None:
+def _resolve_latest_release_version() -> Optional[str]:
     versions = get_available_versions()
     return latest_version(versions)
 
 
-def _update_via_tarball(tmp_base: Path, *, install_dir: Path, target_version: str | None, old_info: dict[str, object]) -> int:
+def _update_via_tarball(tmp_base: Path, *, install_dir: Path, target_version: Optional[str], old_info: dict[str, object]) -> int:
     if not target_version:
         print("❌ Update failed: no release version selected")
         return 1
@@ -170,7 +172,7 @@ def _release_artifact_url(version: str, *, artifact_name: str) -> str:
     return f"{REPO_URL}/releases/download/v{version}/{artifact_name}"
 
 
-def _release_artifact_name() -> str | None:
+def _release_artifact_name() -> Optional[str]:
     return release_artifact_name(platform.system(), machine=platform.machine())
 
 

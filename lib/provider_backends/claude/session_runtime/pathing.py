@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 import json
 import time
 from pathlib import Path
@@ -27,8 +29,8 @@ def ensure_work_dir_fields(
     data: dict,
     *,
     session_file: Path,
-    fallback_work_dir: Path | None = None,
-) -> Path | None:
+    fallback_work_dir: Optional[Path] = None,
+) -> Optional[Path]:
     if not isinstance(data, dict):
         return None
 
@@ -71,12 +73,12 @@ def _assign_project_id(data: dict, work_dir: str) -> None:
         pass
 
 
-def find_project_session_file(work_dir: Path, instance: str | None = None) -> Path | None:
+def find_project_session_file(work_dir: Path, instance: Optional[str] = None) -> Optional[Path]:
     filename = session_filename_for_instance(".claude-session", instance)
     return find_session_file_for_work_dir(work_dir, filename)
 
 
-def read_json(path: Path) -> dict | None:
+def read_json(path: Path) -> Optional[dict]:
     try:
         raw = path.read_text(encoding="utf-8-sig")
         data = json.loads(raw)

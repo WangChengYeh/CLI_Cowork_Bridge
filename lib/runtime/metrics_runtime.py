@@ -7,7 +7,7 @@ from pathlib import Path
 from runtime.metrics_server import RuntimeMetricsHttpServer
 
 
-@dataclass(slots=True)
+@dataclass
 class RuntimeMetricsRuntime:
     server: RuntimeMetricsHttpServer
     thread: threading.Thread

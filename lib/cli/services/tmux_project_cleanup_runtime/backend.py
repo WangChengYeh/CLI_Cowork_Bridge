@@ -1,9 +1,11 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from pathlib import Path
 
 
-def resolve_socket_ref(socket_name: str | None) -> tuple[str | None, str | None]:
+def resolve_socket_ref(socket_name: Optional[str]) -> Optional[tuple[str], Optional[str]]:
     text = str(socket_name or '').strip()
     if not text:
         return None, None
@@ -15,7 +17,7 @@ def resolve_socket_ref(socket_name: str | None) -> tuple[str | None, str | None]
     return text, None
 
 
-def build_backend(backend_factory, *, socket_name: str | None):
+def build_backend(backend_factory, *, socket_name: Optional[str]):
     resolved_socket_name, resolved_socket_path = resolve_socket_ref(socket_name)
     for kwargs in _backend_call_variants(
         socket_name=resolved_socket_name,
@@ -27,8 +29,8 @@ def build_backend(backend_factory, *, socket_name: str | None):
     return None
 
 
-def _backend_call_variants(*, socket_name: str | None, socket_path: str | None) -> tuple[dict[str, str | None], ...]:
-    variants: list[dict[str, str | None]] = [
+def _backend_call_variants(*, socket_name: Optional[str], socket_path: Optional[str]) -> tuple[dict[str, Optional[str]], ...]:
+    variants: list[dict[str, Optional[str]]] = [
         {'socket_name': socket_name, 'socket_path': socket_path},
     ]
     if socket_path is not None:
@@ -39,7 +41,7 @@ def _backend_call_variants(*, socket_name: str | None, socket_path: str | None) 
     return tuple(variants)
 
 
-def _call_backend_factory(backend_factory, *, kwargs: dict[str, str | None]) -> tuple[object | None, bool]:
+def _call_backend_factory(backend_factory, *, kwargs: dict[str, Optional[str]]) -> Optional[tuple[object], bool]:
     try:
         return backend_factory(**kwargs), False
     except TypeError:

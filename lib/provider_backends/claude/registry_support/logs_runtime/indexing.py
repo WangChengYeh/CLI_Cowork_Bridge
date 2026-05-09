@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from pathlib import Path
 
 from provider_backends.claude.session_index_runtime import (
@@ -10,7 +12,7 @@ from provider_backends.claude.session_index_runtime import (
 )
 
 
-def parse_sessions_index(work_dir: Path, *, root: Path) -> Path | None:
+def parse_sessions_index(work_dir: Path, *, root: Path) -> Optional[Path]:
     candidates = candidate_paths_for_work_dir(work_dir, include_env_pwd=False)
     location = resolve_registry_index_location(work_dir, root=root)
     if location is None:

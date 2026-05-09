@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from dataclasses import dataclass
 
 from room.imessage_delivery import RoomIMessageDelivery
@@ -14,11 +16,11 @@ DELIVERABLE_EVENT_TYPES = {
 }
 
 
-@dataclass(slots=True)
+@dataclass
 class DeliveryWorkerResult:
     attempted: bool
     delivered: bool
-    reason: str | None = None
+    reason: Optional[str] = None
 
 
 class DeliveryWorker:

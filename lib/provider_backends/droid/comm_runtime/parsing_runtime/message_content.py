@@ -1,9 +1,9 @@
 from __future__ import annotations
 
-from typing import Any
+from typing import Any, Optional
 
 
-def extract_message(entry: dict, role: str) -> str | None:
+def extract_message(entry: dict, role: str) -> Optional[str]:
     if not isinstance(entry, dict):
         return None
     entry_type = str(entry.get("type") or "").strip().lower()
@@ -19,7 +19,7 @@ def extract_message(entry: dict, role: str) -> str | None:
     return None
 
 
-def _extract_content_text(content: Any) -> str | None:
+def _extract_content_text(content: Any) -> Optional[str]:
     if content is None:
         return None
     if isinstance(content, str):
@@ -36,7 +36,7 @@ def _extract_content_text(content: Any) -> str | None:
     return "\n".join(texts).strip()
 
 
-def _extract_text_fragment(item: object) -> str | None:
+def _extract_text_fragment(item: object) -> Optional[str]:
     if not isinstance(item, dict):
         return None
     item_type = str(item.get("type") or "").strip().lower()

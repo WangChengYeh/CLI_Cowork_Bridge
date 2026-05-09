@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from collections.abc import Mapping
 
 from provider_profiles.codex_home_config import codex_provider_authority_fingerprint
@@ -19,7 +21,7 @@ def stored_session_authority_fingerprint(data: Mapping[str, object]) -> str:
     return _normalized_fingerprint(data.get('codex_session_authority_fingerprint'))
 
 
-def resume_authority_matches(data: Mapping[str, object], *, profile=None, current_fingerprint: str | None = None) -> bool:
+def resume_authority_matches(data: Mapping[str, object], *, profile=None, current_fingerprint: Optional[str] = None) -> bool:
     current = (
         _normalized_fingerprint(current_fingerprint)
         if current_fingerprint is not None

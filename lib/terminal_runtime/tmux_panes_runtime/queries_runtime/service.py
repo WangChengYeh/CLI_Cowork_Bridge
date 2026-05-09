@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from .options import normalize_expected_user_options, normalize_user_option_names, pane_matches_expected
 
 
@@ -22,7 +24,7 @@ def get_current_pane_id(service, *, env_pane: str) -> str:
     raise RuntimeError("tmux current pane id not available")
 
 
-def find_pane_by_title_marker(service, marker: str) -> str | None:
+def find_pane_by_title_marker(service, marker: str) -> Optional[str]:
     marker = (marker or "").strip()
     if not marker:
         return None
@@ -42,7 +44,7 @@ def list_panes_by_user_options(service, expected: dict[str, str]) -> list[str]:
     return matching_pane_ids(service, getattr(cp, "stdout", "") or "", normalized)
 
 
-def describe_pane(service, pane_id: str, *, user_options: tuple[str, ...] = ()) -> dict[str, str] | None:
+def describe_pane(service, pane_id: str, *, user_options: tuple[str, ...] = ()) -> Optional[dict[str, str]]:
     if not service.looks_like_pane_id_fn(pane_id):
         return None
     normalized_options = normalize_user_option_names(service, user_options)
@@ -57,7 +59,7 @@ def describe_pane(service, pane_id: str, *, user_options: tuple[str, ...] = ()) 
     return describe_pane_output(getattr(cp, "stdout", "") or "", normalized_options)
 
 
-def get_pane_content(service, pane_id: str, *, lines: int = 20) -> str | None:
+def get_pane_content(service, pane_id: str, *, lines: int = 20) -> Optional[str]:
     if not pane_id:
         return None
     n = max(1, int(lines))
@@ -76,14 +78,14 @@ def is_pane_alive(service, pane_id: str) -> bool:
     return service.pane_is_alive_fn(getattr(cp, "stdout", "") or "")
 
 
-def run_tmux_capture(service, args: list[str], *, timeout: float | None = None):
+def run_tmux_capture(service, args: list[str], *, timeout: Optional[float] = None):
     try:
         return service.tmux_run_fn(args, capture=True, timeout=timeout)
     except Exception:
         return None
 
 
-def current_pane_from_tmux(service) -> str | None:
+def current_pane_from_tmux(service) -> Optional[str]:
     cp = run_tmux_capture(service, ["display-message", "-p", "#{pane_id}"], timeout=0.5)
     if cp is None:
         return None
@@ -116,7 +118,7 @@ def describe_pane_fields(normalized_options: list[str]) -> list[str]:
     return ["#{pane_id}", "#{pane_title}", "#{pane_dead}", *(f"#{{{opt}}}" for opt in normalized_options)]
 
 
-def describe_pane_output(stdout: str, normalized_options: list[str]) -> dict[str, str] | None:
+def describe_pane_output(stdout: str, normalized_options: list[str]) -> Optional[dict[str, str]]:
     format_size = len(normalized_options) + 3
     line = (stdout.splitlines() or [""])[0]
     parts = line.split("\t")

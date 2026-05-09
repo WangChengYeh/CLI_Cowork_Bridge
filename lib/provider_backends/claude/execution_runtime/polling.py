@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from dataclasses import replace
 
 from completion.models import CompletionItemKind
@@ -27,7 +29,7 @@ def poll_submission(
     submission: ProviderSubmission,
     *,
     now: str,
-) -> ProviderPollResult | None:
+) -> Optional[ProviderPollResult]:
     del adapter
     prepared = _prepare_submission_poll(submission, now=now)
     if prepared is None or isinstance(prepared, ProviderPollResult):
@@ -77,7 +79,7 @@ def _dispatch_deferred_prompt(
     *,
     prepared,
     now: str,
-) -> ProviderPollResult | ProviderSubmission | None:
+) -> ProviderPollResult | Optional[ProviderSubmission]:
     if bool(submission.runtime_state.get("prompt_sent", True)):
         return None
     if not _prompt_delivery_due(submission, backend=prepared.backend, pane_id=prepared.pane_id, now=now):
@@ -169,7 +171,7 @@ def _reply_delivery_terminal_if_dispatched(
     submission: ProviderSubmission,
     *,
     now: str,
-) -> ProviderPollResult | None:
+) -> Optional[ProviderPollResult]:
     if not bool(submission.runtime_state.get("reply_delivery_complete_on_dispatch", False)):
         return None
     if not bool(submission.runtime_state.get("prompt_sent", False)):
@@ -275,7 +277,7 @@ def _process_events(
     *,
     state: dict,
     now: str,
-) -> ProviderPollResult | None:
+) -> Optional[ProviderPollResult]:
     for event in events:
         result = _process_event(submission, poll, event, state=state, now=now)
         if result is not None:
@@ -292,7 +294,7 @@ def _process_event(
     *,
     state: dict,
     now: str,
-) -> ProviderPollResult | None:
+) -> Optional[ProviderPollResult]:
     role = str(event.get("role") or "")
     if role == "user":
         handle_user_event(submission, poll, text=str(event.get("text") or ""), now=now)

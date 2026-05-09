@@ -1,11 +1,13 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from dataclasses import dataclass
 
 
 @dataclass(frozen=True)
 class HeartbeatTickContext:
-    snapshot: object | None
+    snapshot: Optional[object]
     observed_last_progress_at: str
     now: str
     next_state: object

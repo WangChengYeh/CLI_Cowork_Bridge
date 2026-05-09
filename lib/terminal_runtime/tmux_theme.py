@@ -4,7 +4,7 @@ from dataclasses import dataclass
 import hashlib
 import os
 import shlex
-from typing import Mapping
+from typing import Mapping, Optional
 
 
 @dataclass(frozen=True)
@@ -20,8 +20,8 @@ class TmuxThemeProfile:
     fallback_label_style: str
     pane_border_style: str
     pane_active_border_style: str
-    window_style: str | None = None
-    window_active_style: str | None = None
+    window_style: Optional[str] = None
+    window_active_style: Optional[str] = None
 
 
 @dataclass(frozen=True)
@@ -61,7 +61,7 @@ _WINDOW_STATUS_SEPARATOR = ''
 _PANE_BORDER_STATUS = 'top'
 
 
-def _visual(*, bg: str, border: str | None = None, active: str | None = None, fg: str = '#16161e') -> TmuxPaneVisual:
+def _visual(*, bg: str, border: Optional[str] = None, active: Optional[str] = None, fg: str = '#16161e') -> TmuxPaneVisual:
     border_color = str(border or bg).strip()
     active_color = str(active or border_color).strip()
     return TmuxPaneVisual(
@@ -122,11 +122,11 @@ _AGENT_VISUALS_CONTRAST: tuple[TmuxPaneVisual, ...] = (
 )
 
 
-def _env(environ: Mapping[str, str] | None = None) -> Mapping[str, str]:
+def _env(environ: Optional[Mapping[str, str]] = None) -> Mapping[str, str]:
     return environ if environ is not None else os.environ
 
 
-def detect_terminal_family(environ: Mapping[str, str] | None = None) -> str:
+def detect_terminal_family(environ: Optional[Mapping[str, str]] = None) -> str:
     env = _env(environ)
     for key in ('TERM_PROGRAM', 'LC_TERMINAL'):
         value = str(env.get(key, '') or '').strip().lower()
@@ -135,14 +135,14 @@ def detect_terminal_family(environ: Mapping[str, str] | None = None) -> str:
     return str(env.get('TERM', '') or '').strip().lower()
 
 
-def _normalize_profile_name(value: str | None) -> str | None:
+def _normalize_profile_name(value: Optional[str]) -> Optional[str]:
     name = str(value or '').strip().lower()
     if not name:
         return None
     return name if name in _THEME_PROFILES else None
 
 
-def tmux_theme_profile(environ: Mapping[str, str] | None = None) -> str:
+def tmux_theme_profile(environ: Optional[Mapping[str, str]] = None) -> str:
     env = _env(environ)
     override = _normalize_profile_name(env.get('CCB_TMUX_THEME_PROFILE'))
     if override is not None:
@@ -151,19 +151,19 @@ def tmux_theme_profile(environ: Mapping[str, str] | None = None) -> str:
     return 'contrast' if family in _CONTRAST_TERMINAL_FAMILIES else 'default'
 
 
-def tmux_status_interval(environ: Mapping[str, str] | None = None) -> str:
+def tmux_status_interval(environ: Optional[Mapping[str, str]] = None) -> str:
     raw = str(_env(environ).get('CCB_TMUX_STATUS_INTERVAL', '') or '').strip()
     if raw.isdigit() and int(raw) > 0:
         return str(int(raw))
     return '5'
 
 
-def theme_profile_definition(profile_name: str | None = None, *, environ: Mapping[str, str] | None = None) -> TmuxThemeProfile:
+def theme_profile_definition(profile_name: Optional[str] = None, *, environ: Optional[Mapping[str, str]] = None) -> TmuxThemeProfile:
     resolved = _normalize_profile_name(profile_name) or tmux_theme_profile(environ)
     return _THEME_PROFILES.get(resolved, _THEME_PROFILES['default'])
 
 
-def pane_border_format(profile_name: str | None = None, *, environ: Mapping[str, str] | None = None) -> str:
+def pane_border_format(profile_name: Optional[str] = None, *, environ: Optional[Mapping[str, str]] = None) -> str:
     profile = theme_profile_definition(profile_name, environ=environ)
     return (
         '#{?#{@ccb_agent},'
@@ -176,10 +176,10 @@ def pane_border_format(profile_name: str | None = None, *, environ: Mapping[str,
 def render_tmux_session_theme(
     *,
     ccb_version: str,
-    status_script: str | None,
-    git_script: str | None,
-    environ: Mapping[str, str] | None = None,
-    profile_name: str | None = None,
+    status_script: Optional[str],
+    git_script: Optional[str],
+    environ: Optional[Mapping[str, str]] = None,
+    profile_name: Optional[str] = None,
 ) -> RenderedTmuxSessionTheme:
     profile = theme_profile_definition(profile_name, environ=environ)
     normalized_version = _normalized_ccb_version(ccb_version)
@@ -241,12 +241,12 @@ def _pane_palette(*, profile_name: str, is_cmd: bool) -> tuple[TmuxPaneVisual, .
 
 def pane_visual(
     *,
-    project_id: str | None = None,
-    slot_key: str | None = None,
-    order_index: int | None = None,
+    project_id: Optional[str] = None,
+    slot_key: Optional[str] = None,
+    order_index: Optional[int] = None,
     is_cmd: bool = False,
-    profile_name: str | None = None,
-    environ: Mapping[str, str] | None = None,
+    profile_name: Optional[str] = None,
+    environ: Optional[Mapping[str, str]] = None,
 ) -> TmuxPaneVisual:
     resolved_profile = theme_profile_definition(profile_name, environ=environ).name
     visuals = _pane_palette(profile_name=resolved_profile, is_cmd=is_cmd)
@@ -256,9 +256,9 @@ def pane_visual(
 def _select_visual(
     visuals: tuple[TmuxPaneVisual, ...],
     *,
-    project_id: str | None,
-    slot_key: str | None,
-    fallback_index: int | None,
+    project_id: Optional[str],
+    slot_key: Optional[str],
+    fallback_index: Optional[int],
 ) -> TmuxPaneVisual:
     if project_id and slot_key:
         key = f'{project_id}:{slot_key}'
@@ -277,10 +277,10 @@ def _stable_index(key: str, size: int) -> int:
 def shell_exports(
     *,
     ccb_version: str,
-    status_script: str | None,
-    git_script: str | None,
-    environ: Mapping[str, str] | None = None,
-    profile_name: str | None = None,
+    status_script: Optional[str],
+    git_script: Optional[str],
+    environ: Optional[Mapping[str, str]] = None,
+    profile_name: Optional[str] = None,
 ) -> str:
     rendered = render_tmux_session_theme(
         ccb_version=ccb_version,

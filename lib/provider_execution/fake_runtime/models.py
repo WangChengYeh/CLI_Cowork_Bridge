@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from dataclasses import dataclass
 
 from completion.models import CompletionConfidence, CompletionItemKind, CompletionStatus
@@ -50,7 +52,7 @@ class FakeDirective:
 @dataclass(frozen=True)
 class FakeScriptEvent:
     at_ms: int
-    kind: CompletionItemKind | None
+    kind: Optional[CompletionItemKind]
     payload: dict[str, object]
 
 

@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import Any
+from typing import Any, Optional
 
 from agents.models_runtime.names import SCHEMA_VERSION
 
@@ -11,13 +11,13 @@ from .helpers import validate_restore_state
 @dataclass
 class AgentRestoreState:
     restore_mode: object
-    last_checkpoint: str | None
+    last_checkpoint: Optional[str]
     conversation_summary: str
     open_tasks: list[str] = field(default_factory=list)
     files_touched: list[str] = field(default_factory=list)
-    base_commit: str | None = None
-    head_commit: str | None = None
-    last_restore_status: object | None = None
+    base_commit: Optional[str] = None
+    head_commit: Optional[str] = None
+    last_restore_status: Optional[object] = None
 
     def __post_init__(self) -> None:
         validate_restore_state(self)

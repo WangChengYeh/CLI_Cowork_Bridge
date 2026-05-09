@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import time
-from typing import Any
+from typing import Any, Optional
 
 from ...log_entries import extract_entry, extract_message
 from .events import message_event as _message_event
@@ -13,7 +13,7 @@ def read_since(
     state: dict[str, Any],
     timeout: float,
     block: bool,
-) -> tuple[str | None, dict[str, Any]]:
+) -> Optional[tuple[str], dict[str, Any]]:
     return _read_matching_since(
         reader,
         state,
@@ -29,7 +29,7 @@ def read_event_since(
     state: dict[str, Any],
     timeout: float,
     block: bool,
-) -> tuple[tuple[str, str] | None, dict[str, Any]]:
+) -> Optional[tuple[tuple[str, str]], dict[str, Any]]:
     deadline = time.time() + timeout
     current_state = dict(state or {})
     while True:
@@ -51,7 +51,7 @@ def read_entry_since(
     state: dict[str, Any],
     timeout: float,
     block: bool,
-) -> tuple[dict[str, Any] | None, dict[str, Any]]:
+) -> Optional[tuple[dict[str, Any]], dict[str, Any]]:
     return _read_matching_since(
         reader,
         state,

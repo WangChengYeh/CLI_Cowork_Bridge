@@ -35,8 +35,8 @@ class RegistryRuntimeState:
     watchers: dict[str, WatcherEntry] = field(default_factory=dict)
     pending_logs: dict[str, float] = field(default_factory=dict)
     log_last_check: dict[str, float] = field(default_factory=dict)
-    monitor_thread: threading.Thread | None = None
-    root_watcher: SessionFileWatcher | None = None
+    monitor_thread: Optional[threading.Thread] = None
+    root_watcher: Optional[SessionFileWatcher] = None
 
 
 __all__ = ['RegistryRuntimeState', 'SessionEntry', 'WatcherEntry']

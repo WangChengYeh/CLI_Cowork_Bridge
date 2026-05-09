@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from uuid import uuid4
 
 from ccbd.api_models import JobRecord, JobStatus
@@ -9,7 +11,7 @@ from mailbox_runtime.targets import normalize_mailbox_target
 from .models import AttemptState, ReplyTerminalStatus
 
 
-def job_id_from_payload_ref(payload_ref: str | None) -> str | None:
+def job_id_from_payload_ref(payload_ref: Optional[str]) -> Optional[str]:
     text = str(payload_ref or '').strip()
     if not text.startswith('job:'):
         return None
@@ -19,7 +21,7 @@ def job_id_from_payload_ref(payload_ref: str | None) -> str | None:
     return job_id
 
 
-def mailbox_actor(service, actor: str) -> str | None:
+def mailbox_actor(service, actor: str) -> Optional[str]:
     return normalize_mailbox_target(actor, known_targets=service._known_mailboxes)
 
 

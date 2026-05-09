@@ -5,7 +5,7 @@ import os
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any, Callable
+from typing import Any, Callable, Optional
 
 
 STATE_RUNNING = 'running'
@@ -17,12 +17,12 @@ class RuntimeDaemonAlreadyRunning(RuntimeError):
     pass
 
 
-@dataclass(slots=True)
+@dataclass
 class RuntimeDaemonState:
     state: str
-    pid: int | None
+    pid: Optional[int]
     updated_at: str
-    heartbeat_at: str | None = None
+    heartbeat_at: Optional[str] = None
 
     def to_record(self) -> dict[str, Any]:
         return {
@@ -46,7 +46,7 @@ def now_utc() -> str:
     return datetime.now(timezone.utc).isoformat()
 
 
-def pid_exists(pid: int | None) -> bool:
+def pid_exists(pid: Optional[int]) -> bool:
     if pid is None or pid <= 0:
         return False
 
@@ -65,7 +65,7 @@ class RuntimeDaemonStateStore:
         self,
         *,
         project_root: Path,
-        pid_exists_fn: Callable[[int | None], bool] = pid_exists,
+        pid_exists_fn: Optional[Callable[[int]], bool] = pid_exists,
     ) -> None:
         self.project_root = Path(project_root)
         self.state_path = self.project_root / '.ccb' / 'runtime-daemon.json'
@@ -118,7 +118,7 @@ class RuntimeDaemonStateStore:
     def mark_running(
         self,
         *,
-        pid: int | None = None,
+        pid: Optional[int] = None,
         force: bool = False,
     ) -> RuntimeDaemonState:
         if not force:

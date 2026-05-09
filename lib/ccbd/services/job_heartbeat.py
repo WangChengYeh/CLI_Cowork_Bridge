@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from ccbd.system import utc_now
 from heartbeat import HeartbeatPolicy, HeartbeatStateStore
 from storage.paths import PathLayout
@@ -21,7 +23,7 @@ class JobHeartbeatService:
         layout: PathLayout,
         *,
         policy: HeartbeatPolicy,
-        store: HeartbeatStateStore | None = None,
+        store: Optional[HeartbeatStateStore] = None,
         clock=utc_now,
         subject_kind: str = _DEFAULT_SUBJECT_KIND,
     ) -> None:

@@ -1,9 +1,11 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from ccbd.services.provider_runtime_facts import build_provider_runtime_facts
 
 
-def provider_runtime_facts(monitor, runtime, session, binding, *, pane_id_override: str | None = None):
+def provider_runtime_facts(monitor, runtime, session, binding, *, pane_id_override: Optional[str] = None):
     provider = str(getattr(runtime, 'provider', '') or '').strip()
     if not provider:
         try:

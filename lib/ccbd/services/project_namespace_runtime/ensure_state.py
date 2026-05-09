@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from .backend import find_window, kill_server, session_window_target, window_root_pane
 from .ensure_context import rebuild_namespace_backend
 from .ensure_identity import apply_namespace_identity
@@ -26,7 +28,7 @@ def force_recreate_namespace(controller, context):
     )
 
 
-def layout_recreate_reason(controller, *, current, desired_layout_signature: str | None) -> str | None:
+def layout_recreate_reason(controller, *, current, desired_layout_signature: Optional[str]) -> Optional[str]:
     if current is None:
         return None
     if int(current.layout_version) != controller._layout_version:

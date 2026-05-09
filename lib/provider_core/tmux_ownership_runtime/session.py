@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 
 def session_user_option_lookup(session) -> dict[str, str]:
     resolver = getattr(session, 'user_option_lookup', None)
@@ -26,7 +28,7 @@ def session_user_option_lookup(session) -> dict[str, str]:
     return lookup
 
 
-def session_pane_title_marker(session) -> str | None:
+def session_pane_title_marker(session) -> Optional[str]:
     text = str(getattr(session, 'pane_title_marker', '') or '').strip()
     if text:
         return text
@@ -38,7 +40,7 @@ def session_pane_title_marker(session) -> str | None:
     return None
 
 
-def session_display_title(session) -> str | None:
+def session_display_title(session) -> Optional[str]:
     data = getattr(session, 'data', None)
     if isinstance(data, dict):
         agent_name = str(data.get('agent_name') or '').strip()

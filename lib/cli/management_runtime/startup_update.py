@@ -9,7 +9,7 @@ import time
 from datetime import datetime, timezone
 from pathlib import Path
 from types import SimpleNamespace
-from typing import TextIO
+from typing import Optional, TextIO
 
 from cli.models_start import ParsedStartCommand
 from cli.parser import CliParser, CliUsageError
@@ -31,7 +31,7 @@ _REFRESH_CURL_TIMEOUT_S = 1.5
 _REFRESH_GIT_TIMEOUT_S = 1.0
 
 
-def maybe_handle_background_update_refresh_command(tokens: list[str], *, script_root: Path) -> int | None:
+def maybe_handle_background_update_refresh_command(tokens: list[str], *, script_root: Path) -> Optional[int]:
     if list(tokens[:1]) != [BACKGROUND_REFRESH_COMMAND]:
         return None
     install_dir = find_install_dir(script_root)
@@ -53,11 +53,11 @@ def maybe_handle_startup_release_update(
     stdout: TextIO,
     stderr: TextIO,
     stdin,
-    env: dict[str, str] | None = None,
+    env: Optional[dict[str, str]] = None,
     schedule_refresh_fn=None,
     update_fn=None,
     relaunch_fn=None,
-) -> int | None:
+) -> Optional[int]:
     del stderr
     if os.environ.get("CCB_SKIP_STARTUP_UPDATE_CHECK"):
         return None
@@ -139,7 +139,7 @@ def refresh_update_check_cache(install_dir: Path) -> bool:
     return True
 
 
-def load_update_check_state(install_dir: Path) -> dict[str, object] | None:
+def load_update_check_state(install_dir: Path) -> Optional[dict[str, object]]:
     path = update_check_cache_path(install_dir)
     if not path.exists():
         return None
@@ -183,7 +183,7 @@ def update_check_lock_path(install_dir: Path) -> Path:
     return Path(install_dir) / _LOCK_FILE_NAME
 
 
-def update_check_state_is_stale(state: dict[str, object], *, now: float | None = None) -> bool:
+def update_check_state_is_stale(state: dict[str, object], *, now: Optional[float] = None) -> bool:
     checked_at_epoch = _safe_float(state.get("checked_at_epoch"))
     return checked_at_epoch <= 0 or checked_at_epoch + _CACHE_TTL_S <= float(now or time.time())
 
@@ -192,7 +192,7 @@ def should_prompt_for_update(
     state: dict[str, object],
     *,
     local_info: dict[str, object],
-    now: float | None = None,
+    now: Optional[float] = None,
 ) -> bool:
     if update_check_state_is_stale(state, now=now):
         return False
@@ -234,7 +234,7 @@ def prompt_for_startup_update(
     return ""
 
 
-def defer_update_prompt(install_dir: Path, state: dict[str, object], *, now: float | None = None) -> None:
+def defer_update_prompt(install_dir: Path, state: dict[str, object], *, now: Optional[float] = None) -> None:
     payload = dict(state)
     payload["deferred_version"] = str(state.get("latest_version") or "").strip() or None
     payload["deferred_until_epoch"] = float(now or time.time()) + _PROMPT_DEFER_S
@@ -280,7 +280,7 @@ def relaunch_after_update(tokens: list[str], *, script_root: Path, cwd: Path, en
     return subprocess.run(command, cwd=str(cwd), env=child_env).returncode
 
 
-def _acquire_refresh_lock(install_dir: Path) -> Path | None:
+def _acquire_refresh_lock(install_dir: Path) -> Optional[Path]:
     lock_path = update_check_lock_path(install_dir)
     now = time.time()
     if lock_path.exists():
@@ -344,7 +344,7 @@ def _safe_float(value: object) -> float:
         return 0.0
 
 
-def _optional_float(value: object) -> float | None:
+def _optional_float(value: object) -> Optional[float]:
     try:
         resolved = float(value)
     except Exception:

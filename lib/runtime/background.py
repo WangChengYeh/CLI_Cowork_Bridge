@@ -6,7 +6,7 @@ import subprocess
 import sys
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Callable, Sequence
+from typing import Callable, Optional, Sequence
 
 from runtime.daemon_state import (
     STATE_RUNNING,
@@ -15,25 +15,25 @@ from runtime.daemon_state import (
 )
 
 
-@dataclass(slots=True)
+@dataclass
 class BackgroundDaemonLaunchResult:
     pid: int
     argv: list[str]
     log_path: Path
 
 
-@dataclass(slots=True)
+@dataclass
 class BackgroundDaemonStopResult:
     signaled: bool
-    pid: int | None
-    reason: str | None = None
+    pid: Optional[int]
+    reason: Optional[str] = None
 
 
-@dataclass(slots=True)
+@dataclass
 class BackgroundDaemonRestartResult:
     restarted: bool
-    launch: BackgroundDaemonLaunchResult | None
-    reason: str | None = None
+    launch: Optional[BackgroundDaemonLaunchResult]
+    reason: Optional[str] = None
 
 
 def default_daemon_argv(project_root: Path) -> list[str]:
@@ -54,7 +54,7 @@ def default_daemon_argv(project_root: Path) -> list[str]:
 def launch_background_daemon(
     *,
     project_root: Path,
-    argv: Sequence[str] | None = None,
+    argv: Optional[Sequence[str]] = None,
     popen_fn: Callable[..., subprocess.Popen] = subprocess.Popen,
 ) -> BackgroundDaemonLaunchResult:
     project_root = Path(project_root)
@@ -124,7 +124,7 @@ def stop_background_daemon(
 def restart_background_daemon_if_needed(
     *,
     project_root: Path,
-    argv: Sequence[str] | None = None,
+    argv: Optional[Sequence[str]] = None,
     popen_fn: Callable[..., subprocess.Popen] = subprocess.Popen,
 ) -> BackgroundDaemonRestartResult:
     state_store = RuntimeDaemonStateStore(project_root=project_root)

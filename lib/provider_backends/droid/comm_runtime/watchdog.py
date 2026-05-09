@@ -21,8 +21,8 @@ _DROID_WATCH_LOCK = threading.Lock()
 def handle_droid_session_event(
     path: Path,
     *,
-    find_project_session_file_fn: Callable[[Path, str | None], Optional[Path]],
-    load_project_session_fn: Callable[[Path, str | None], object | None],
+    find_project_session_file_fn: Callable[[Path, Optional[str]], Optional[Path]],
+    load_project_session_fn: Callable[[Path, Optional[str]], Optional[object]],
 ) -> None:
     if not path or not path.exists() or path.suffix != ".jsonl":
         return
@@ -55,8 +55,8 @@ def ensure_droid_watchdog_started(
     *,
     root: Path = DROID_SESSIONS_ROOT,
     watcher_factory: Callable[..., SessionFileWatcher] = SessionFileWatcher,
-    find_project_session_file_fn: Callable[[Path, str | None], Optional[Path]],
-    load_project_session_fn: Callable[[Path, str | None], object | None],
+    find_project_session_file_fn: Callable[[Path, Optional[str]], Optional[Path]],
+    load_project_session_fn: Callable[[Path, Optional[str]], Optional[object]],
 ) -> None:
     if not HAS_WATCHDOG:
         return

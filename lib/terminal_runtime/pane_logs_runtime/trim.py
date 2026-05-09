@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 import os
 import tempfile
 from pathlib import Path
@@ -23,7 +25,7 @@ def maybe_trim_log(path: Path) -> None:
     replace_log_with_tail(path, tail=tail)
 
 
-def read_log_tail(path: Path, *, max_bytes: int) -> bytes | None:
+def read_log_tail(path: Path, *, max_bytes: int) -> Optional[bytes]:
     try:
         with path.open('rb') as handle:
             handle.seek(-max_bytes, os.SEEK_END)

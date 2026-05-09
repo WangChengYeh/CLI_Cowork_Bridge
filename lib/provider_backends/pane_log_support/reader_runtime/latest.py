@@ -1,12 +1,14 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from pathlib import Path
 
 from ..parsing import extract_assistant_blocks, extract_conversation_pairs, strip_ansi
 from .state import resolve_log_path
 
 
-def latest_reader_message(reader) -> str | None:
+def latest_reader_message(reader) -> Optional[str]:
     clean = _read_clean_log(resolve_log_path(reader))
     if clean is None:
         return None
@@ -22,7 +24,7 @@ def latest_conversation_pairs(reader, *, n: int = 1):
     return pairs[-max(1, int(n)) :]
 
 
-def _read_clean_log(log_path: Path | None) -> str | None:
+def _read_clean_log(log_path: Optional[Path]) -> Optional[str]:
     if log_path is None or not log_path.exists():
         return None
     try:

@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from dataclasses import dataclass
 
 from agents.models import normalize_agent_name
@@ -15,7 +17,7 @@ class AcceptedJobReceipt:
     accepted_at: str
     target_kind: TargetKind = TargetKind.AGENT
     target_name: str = ""
-    provider_instance: str | None = None
+    provider_instance: Optional[str] = None
 
     def __post_init__(self) -> None:
         if not self.job_id:
@@ -56,7 +58,7 @@ class AcceptedJobReceipt:
 class SubmitReceipt:
     accepted_at: str
     jobs: tuple[AcceptedJobReceipt, ...]
-    submission_id: str | None = None
+    submission_id: Optional[str] = None
 
     def __post_init__(self) -> None:
         if not self.accepted_at:
@@ -97,7 +99,7 @@ class CancelReceipt:
     cancelled_at: str
     target_kind: TargetKind = TargetKind.AGENT
     target_name: str = ""
-    provider_instance: str | None = None
+    provider_instance: Optional[str] = None
 
     def __post_init__(self) -> None:
         if not self.job_id:

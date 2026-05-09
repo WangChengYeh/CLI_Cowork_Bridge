@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from pathlib import Path
 import shlex
 
@@ -80,7 +82,7 @@ def resolve_run_cwd(
     launch_session_id: str,
     *,
     resolve_restore_target_fn,
-) -> Path | str | None:
+) -> Path | Optional[str]:
     del launch_session_id
     return resolve_restore_target_fn(
         spec=spec,

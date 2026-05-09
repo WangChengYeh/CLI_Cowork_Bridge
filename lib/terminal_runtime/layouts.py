@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from .layouts_models import LayoutResult, TmuxLayoutBackend
 from .layouts_root import resolve_root_pane
 from .layouts_split import build_layout_result, build_marker, build_split_layout
@@ -10,12 +12,12 @@ def create_tmux_auto_layout(
     *,
     cwd: str,
     backend: TmuxLayoutBackend,
-    root_pane_id: str | None = None,
-    tmux_session_name: str | None = None,
+    root_pane_id: Optional[str] = None,
+    tmux_session_name: Optional[str] = None,
     percent: int = 50,
     set_markers: bool = True,
     marker_prefix: str = "CCB",
-    detached_session_name: str | None = None,
+    detached_session_name: Optional[str] = None,
     inside_tmux: bool = False,
 ) -> LayoutResult:
     if not providers:

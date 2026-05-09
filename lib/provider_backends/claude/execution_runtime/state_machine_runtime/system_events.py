@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from dataclasses import replace
 
 from completion.models import (
@@ -42,7 +44,7 @@ def handle_system_event(
     *,
     now: str,
     state: dict[str, object],
-) -> ProviderPollResult | None:
+) -> Optional[ProviderPollResult]:
     api_error = terminal_api_error_payload(event)
     if api_error is not None:
         timestamp = str(api_error.get("timestamp") or now)

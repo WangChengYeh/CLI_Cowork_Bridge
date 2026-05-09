@@ -3,13 +3,13 @@ from __future__ import annotations
 import time
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Callable
+from typing import Callable, Optional
 
 from room.models import RoomEvent, RoomEventType
 from room.store import RoomEventStore
 
 
-@dataclass(slots=True)
+@dataclass
 class RuntimeLoopResult:
     processed_events: int
     next_offset: int
@@ -20,9 +20,9 @@ class RuntimeEventLoop:
         self,
         *,
         project_root: Path,
-        store: RoomEventStore | None = None,
+        store: Optional[RoomEventStore] = None,
         cursor_name: str = 'runtime-supervisor',
-        on_event: Callable[[RoomEvent], None] | None = None,
+        on_event: Callable[[RoomEvent], Optional[None]] = None,
     ) -> None:
         self.project_root = project_root
         self.store = store or RoomEventStore(project_root / '.ccb' / 'room')

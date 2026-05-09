@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from dataclasses import dataclass, replace
 
 
@@ -19,13 +21,13 @@ def start_agents(
     context,
     command,
     *,
-    terminal_size: tuple[int, int] | None = None,
+    terminal_size: Optional[tuple[int, int]] = None,
     ensure_daemon_started_fn,
     startup_report_store_cls,
     cleanup_summary_cls,
     before_client_start_fn=None,
     enrich_summary_fn=None,
-    start_rpc_timeout_s: float | None = None,
+    start_rpc_timeout_s: Optional[float] = None,
 ) -> StartSummary:
     pre_start_result = before_client_start_fn(context) if before_client_start_fn is not None else None
     handle = ensure_daemon_started_fn(context)
@@ -54,7 +56,7 @@ def start_agents(
     return summary
 
 
-def _start_rpc_client(client, *, timeout_s: float | None):
+def _start_rpc_client(client, *, timeout_s: Optional[float]):
     if timeout_s is None:
         return client
     with_timeout = getattr(client, 'with_timeout', None)

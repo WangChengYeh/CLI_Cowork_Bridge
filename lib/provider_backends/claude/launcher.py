@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import os
 from pathlib import Path
-from typing import Any
+from typing import Any, Optional
 
 from agents.models import AgentSpec
 from cli.context import CliContext
@@ -66,7 +66,7 @@ def resolve_run_cwd(
     plan: WorkspacePlan,
     runtime_dir: Path,
     launch_session_id: str,
-) -> Path | str | None:
+) -> Path | Optional[str]:
     return _resolve_run_cwd_impl(
         command,
         spec,
@@ -111,7 +111,7 @@ def _resolve_claude_restore_target(
     spec: AgentSpec,
     runtime_dir: Path,
     restore: bool,
-    workspace_path: Path | None = None,
+    workspace_path: Optional[Path] = None,
 ) -> ProviderRestoreTarget:
     return _resolve_claude_restore_target_impl(
         spec=spec,
@@ -127,10 +127,10 @@ def _resolve_claude_restore_target(
 
 def _project_session_restore_target(
     workspace_path: Path,
-    session_instance: str | None,
+    session_instance: Optional[str],
     *,
     managed_home: Path,
-) -> ProviderRestoreTarget | None:
+) -> Optional[ProviderRestoreTarget]:
     return _project_session_restore_target_impl(
         workspace_path,
         session_instance,
@@ -145,8 +145,8 @@ def _claude_history_state(
     invocation_dir: Path,
     project_root: Path,
     include_env_pwd: bool,
-    home_dir: Path | None = None,
-) -> tuple[str | None, bool, Path | None]:
+    home_dir: Optional[Path] = None,
+) -> Optional[tuple[str], bool, Optional[Path]]:
     return _claude_history_state_impl(
         invocation_dir=invocation_dir,
         project_root=project_root,
@@ -158,8 +158,8 @@ def _claude_history_state(
 def write_claude_settings_overlay(
     runtime_dir: Path,
     *,
-    profile: ResolvedProviderProfile | None = None,
-) -> Path | None:
+    profile: Optional[ResolvedProviderProfile] = None,
+) -> Optional[Path]:
     return _write_claude_settings_overlay_impl(
         runtime_dir,
         profile=profile,
@@ -168,8 +168,8 @@ def write_claude_settings_overlay(
 
 def build_claude_env_prefix(
     *,
-    profile: ResolvedProviderProfile | None = None,
-    extra_env: dict[str, str] | None = None,
+    profile: Optional[ResolvedProviderProfile] = None,
+    extra_env: Optional[dict[str, str]] = None,
 ) -> str:
     return _build_claude_env_prefix_impl(
         profile=profile,

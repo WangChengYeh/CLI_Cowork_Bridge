@@ -1,6 +1,8 @@
 """Backend environment detection for Windows/WSL runtime integration."""
 from __future__ import annotations
 
+from typing import Optional
+
 import os
 from pathlib import Path
 import subprocess
@@ -9,7 +11,7 @@ import sys
 from terminal_runtime.env import subprocess_kwargs as _subprocess_kwargs
 
 
-def get_backend_env() -> str | None:
+def get_backend_env() -> Optional[str]:
     """Get backend environment from explicit env or platform default."""
     v = (os.environ.get("CCB_BACKEND_ENV") or "").strip().lower()
     if v in {"wsl", "windows"}:
@@ -34,7 +36,7 @@ def _run_wsl(
     )
 
 
-def _probe_wsl_env() -> tuple[str, str] | None:
+def _probe_wsl_env() -> Optional[tuple[str, str]]:
     try:
         result = _run_wsl(
             ["wsl.exe", "-e", "sh", "-lc", "echo $WSL_DISTRO_NAME; echo $HOME"],

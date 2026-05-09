@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 
 def session_backend(session):
     backend_factory = getattr(session, 'backend', None)
@@ -11,7 +13,7 @@ def session_backend(session):
         return None
 
 
-def backend_pane_alive(backend, pane_id: str | None) -> bool:
+def backend_pane_alive(backend, pane_id: Optional[str]) -> bool:
     pane_text = str(pane_id or '').strip()
     if not pane_text:
         return False

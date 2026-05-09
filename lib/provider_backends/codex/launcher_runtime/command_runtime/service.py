@@ -3,7 +3,7 @@ from __future__ import annotations
 import os
 import shlex
 from pathlib import Path
-from typing import Callable
+from typing import Callable, Optional
 
 from provider_core.caller_env import caller_context_env, provider_user_session_env
 from provider_backends.codex.runtime_artifacts import codex_runtime_artifact_layout
@@ -16,10 +16,10 @@ def build_start_cmd(
     runtime_dir: Path,
     launch_session_id: str,
     *,
-    load_resolved_provider_profile_fn: Callable[[Path], object | None],
-    prepare_codex_home_overrides_fn: Callable[[Path, object | None], dict[str, str]],
+    load_resolved_provider_profile_fn: Callable[[Path], Optional[object]],
+    prepare_codex_home_overrides_fn: Callable[[Path, Optional[object]], dict[str, str]],
     provider_start_parts_fn: Callable[[str], list[str]],
-    load_resume_session_id_fn: Callable[[object, Path], str | None],
+    load_resume_session_id_fn: Callable[[object, Path], Optional[str]],
     build_codex_shell_prefix_fn: Callable[..., list[str]],
 ) -> str:
     profile = load_resolved_provider_profile_fn(runtime_dir)

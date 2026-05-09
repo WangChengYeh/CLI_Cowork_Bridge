@@ -1,11 +1,13 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from agents.models import AgentRuntime
 from ccbd.api_models import JobRecord, TargetKind
 from provider_execution.base import ProviderRuntimeContext
 
 
-def build_runtime_context(runtime: AgentRuntime | None) -> ProviderRuntimeContext | None:
+def build_runtime_context(runtime: Optional[AgentRuntime]) -> Optional[ProviderRuntimeContext]:
     if runtime is None:
         return None
     return ProviderRuntimeContext(
@@ -20,7 +22,7 @@ def build_runtime_context(runtime: AgentRuntime | None) -> ProviderRuntimeContex
     )
 
 
-def build_job_runtime_context(job: JobRecord, runtime: AgentRuntime | None = None) -> ProviderRuntimeContext | None:
+def build_job_runtime_context(job: JobRecord, runtime: Optional[AgentRuntime] = None) -> Optional[ProviderRuntimeContext]:
     if job.target_kind is TargetKind.AGENT:
         return build_runtime_context(runtime)
     if not job.workspace_path:

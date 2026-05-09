@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any
+from typing import Any, Optional
 
 from agents.models import normalize_agent_name
 from storage.json_store import JsonStore
@@ -16,9 +16,9 @@ class ProviderHelperManifest:
     runtime_generation: int
     helper_kind: str
     leader_pid: int
-    pgid: int | None
-    started_at: str | None
-    owner_daemon_generation: int | None
+    pgid: Optional[int]
+    started_at: Optional[str]
+    owner_daemon_generation: Optional[int]
     state: str = 'running'
 
     def __post_init__(self) -> None:
@@ -64,14 +64,14 @@ class ProviderHelperManifest:
         )
 
 
-def load_helper_manifest(path: Path, *, store: JsonStore | None = None) -> ProviderHelperManifest | None:
+def load_helper_manifest(path: Path, *, store: Optional[JsonStore] = None) -> Optional[ProviderHelperManifest]:
     if not path.exists():
         return None
     current_store = store or JsonStore()
     return current_store.load(path, loader=ProviderHelperManifest.from_record)
 
 
-def save_helper_manifest(path: Path, manifest: ProviderHelperManifest, *, store: JsonStore | None = None) -> Path:
+def save_helper_manifest(path: Path, manifest: ProviderHelperManifest, *, store: Optional[JsonStore] = None) -> Path:
     current_store = store or JsonStore()
     current_store.save(path, manifest, serializer=lambda value: value.to_record())
     return path
@@ -84,7 +84,7 @@ def clear_helper_manifest(path: Path) -> None:
         return
 
 
-def sync_runtime_helper_manifest(paths, runtime) -> ProviderHelperManifest | None:
+def sync_runtime_helper_manifest(paths, runtime) -> Optional[ProviderHelperManifest]:
     helper_path = paths.agent_helper_path(runtime.agent_name)
     manifest = build_runtime_helper_manifest(runtime)
     if manifest is None:
@@ -94,7 +94,7 @@ def sync_runtime_helper_manifest(paths, runtime) -> ProviderHelperManifest | Non
     return manifest
 
 
-def build_runtime_helper_manifest(runtime) -> ProviderHelperManifest | None:
+def build_runtime_helper_manifest(runtime) -> Optional[ProviderHelperManifest]:
     provider = str(getattr(runtime, 'provider', '') or '').strip().lower()
     if provider != 'codex':
         return None
@@ -121,7 +121,7 @@ def build_runtime_helper_manifest(runtime) -> ProviderHelperManifest | None:
     )
 
 
-def _canonical_runtime_generation(runtime) -> int | None:
+def _canonical_runtime_generation(runtime) -> Optional[int]:
     try:
         generation = int(getattr(runtime, 'runtime_generation', None))
     except Exception:
@@ -129,7 +129,7 @@ def _canonical_runtime_generation(runtime) -> int | None:
     return generation if generation > 0 else None
 
 
-def _read_pid(path: Path) -> int | None:
+def _read_pid(path: Path) -> Optional[int]:
     try:
         raw = path.read_text(encoding='utf-8').strip()
     except Exception:

@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from dataclasses import replace
 
 from agents.models import normalize_agent_name
@@ -19,7 +21,7 @@ _TERMINAL_ATTEMPT_STATES = frozenset(
 )
 
 
-def resolve_origin_message_id(service, reply_to: str | None) -> str | None:
+def resolve_origin_message_id(service, reply_to: Optional[str]) -> Optional[str]:
     key = str(reply_to or '').strip()
     if not key:
         return None

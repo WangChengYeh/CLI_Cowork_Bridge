@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from pathlib import Path
 
 from agents.models import (
@@ -24,11 +26,11 @@ SCHEMA_VERSION = 2
 
 
 class AgentSpecStore:
-    def __init__(self, layout: PathLayout, store: JsonStore | None = None) -> None:
+    def __init__(self, layout: PathLayout, store: Optional[JsonStore] = None) -> None:
         self._layout = layout
         self._store = store or JsonStore()
 
-    def load(self, agent_name: str) -> AgentSpec | None:
+    def load(self, agent_name: str) -> Optional[AgentSpec]:
         path = self._layout.agent_spec_path(agent_name)
         if not path.exists():
             return None
@@ -41,11 +43,11 @@ class AgentSpecStore:
 
 
 class AgentRuntimeStore:
-    def __init__(self, layout: PathLayout, store: JsonStore | None = None) -> None:
+    def __init__(self, layout: PathLayout, store: Optional[JsonStore] = None) -> None:
         self._layout = layout
         self._store = store or JsonStore()
 
-    def load(self, agent_name: str) -> AgentRuntime | None:
+    def load(self, agent_name: str) -> Optional[AgentRuntime]:
         path = self._layout.agent_runtime_path(agent_name)
         if not path.exists():
             return None
@@ -56,7 +58,7 @@ class AgentRuntimeStore:
         self._store.save(path, runtime, serializer=lambda value: value.to_record())
         return path
 
-    def load_best_effort(self, agent_name: str) -> AgentRuntime | None:
+    def load_best_effort(self, agent_name: str) -> Optional[AgentRuntime]:
         try:
             return self.load(agent_name)
         except Exception:
@@ -64,11 +66,11 @@ class AgentRuntimeStore:
 
 
 class AgentRestoreStore:
-    def __init__(self, layout: PathLayout, store: JsonStore | None = None) -> None:
+    def __init__(self, layout: PathLayout, store: Optional[JsonStore] = None) -> None:
         self._layout = layout
         self._store = store or JsonStore()
 
-    def load(self, agent_name: str) -> AgentRestoreState | None:
+    def load(self, agent_name: str) -> Optional[AgentRestoreState]:
         path = self._layout.agent_restore_path(agent_name)
         if not path.exists():
             return None

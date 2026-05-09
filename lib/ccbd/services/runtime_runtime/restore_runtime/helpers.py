@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from dataclasses import replace
 
 from agents.models import RuntimeBindingSource
@@ -24,7 +26,7 @@ def restore_attachment_kwargs(*, layout, spec, runtime) -> dict[str, object]:
     }
 
 
-def touch_active_runtime(*, registry, runtime, timestamp: str, health: str | None = None):
+def touch_active_runtime(*, registry, runtime, timestamp: str, health: Optional[str] = None):
     updated_runtime = replace(
         runtime,
         last_seen_at=timestamp,

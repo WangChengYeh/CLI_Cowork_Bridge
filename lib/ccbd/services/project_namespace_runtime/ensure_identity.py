@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from cli.services.tmux_ui import apply_project_tmux_ui
 from terminal_runtime.tmux_identity import apply_ccb_pane_identity
 
@@ -18,7 +20,7 @@ def prepare_namespace_root_pane(
     context,
     *,
     epoch: int,
-    terminal_size: tuple[int, int] | None = None,
+    terminal_size: Optional[tuple[int, int]] = None,
 ) -> None:
     prepare_server(context.backend)
     if not context.session_is_alive:

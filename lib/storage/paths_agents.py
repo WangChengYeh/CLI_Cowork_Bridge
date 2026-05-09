@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from pathlib import Path
 
 from agents.models import normalize_agent_name
@@ -81,7 +83,7 @@ class WorkspacePathMixin:
     def workspaces_dir(self):
         return self.ccb_dir / 'workspaces'
 
-    def workspace_path(self, agent_name: str, workspace_root: str | None = None) -> Path:
+    def workspace_path(self, agent_name: str, workspace_root: Optional[str] = None) -> Path:
         normalized = normalize_agent_name(agent_name)
         if workspace_root:
             base = Path(workspace_root).expanduser()
@@ -91,7 +93,7 @@ class WorkspacePathMixin:
     def workspace_binding_path(
         self,
         agent_name: str,
-        workspace_root: str | None = None,
+        workspace_root: Optional[str] = None,
     ) -> Path:
         return self.workspace_path(
             agent_name,

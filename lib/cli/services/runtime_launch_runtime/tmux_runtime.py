@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from pathlib import Path
 
 from terminal_runtime.tmux_identity import apply_ccb_pane_identity
@@ -28,9 +30,9 @@ def launch_tmux_runtime(
     pane_meets_minimum_size_fn,
     best_effort_kill_tmux_pane_fn,
     write_session_file_fn,
-    assigned_pane_id: str | None = None,
+    assigned_pane_id: Optional[str] = None,
     style_index: int = 0,
-    tmux_socket_path: str | None = None,
+    tmux_socket_path: Optional[str] = None,
     allow_detached_fallback: bool = True,
 ) -> None:
     runtime_dir = context.paths.agent_dir(spec.name) / 'provider-runtime' / spec.provider

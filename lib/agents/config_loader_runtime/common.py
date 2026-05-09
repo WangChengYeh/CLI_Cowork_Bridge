@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -49,7 +51,7 @@ class ConfigValidationError(ValueError):
 @dataclass(frozen=True)
 class ConfigLoadResult:
     config: ProjectConfig
-    source_path: Path | None
+    source_path: Optional[Path]
     used_default: bool = False
 
 

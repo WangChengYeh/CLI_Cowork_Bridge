@@ -45,7 +45,7 @@ class ClaudeProjectSession:
         return str(self.data.get("claude_home") or "").strip()
 
     @property
-    def claude_home_path(self) -> Path | None:
+    def claude_home_path(self) -> Optional[Path]:
         layout = claude_layout_from_session_data(self.data)
         return layout.home_root if layout is not None else None
 

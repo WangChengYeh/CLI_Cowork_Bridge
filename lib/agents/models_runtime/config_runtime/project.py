@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Any
+from typing import Any, Optional
 
 from ..names import SCHEMA_VERSION, AgentValidationError
 from .validation import normalize_agent_specs, normalize_default_agents, resolve_layout_spec
@@ -13,8 +13,8 @@ class ProjectConfig:
     default_agents: tuple[str, ...]
     agents: dict[str, object]
     cmd_enabled: bool = False
-    layout_spec: str | None = None
-    source_path: str | None = None
+    layout_spec: Optional[str] = None
+    source_path: Optional[str] = None
 
     def __post_init__(self) -> None:
         if self.version != SCHEMA_VERSION:

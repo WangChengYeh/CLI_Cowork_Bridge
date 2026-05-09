@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from dataclasses import dataclass
 
 from cli.context import CliContext
@@ -13,7 +15,7 @@ class ResubmitSummary:
     project_id: str
     original_message_id: str
     message_id: str
-    submission_id: str | None
+    submission_id: Optional[str]
     jobs: tuple[dict, ...]
 
 

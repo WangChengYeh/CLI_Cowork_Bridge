@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from storage.json_store import JsonStore
 from storage.paths import PathLayout
 
@@ -7,11 +9,11 @@ from .records import KeeperState, ShutdownIntent
 
 
 class KeeperStateStore:
-    def __init__(self, layout: PathLayout, store: JsonStore | None = None) -> None:
+    def __init__(self, layout: PathLayout, store: Optional[JsonStore] = None) -> None:
         self._layout = layout
         self._store = store or JsonStore()
 
-    def load(self) -> KeeperState | None:
+    def load(self) -> Optional[KeeperState]:
         path = self._layout.ccbd_keeper_path
         if not path.exists():
             return None
@@ -22,11 +24,11 @@ class KeeperStateStore:
 
 
 class ShutdownIntentStore:
-    def __init__(self, layout: PathLayout, store: JsonStore | None = None) -> None:
+    def __init__(self, layout: PathLayout, store: Optional[JsonStore] = None) -> None:
         self._layout = layout
         self._store = store or JsonStore()
 
-    def load(self) -> ShutdownIntent | None:
+    def load(self) -> Optional[ShutdownIntent]:
         path = self._layout.ccbd_shutdown_intent_path
         if not path.exists():
             return None

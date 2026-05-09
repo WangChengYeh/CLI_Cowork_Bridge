@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from dataclasses import fields, replace
 
 from agents.models import AgentRuntime, AgentSpec, AgentState, normalize_agent_name
@@ -31,7 +33,7 @@ _RUNTIME_FIELD_NAMES = tuple(field.name for field in fields(AgentRuntime))
 
 
 class AgentRegistry:
-    def __init__(self, layout: PathLayout, config, runtime_store: AgentRuntimeStore | None = None) -> None:
+    def __init__(self, layout: PathLayout, config, runtime_store: Optional[AgentRuntimeStore] = None) -> None:
         self._layout = layout
         self._config = config
         self._runtime_store = runtime_store or AgentRuntimeStore(layout)
@@ -51,7 +53,7 @@ class AgentRegistry:
         except KeyError as exc:
             raise KeyError(f'unknown agent: {normalized}') from exc
 
-    def get(self, agent_name: str) -> AgentRuntime | None:
+    def get(self, agent_name: str) -> Optional[AgentRuntime]:
         normalized = normalize_agent_name(agent_name)
         cached = self._cache.get(normalized)
         if cached is not None:
@@ -81,7 +83,7 @@ class AgentRegistry:
     def upsert_authority(self, runtime: AgentRuntime) -> AgentRuntime:
         return self.upsert(runtime, authority_write=True)
 
-    def remove(self, agent_name: str) -> AgentRuntime | None:
+    def remove(self, agent_name: str) -> Optional[AgentRuntime]:
         runtime = self.get(agent_name)
         if runtime is None:
             clear_helper_manifest(self._layout.agent_helper_path(agent_name))
@@ -122,7 +124,7 @@ class AgentRegistry:
         return tuple(sorted(self._config.agents))
 
 
-def _changed_runtime_fields(existing: AgentRuntime | None, runtime: AgentRuntime) -> tuple[str, ...]:
+def _changed_runtime_fields(existing: Optional[AgentRuntime], runtime: AgentRuntime) -> tuple[str, ...]:
     if existing is None:
         return ()
     changed: list[str] = []

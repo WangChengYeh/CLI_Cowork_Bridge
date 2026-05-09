@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from pathlib import Path
 
 from provider_sessions.files import resolve_project_config_dir
@@ -9,7 +11,7 @@ from provider_backends.codex.session_runtime.pathing import read_json
 from .session_ids import extract_session_id
 
 
-def parse_instance_from_codex_session_name(filename: str) -> str | None:
+def parse_instance_from_codex_session_name(filename: str) -> Optional[str]:
     name = str(filename or "").strip()
     if not name.startswith(".codex") or not name.endswith("-session"):
         return None
@@ -19,7 +21,7 @@ def parse_instance_from_codex_session_name(filename: str) -> str | None:
     return middle or None
 
 
-def resolve_unique_codex_session_target(work_dir: Path, *, log_path: Path | None = None) -> tuple[Path | None, str | None]:
+def resolve_unique_codex_session_target(work_dir: Path, *, log_path: Optional[Path] = None) -> Optional[tuple[Path], Optional[str]]:
     root = _normalize_work_dir(work_dir)
     unique = _unique_session_candidates(root)
     if log_path is not None:
@@ -81,7 +83,7 @@ def _candidate_matches_log(candidate: Path, log_path: Path) -> bool:
     return not has_bound_codex_session(data)
 
 
-def _normalize_log_path(value: object) -> Path | None:
+def _normalize_log_path(value: object) -> Optional[Path]:
     if value is None:
         return None
     try:

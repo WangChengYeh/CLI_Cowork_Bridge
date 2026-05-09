@@ -1,7 +1,9 @@
 from __future__ import annotations
 
+from typing import Optional
 
-def terminal_api_error_payload(event: dict[str, object]) -> dict[str, object] | None:
+
+def terminal_api_error_payload(event: dict[str, object]) -> Optional[dict[str, object]]:
     if not api_error_event(event):
         return None
     raw_entry = event.get("entry")
@@ -27,7 +29,7 @@ def api_error_event(event: dict[str, object]) -> bool:
     return entry_type == "system" and subtype == "api_error"
 
 
-def exhausted_retry_state(raw_entry: dict[str, object]) -> tuple[int, int] | None:
+def exhausted_retry_state(raw_entry: dict[str, object]) -> Optional[tuple[int, int]]:
     try:
         retry_attempt = int(raw_entry.get("retryAttempt"))
         max_retries = int(raw_entry.get("maxRetries"))
@@ -38,7 +40,7 @@ def exhausted_retry_state(raw_entry: dict[str, object]) -> tuple[int, int] | Non
     return retry_attempt, max_retries
 
 
-def api_error_details(raw_entry: dict[str, object]) -> tuple[str | None, str | None]:
+def api_error_details(raw_entry: dict[str, object]) -> Optional[tuple[str], Optional[str]]:
     cause = raw_entry.get("cause")
     if not isinstance(cause, dict):
         cause = {}
@@ -47,7 +49,7 @@ def api_error_details(raw_entry: dict[str, object]) -> tuple[str | None, str | N
     return error_code, error_path
 
 
-def build_api_error_message(*, error_code: str | None, error_path: str | None) -> str:
+def build_api_error_message(*, error_code: Optional[str], error_path: Optional[str]) -> str:
     message_parts = ["Claude API request failed"]
     if error_code:
         message_parts.append(f"code={error_code}")

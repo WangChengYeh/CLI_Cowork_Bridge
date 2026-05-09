@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Protocol
+from typing import Optional, Protocol
 
 from completion.models import CompletionDecision, ReplyCandidate
 
@@ -39,7 +39,7 @@ class BaseReplySelector:
         best = self._best_candidate()
         return best.text if best is not None else ''
 
-    def _best_candidate(self) -> ReplyCandidate | None:
+    def _best_candidate(self) -> Optional[ReplyCandidate]:
         if not self._candidates:
             return None
         return sorted(

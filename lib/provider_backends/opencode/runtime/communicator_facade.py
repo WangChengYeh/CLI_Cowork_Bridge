@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 import os
 import time
 from pathlib import Path
@@ -43,10 +45,10 @@ class OpenCodeCommunicator:
                     f"❌ Session unhealthy: {msg}\nTip: Add opencode to ccb.config and run `ccb` to start a new session"
                 )
 
-    def _find_session_file(self) -> Path | None:
+    def _find_session_file(self) -> Optional[Path]:
         return find_opencode_session_file(cwd=Path.cwd(), finder=find_opencode_project_session_file)
 
-    def _load_session_info(self) -> dict | None:
+    def _load_session_info(self) -> Optional[dict]:
         return load_opencode_session_info(session_finder=self._find_session_file)
 
     def _check_session_health(self) -> tuple[bool, str]:
@@ -72,7 +74,7 @@ class OpenCodeCommunicator:
     def ask_async(self, question: str) -> bool:
         return _ask_async_impl(self, question)
 
-    def ask_sync(self, question: str, timeout: int | None = None) -> str | None:
+    def ask_sync(self, question: str, timeout: Optional[int] = None) -> Optional[str]:
         return _ask_sync_impl(self, question, timeout=timeout)
 
 

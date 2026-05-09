@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from pathlib import Path
 import os
 import subprocess
@@ -205,7 +207,7 @@ def _lib_root() -> Path:
     return Path(__file__).resolve().parents[3]
 
 
-def _current_config_signature(context) -> str | None:
+def _current_config_signature(context) -> Optional[str]:
     try:
         config = load_project_config(context.project.project_root).config
     except Exception:

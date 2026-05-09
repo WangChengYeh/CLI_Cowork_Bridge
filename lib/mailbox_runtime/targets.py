@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from agents.models import AgentValidationError, normalize_agent_name
 
 
@@ -9,7 +11,7 @@ NON_MAILBOX_ACTORS = frozenset({USER_ACTOR, 'system', 'manual', 'email'})
 NON_AGENT_ACTORS = frozenset({CMD_ACTOR, *NON_MAILBOX_ACTORS})
 
 
-def normalize_actor_name(actor: str | None) -> str:
+def normalize_actor_name(actor: Optional[str]) -> str:
     normalized = str(actor or '').strip().lower()
     if not normalized:
         raise AgentValidationError('actor cannot be empty')
@@ -18,7 +20,7 @@ def normalize_actor_name(actor: str | None) -> str:
     return normalize_agent_name(normalized)
 
 
-def normalize_mailbox_owner_name(actor: str | None) -> str:
+def normalize_mailbox_owner_name(actor: Optional[str]) -> str:
     normalized = normalize_actor_name(actor)
     if normalized in NON_MAILBOX_ACTORS:
         raise AgentValidationError(f'actor {normalized!r} does not own a mailbox')
@@ -33,7 +35,7 @@ def known_mailbox_targets(config) -> frozenset[str]:
     return frozenset(names)
 
 
-def normalize_mailbox_target(actor: str | None, *, known_targets: frozenset[str]) -> str | None:
+def normalize_mailbox_target(actor: Optional[str], *, known_targets: frozenset[str]) -> Optional[str]:
     normalized = str(actor or '').strip().lower()
     if not normalized:
         return None

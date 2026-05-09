@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import Any
+from typing import Any, Optional
 
 from .common import API_VERSION
 
@@ -41,7 +41,7 @@ class RpcRequest:
 class RpcResponse:
     ok: bool
     payload: dict[str, Any] = field(default_factory=dict)
-    error: str | None = None
+    error: Optional[str] = None
     api_version: int = API_VERSION
 
     def __post_init__(self) -> None:
@@ -60,11 +60,11 @@ class RpcResponse:
         return record
 
     @classmethod
-    def success(cls, payload: dict[str, Any] | None = None) -> "RpcResponse":
+    def success(cls, payload: Optional[dict[str, Any]] = None) -> "RpcResponse":
         return cls(ok=True, payload=payload or {})
 
     @classmethod
-    def failure(cls, error: str, *, payload: dict[str, Any] | None = None) -> "RpcResponse":
+    def failure(cls, error: str, *, payload: Optional[dict[str, Any]] = None) -> "RpcResponse":
         return cls(ok=False, payload=payload or {}, error=error)
 
     @classmethod

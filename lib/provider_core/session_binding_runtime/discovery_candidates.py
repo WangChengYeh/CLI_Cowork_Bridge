@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from pathlib import Path
 
 from agents.models import normalize_agent_name
@@ -18,7 +20,7 @@ def session_file_for_agent(
     base_filename: str,
     work_dir: Path | str,
     agent_name: str,
-) -> Path | None:
+) -> Optional[Path]:
     try:
         root = Path(work_dir).expanduser()
     except Exception:
@@ -31,7 +33,7 @@ def session_file_for_agent(
     return None
 
 
-def unique_project_session_file(*, base_filename: str, work_dir: Path | str) -> Path | None:
+def unique_project_session_file(*, base_filename: str, work_dir: Path | str) -> Optional[Path]:
     project_root = target_project_root(work_dir)
     if project_root is None:
         return None
@@ -60,11 +62,11 @@ def project_session_candidates(*, base_filename: str, project_root: Path) -> lis
     return candidates
 
 
-def candidate_instances_for_agent(*, provider: str, agent_name: str) -> tuple[str | None, ...]:
+def candidate_instances_for_agent(*, provider: str, agent_name: str) -> Optional[tuple[str], ...]:
     normalized_provider = str(provider or '').strip().lower()
     normalized_agent = normalize_agent_name(agent_name)
     instance = named_agent_instance(agent_name, primary_agent=normalized_provider)
-    candidates: list[str | None] = []
+    candidates: Optional[list[str]] = []
     if instance is not None:
         candidates.append(instance)
     if normalized_agent and normalized_agent == normalized_provider and None not in candidates:

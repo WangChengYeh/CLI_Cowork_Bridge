@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from dataclasses import replace
 
 from provider_execution.active import prepare_active_poll
@@ -79,7 +81,7 @@ def poll_submission(
     state_session_path_fn,
     is_done_text_fn,
     clean_reply_fn,
-) -> ProviderPollResult | None:
+) -> Optional[ProviderPollResult]:
     prepared = prepare_active_poll(submission, now=now)
     if prepared is None or isinstance(prepared, ProviderPollResult):
         return prepared

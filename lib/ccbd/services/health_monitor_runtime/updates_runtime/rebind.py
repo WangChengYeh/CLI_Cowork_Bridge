@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from dataclasses import replace
 
 from agents.models import AgentState
@@ -14,7 +16,7 @@ def rebind_runtime(
     session,
     binding,
     *,
-    pane_id_override: str | None = None,
+    pane_id_override: Optional[str] = None,
     force_session_ref_update: bool = False,
 ):
     facts = monitor._provider_runtime_facts(
@@ -65,13 +67,13 @@ def rebind_runtime(
     return monitor._registry.upsert(updated)
 
 
-def _bound_pane_id(*, facts, pane_id_override: str | None, session) -> str | None:
+def _bound_pane_id(*, facts, pane_id_override: Optional[str], session) -> Optional[str]:
     if facts is not None:
         return facts.pane_id
     return str(pane_id_override or getattr(session, 'pane_id', '') or '').strip() or None
 
 
-def _bound_session_ref(*, facts, session, binding) -> str | None:
+def _bound_session_ref(*, facts, session, binding) -> Optional[str]:
     if facts is not None:
         return facts.session_ref
     return session_ref(
@@ -81,7 +83,7 @@ def _bound_session_ref(*, facts, session, binding) -> str | None:
     )
 
 
-def _next_session_ref(*, runtime, bound_session_ref: str | None, force_session_ref_update: bool) -> str | None:
+def _next_session_ref(*, runtime, bound_session_ref: Optional[str], force_session_ref_update: bool) -> Optional[str]:
     if force_session_ref_update:
         return bound_session_ref
     return runtime.session_ref or bound_session_ref
@@ -97,7 +99,7 @@ def _next_health(runtime) -> str:
     return 'healthy'
 
 
-def _next_pid(*, runtime, facts) -> int | None:
+def _next_pid(*, runtime, facts) -> Optional[int]:
     if facts is not None and facts.runtime_pid is not None:
         return facts.runtime_pid
     return runtime.pid

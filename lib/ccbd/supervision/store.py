@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from dataclasses import dataclass
 
 from storage.jsonl_store import JsonlStore
@@ -14,15 +16,15 @@ class SupervisionEvent:
     project_id: str
     agent_name: str
     occurred_at: str
-    daemon_generation: int | None = None
-    desired_state: str | None = None
-    reconcile_state: str | None = None
-    prior_health: str | None = None
-    result_health: str | None = None
-    runtime_state: str | None = None
-    runtime_ref: str | None = None
-    session_ref: str | None = None
-    details: dict[str, object] | None = None
+    daemon_generation: Optional[int] = None
+    desired_state: Optional[str] = None
+    reconcile_state: Optional[str] = None
+    prior_health: Optional[str] = None
+    result_health: Optional[str] = None
+    runtime_state: Optional[str] = None
+    runtime_ref: Optional[str] = None
+    session_ref: Optional[str] = None
+    details: Optional[dict[str, object]] = None
 
     def to_record(self) -> dict[str, object]:
         return {
@@ -68,7 +70,7 @@ class SupervisionEvent:
 
 
 class SupervisionEventStore:
-    def __init__(self, layout: PathLayout, store: JsonlStore | None = None) -> None:
+    def __init__(self, layout: PathLayout, store: Optional[JsonlStore] = None) -> None:
         self._layout = layout
         self._store = store or JsonlStore()
 
@@ -79,7 +81,7 @@ class SupervisionEventStore:
         return self._store.read_all(self._layout.ccbd_supervision_path, loader=SupervisionEvent.from_record)
 
 
-def _clean_text(value: object) -> str | None:
+def _clean_text(value: object) -> Optional[str]:
     text = str(value or '').strip()
     return text or None
 

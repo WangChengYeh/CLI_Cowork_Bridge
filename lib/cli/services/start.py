@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from dataclasses import replace
 
 from agents.config_loader import load_project_config
@@ -16,7 +18,7 @@ def start_agents(
     context,
     command,
     *,
-    terminal_size: tuple[int, int] | None = None,
+    terminal_size: Optional[tuple[int, int]] = None,
 ) -> StartSummary:
     return _start_agents_impl(
         context,

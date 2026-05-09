@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from pathlib import Path
 
 from .binding import launch_binding_hint, relabel_project_namespace_pane
@@ -28,12 +30,12 @@ def run_start_flow(
     auto_permission: bool,
     cleanup_tmux_orphans: bool,
     interactive_tmux_layout: bool,
-    tmux_socket_path: str | None,
-    tmux_session_name: str | None,
-    tmux_workspace_window_name: str | None,
-    namespace_epoch: int | None,
-    workspace_window_id: str | None,
-    workspace_epoch: int | None,
+    tmux_socket_path: Optional[str],
+    tmux_session_name: Optional[str],
+    tmux_workspace_window_name: Optional[str],
+    namespace_epoch: Optional[int],
+    workspace_window_id: Optional[str],
+    workspace_epoch: Optional[int],
     fresh_namespace: bool,
     fresh_workspace: bool,
     clock,
@@ -90,7 +92,7 @@ def run_start_flow(
         actions_taken=actions_taken,
     )
 
-    active_panes_by_socket: dict[str | None, list[str]] = {}
+    active_panes_by_socket: Optional[dict[str], list[str]] = {}
     active_project_panes, cmd_pane_id = project_socket_active_panes(
         tmux_layout=tmux_layout,
         tmux_socket_path=tmux_socket_path,

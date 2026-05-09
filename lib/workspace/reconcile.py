@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from dataclasses import dataclass
 from pathlib import Path
 import shutil
@@ -23,10 +25,10 @@ from .planner import WorkspacePlanner
 @dataclass(frozen=True)
 class WorktreeAlert:
     agent_name: str
-    branch_name: str | None
+    branch_name: Optional[str]
     workspace_path: str
-    dirty: bool | None
-    merged: bool | None
+    dirty: Optional[bool]
+    merged: Optional[bool]
     registered: bool
     exists: bool
     reason: str
@@ -39,7 +41,7 @@ class WorktreeAlert:
 @dataclass(frozen=True)
 class WorkspaceRetirement:
     agent_name: str
-    branch_name: str | None
+    branch_name: Optional[str]
     workspace_path: str
     reason: str
     removed_agent_state: bool = False
@@ -187,9 +189,9 @@ def format_workspace_blockers(action: str, blockers: tuple[WorktreeAlert, ...]) 
 
 def _retirement_reason(
     persisted_spec: AgentSpec,
-    desired_spec: AgentSpec | None,
+    desired_spec: Optional[AgentSpec],
     project_ctx: ProjectContext,
-) -> str | None:
+) -> Optional[str]:
     if desired_spec is None:
         return 'removed_from_config'
     if desired_spec.workspace_mode is not WorkspaceMode.GIT_WORKTREE:
@@ -339,7 +341,7 @@ def _resolve_path(path: Path) -> Path:
         return candidate.absolute()
 
 
-def _state_text(value: bool | None) -> str:
+def _state_text(value: Optional[bool]) -> str:
     if value is True:
         return 'true'
     if value is False:

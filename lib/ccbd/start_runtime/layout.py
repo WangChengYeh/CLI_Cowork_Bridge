@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 import os
 from pathlib import Path
 import shlex
@@ -22,7 +24,7 @@ def prepare_start_layout(
     targets: tuple[str, ...],
     layout_plan=None,
     tmux_backend=None,
-    root_pane_id: str | None = None,
+    root_pane_id: Optional[str] = None,
     inside_tmux_fn,
     prepare_tmux_start_layout_fn,
 ) -> TmuxStartLayout:
@@ -46,10 +48,10 @@ def inside_tmux() -> bool:
 
 def session_root_pane(
     backend,
-    session_name: str | None,
+    session_name: Optional[str],
     *,
-    workspace_window_name: str | None = None,
-) -> str | None:
+    workspace_window_name: Optional[str] = None,
+) -> Optional[str]:
     if backend is None or not session_name:
         return None
     target = str(session_name)
@@ -72,12 +74,12 @@ def bootstrap_project_namespace_cmd_pane(
     pane_id: str,
     project_root: Path,
     project_id: str,
-    tmux_socket_path: str | None,
-    namespace_epoch: int | None,
+    tmux_socket_path: Optional[str],
+    namespace_epoch: Optional[int],
     tmux_backend_factory,
     apply_ccb_pane_identity_fn,
     cmd_bootstrap_command_fn,
-) -> str | None:
+) -> Optional[str]:
     pane_text = str(pane_id or '').strip()
     socket_path = str(tmux_socket_path or '').strip()
     if not pane_text.startswith('%') or not socket_path:
@@ -135,7 +137,7 @@ def _resolved_cmd_shell() -> str:
     return 'sh'
 
 
-def _resolve_shell_candidate(candidate: str) -> str | None:
+def _resolve_shell_candidate(candidate: str) -> Optional[str]:
     if '/' in candidate:
         return candidate if Path(candidate).exists() else None
     return shutil.which(candidate)

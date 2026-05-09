@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -10,11 +12,11 @@ from room.store import RoomEventStore
 from .imessage_correlation import IMessageCorrelationBinding, IMessageCorrelationStore
 
 
-@dataclass(slots=True)
+@dataclass
 class IMessageDispatchResult:
     source_event: RoomEvent
     dispatch_result: RoomDispatchResult
-    correlation_binding: IMessageCorrelationBinding | None
+    correlation_binding: Optional[IMessageCorrelationBinding]
 
 
 class IMessageDispatchBridge:
@@ -22,9 +24,9 @@ class IMessageDispatchBridge:
         self,
         *,
         project_root: Path,
-        store: RoomEventStore | None = None,
-        dispatcher: RoomDispatcher | None = None,
-        correlation_store: IMessageCorrelationStore | None = None,
+        store: Optional[RoomEventStore] = None,
+        dispatcher: Optional[RoomDispatcher] = None,
+        correlation_store: Optional[IMessageCorrelationStore] = None,
     ) -> None:
         self.project_root = project_root
         self.store = store or RoomEventStore(project_root / '.ccb' / 'room')

@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from dataclasses import dataclass
 
 from storage.jsonl_store import JsonlStore
@@ -84,14 +86,14 @@ class TmuxCleanupEvent:
 
 
 class TmuxCleanupHistoryStore:
-    def __init__(self, layout: PathLayout, store: JsonlStore | None = None) -> None:
+    def __init__(self, layout: PathLayout, store: Optional[JsonlStore] = None) -> None:
         self._layout = layout
         self._store = store or JsonlStore()
 
     def append(self, event: TmuxCleanupEvent) -> None:
         self._store.append(self._layout.ccbd_tmux_cleanup_history_path, event, serializer=lambda value: value.to_record())
 
-    def load_latest(self) -> TmuxCleanupEvent | None:
+    def load_latest(self) -> Optional[TmuxCleanupEvent]:
         rows = self._store.read_all(self._layout.ccbd_tmux_cleanup_history_path, loader=TmuxCleanupEvent.from_record)
         if not rows:
             return None
@@ -104,7 +106,7 @@ def _tuple(value: object) -> tuple[str, ...]:
     return tuple(str(item).strip() for item in value if str(item).strip())
 
 
-def _clean(value: object) -> str | None:
+def _clean(value: object) -> Optional[str]:
     text = str(value or '').strip()
     return text or None
 

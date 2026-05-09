@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from provider_execution.base import ProviderExecutionAdapter
 
 from .contracts import ProviderBackend, ProviderRuntimeLauncher, ProviderSessionBinding
@@ -14,7 +16,7 @@ from .registry_runtime import (
 
 
 class ProviderBackendRegistry:
-    def __init__(self, backends: list[ProviderBackend] | None = None) -> None:
+    def __init__(self, backends: Optional[list[ProviderBackend]] = None) -> None:
         self._backends: dict[str, ProviderBackend] = {}
         for backend in backends or []:
             self.register(backend)
@@ -25,7 +27,7 @@ class ProviderBackendRegistry:
             raise ValueError(f"duplicate provider backend: {provider}")
         self._backends[provider] = backend
 
-    def get(self, provider: str) -> ProviderBackend | None:
+    def get(self, provider: str) -> Optional[ProviderBackend]:
         return self._backends.get(str(provider or "").strip().lower())
 
     def manifests(self) -> list[ProviderManifest]:

@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import re
-from typing import List, Tuple
+from typing import List, Optional, Tuple
 
 from provider_core.protocol import ANY_REQ_ID_PATTERN
 
@@ -65,7 +65,7 @@ def _assistant_segment(
     return text[req_end:next_done].strip(), next_done
 
 
-def _next_done_position(done_positions: list[int], req_end: int) -> int | None:
+def _next_done_position(done_positions: list[int], req_end: int) -> Optional[int]:
     for done_pos in done_positions:
         if done_pos > req_end:
             return done_pos

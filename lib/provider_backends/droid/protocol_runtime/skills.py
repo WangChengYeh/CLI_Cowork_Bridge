@@ -1,10 +1,12 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from pathlib import Path
 
 from runtime_env import env_bool
 
-_SKILL_CACHE: str | None = None
+_SKILL_CACHE: Optional[str] = None
 
 
 def load_droid_skills() -> str:

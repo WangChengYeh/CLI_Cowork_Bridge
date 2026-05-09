@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 import time
-from typing import Callable
+from typing import Callable, Optional
 
 from terminal_runtime.tmux_readiness import (
     TmuxCommandError,
@@ -22,7 +22,7 @@ _PLACEHOLDER_CMD = 'while :; do sleep 3600; done'
 
 @dataclass(frozen=True)
 class TmuxWindowRecord:
-    window_id: str | None
+    window_id: Optional[str]
     window_name: str
     active: bool = False
 
@@ -55,8 +55,8 @@ def create_session(
     *,
     session_name: str,
     project_root,
-    window_name: str | None = None,
-    terminal_size: tuple[int, int] | None = None,
+    window_name: Optional[str] = None,
+    terminal_size: Optional[tuple[int, int]] = None,
 ) -> None:
     width, height = _resolved_session_size(terminal_size)
     args = [
@@ -87,7 +87,7 @@ def create_session(
     )
 
 
-def _resolved_session_size(terminal_size: tuple[int, int] | None) -> tuple[int, int]:
+def _resolved_session_size(terminal_size: Optional[tuple[int, int]]) -> tuple[int, int]:
     default = (160, 48)
     if terminal_size is None:
         return default
@@ -101,7 +101,7 @@ def _resolved_session_size(terminal_size: tuple[int, int] | None) -> tuple[int, 
     return width, height
 
 
-def session_window_target(session_name: str, window_name: str | None = None) -> str:
+def session_window_target(session_name: str, window_name: Optional[str] = None) -> str:
     session_text = str(session_name or '').strip()
     window_text = str(window_name or '').strip()
     if not session_text:
@@ -136,7 +136,7 @@ def list_windows(backend, session_name: str) -> tuple[TmuxWindowRecord, ...]:
     return tuple(windows)
 
 
-def find_window(backend, *, session_name: str, window_name: str) -> TmuxWindowRecord | None:
+def find_window(backend, *, session_name: str, window_name: str) -> Optional[TmuxWindowRecord]:
     target_name = str(window_name or '').strip()
     if not target_name:
         return None
@@ -213,7 +213,7 @@ def kill_window(backend, *, target: str) -> None:
     )
 
 
-def session_alive(backend, session_name: str, *, timeout_s: float | None = None) -> bool:
+def session_alive(backend, session_name: str, *, timeout_s: Optional[float] = None) -> bool:
     runner = getattr(backend, '_tmux_run', None)
     if not callable(runner):
         checker = getattr(backend, 'is_alive', None)
@@ -232,11 +232,11 @@ def session_alive(backend, session_name: str, *, timeout_s: float | None = None)
     )
 
 
-def session_root_pane(backend, session_name: str, *, timeout_s: float | None = None) -> str:
+def session_root_pane(backend, session_name: str, *, timeout_s: Optional[float] = None) -> str:
     return window_root_pane(backend, target_window=session_name, timeout_s=timeout_s)
 
 
-def window_root_pane(backend, *, target_window: str, timeout_s: float | None = None) -> str:
+def window_root_pane(backend, *, target_window: str, timeout_s: Optional[float] = None) -> str:
     pane_id = wait_for_root_pane(backend, target_window=target_window, timeout_s=timeout_s)
     if not pane_id.startswith('%'):
         raise RuntimeError(f'failed to resolve root pane for tmux target {target_window!r}')
@@ -256,8 +256,8 @@ def wait_for_window(
     *,
     session_name: str,
     window_name: str,
-    timeout_s: float | None = None,
-) -> TmuxWindowRecord | None:
+    timeout_s: Optional[float] = None,
+) -> Optional[TmuxWindowRecord]:
     return _wait_until(
         lambda: find_window(backend, session_name=session_name, window_name=window_name),
         timeout_s=timeout_s,
@@ -277,7 +277,7 @@ def select_window(backend, *, target: str) -> None:
     )
 
 
-def wait_for_root_pane(backend, *, target_window: str, timeout_s: float | None = None) -> str:
+def wait_for_root_pane(backend, *, target_window: str, timeout_s: Optional[float] = None) -> str:
     pane_id = _wait_until(
         lambda: _root_pane_once(backend, target_window=target_window),
         timeout_s=timeout_s,
@@ -288,7 +288,7 @@ def wait_for_root_pane(backend, *, target_window: str, timeout_s: float | None =
     return pane_id
 
 
-def _root_pane_once(backend, *, target_window: str) -> str | None:
+def _root_pane_once(backend, *, target_window: str) -> Optional[str]:
     result = _tmux_run_once(
         backend,
         ['list-panes', '-t', target_window, '-F', '#{pane_id}'],
@@ -304,7 +304,7 @@ def _tmux_run_ready(
     args: list[str],
     *,
     failure_message: str,
-    timeout_s: float | None = None,
+    timeout_s: Optional[float] = None,
 ):
     return _wait_until_ready(
         lambda: _tmux_run_checked(backend, args),
@@ -353,13 +353,13 @@ def _tmux_run_checked(backend, args: list[str]):
 
 
 def _wait_until(
-    probe: Callable[[], object | None],
+    probe: Callable[[], Optional[object]],
     *,
-    timeout_s: float | None = None,
-    failure_message: str | None = None,
+    timeout_s: Optional[float] = None,
+    failure_message: Optional[str] = None,
 ):
     deadline = time.monotonic() + _tmux_object_ready_timeout_s(timeout_s)
-    last_transient: TmuxTransientServerUnavailable | None = None
+    last_transient: Optional[TmuxTransientServerUnavailable] = None
     while True:
         try:
             value = probe()
@@ -375,9 +375,9 @@ def _wait_until(
         time.sleep(_tmux_object_ready_poll_interval_s())
 
 
-def _wait_until_ready(action: Callable[[], object], *, failure_message: str, timeout_s: float | None = None) -> object:
+def _wait_until_ready(action: Callable[[], object], *, failure_message: str, timeout_s: Optional[float] = None) -> object:
     deadline = time.monotonic() + _tmux_object_ready_timeout_s(timeout_s)
-    last_error: Exception | None = None
+    last_error: Optional[Exception] = None
     while True:
         try:
             return action()
@@ -428,7 +428,7 @@ def _session_alive_once(backend, session_name: str) -> bool:
     raise RuntimeError(detail)
 
 
-def _tmux_object_ready_timeout_s(timeout_s: float | None = None) -> float:
+def _tmux_object_ready_timeout_s(timeout_s: Optional[float] = None) -> float:
     return tmux_object_ready_timeout_s(timeout_s)
 
 

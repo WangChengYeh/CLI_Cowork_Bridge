@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from dataclasses import dataclass
 import os
 from pathlib import Path
@@ -52,7 +54,7 @@ def current_claude_session_env_root() -> Path:
     return claude_layout_for_home(current_claude_home_root()).session_env_root
 
 
-def claude_layout_from_session_data(data: dict[str, object] | None) -> ClaudeHomeLayout | None:
+def claude_layout_from_session_data(data: Optional[dict[str, object]]) -> Optional[ClaudeHomeLayout]:
     if not isinstance(data, dict):
         return None
     home_root = _path_or_none(data.get('claude_home'))
@@ -79,7 +81,7 @@ def claude_layout_from_session_data(data: dict[str, object] | None) -> ClaudeHom
     return None
 
 
-def _env_projects_root() -> Path | None:
+def _env_projects_root() -> Optional[Path]:
     raw = str(
         os.environ.get('CLAUDE_PROJECTS_ROOT')
         or os.environ.get('CLAUDE_PROJECT_ROOT')
@@ -93,7 +95,7 @@ def _env_projects_root() -> Path | None:
         return None
 
 
-def _home_root_from_projects_root(projects_root: Path) -> Path | None:
+def _home_root_from_projects_root(projects_root: Path) -> Optional[Path]:
     root = Path(projects_root).expanduser()
     if root.name != 'projects':
         return None
@@ -105,7 +107,7 @@ def _home_root_from_projects_root(projects_root: Path) -> Path | None:
     return None
 
 
-def _home_root_from_session_env_root(session_env_root: Path) -> Path | None:
+def _home_root_from_session_env_root(session_env_root: Path) -> Optional[Path]:
     root = Path(session_env_root).expanduser()
     if root.name != 'session-env':
         return None
@@ -117,7 +119,7 @@ def _home_root_from_session_env_root(session_env_root: Path) -> Path | None:
     return None
 
 
-def _home_root_from_session_path(session_path: Path) -> Path | None:
+def _home_root_from_session_path(session_path: Path) -> Optional[Path]:
     candidate = Path(session_path).expanduser()
     for parent in candidate.parents:
         if parent.name == '.claude':
@@ -125,7 +127,7 @@ def _home_root_from_session_path(session_path: Path) -> Path | None:
     return None
 
 
-def _path_or_none(value: object) -> Path | None:
+def _path_or_none(value: object) -> Optional[Path]:
     raw = str(value or '').strip()
     if not raw:
         return None

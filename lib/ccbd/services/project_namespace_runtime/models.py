@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from dataclasses import dataclass
 
 
@@ -10,11 +12,11 @@ class ProjectNamespace:
     tmux_socket_path: str
     tmux_session_name: str
     layout_version: int
-    layout_signature: str | None
-    control_window_name: str | None
-    control_window_id: str | None
-    workspace_window_name: str | None
-    workspace_window_id: str | None
+    layout_signature: Optional[str]
+    control_window_name: Optional[str]
+    control_window_id: Optional[str]
+    workspace_window_name: Optional[str]
+    workspace_window_id: Optional[str]
     workspace_epoch: int
     ui_attachable: bool
     created_this_call: bool = False
@@ -43,7 +45,7 @@ class ProjectNamespace:
 @dataclass(frozen=True)
 class ProjectNamespaceDestroySummary:
     project_id: str
-    namespace_epoch: int | None
+    namespace_epoch: Optional[int]
     tmux_socket_path: str
     tmux_session_name: str
     destroyed: bool

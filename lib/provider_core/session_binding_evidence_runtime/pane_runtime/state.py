@@ -1,15 +1,17 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from collections.abc import Callable
 
 
-def _missing_pane_state(*, pane_id: str | None, pane_title_marker: str | None) -> str | None:
+def _missing_pane_state(*, pane_id: Optional[str], pane_title_marker: Optional[str]) -> Optional[str]:
     if pane_id:
         return None
     return 'missing' if pane_title_marker else None
 
 
-def _tmux_pane_exists(backend, pane_id: str) -> str | None:
+def _tmux_pane_exists(backend, pane_id: str) -> Optional[str]:
     pane_exists = getattr(backend, 'pane_exists', None)
     if not callable(pane_exists):
         return None
@@ -45,11 +47,11 @@ def resolve_pane_state(
     backend,
     *,
     terminal: str,
-    pane_id: str | None,
-    pane_title_marker: str | None,
+    pane_id: Optional[str],
+    pane_title_marker: Optional[str],
     inspect_tmux_pane_ownership_fn: Callable,
     backend_pane_alive_fn: Callable[[object, str], bool],
-) -> str | None:
+) -> Optional[str]:
     missing_state = _missing_pane_state(pane_id=pane_id, pane_title_marker=pane_title_marker)
     if missing_state is not None:
         return missing_state

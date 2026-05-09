@@ -37,7 +37,7 @@ def _is_pid_alive(pid: int) -> bool:
 class ProviderLock:
     """Per-provider, per-scope file lock."""
 
-    def __init__(self, provider: str, timeout: float = 60.0, cwd: str | None = None):
+    def __init__(self, provider: str, timeout: float = 60.0, cwd: Optional[str] = None):
         self.provider = provider
         self.timeout = timeout
         scope = cwd if cwd is not None else os.getcwd()

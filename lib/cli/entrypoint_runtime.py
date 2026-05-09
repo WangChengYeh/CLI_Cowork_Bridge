@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import sys
 from pathlib import Path
-from typing import TextIO
+from typing import Optional, TextIO
 
 from cli.ask_usage import write_ask_usage
 from cli.auxiliary import cmd_droid_subcommand
@@ -41,7 +41,7 @@ def _is_start_help(tokens: list[str]) -> bool:
     return any(token in {"-h", "--help", "help"} for token in tokens)
 
 
-def _command_help_name(tokens: list[str]) -> str | None:
+def _command_help_name(tokens: list[str]) -> Optional[str]:
     visible = _strip_global_project_tokens(tokens)
     if len(visible) == 2 and visible[1] in {"-h", "--help"}:
         return visible[0]
@@ -67,7 +67,7 @@ def _write_removed_command_error(stderr: TextIO, *, command: str, guidance: str)
     return 2
 
 
-def _handle_help(tokens: list[str], *, stdout: TextIO) -> int | None:
+def _handle_help(tokens: list[str], *, stdout: TextIO) -> Optional[int]:
     if _is_ask_help(tokens):
         write_ask_usage(stdout, command_name="ccb ask")
         return 0
@@ -83,7 +83,7 @@ def _handle_help(tokens: list[str], *, stdout: TextIO) -> int | None:
     return None
 
 
-def _handle_removed_commands(tokens: list[str], *, stderr: TextIO) -> int | None:
+def _handle_removed_commands(tokens: list[str], *, stderr: TextIO) -> Optional[int]:
     if tokens and tokens[0] == "open":
         print("❌ The standalone attach command has been removed.", file=stderr)
         print("💡 Use: ccb", file=stderr)
@@ -103,14 +103,14 @@ def _handle_removed_commands(tokens: list[str], *, stderr: TextIO) -> int | None
     return None
 
 
-def _dispatch_auxiliary(tokens: list[str], *, script_root: Path) -> int | None:
+def _dispatch_auxiliary(tokens: list[str], *, script_root: Path) -> Optional[int]:
     return dispatch_auxiliary_command(
         tokens,
         droid_handler=lambda args: cmd_droid_subcommand(list(args), script_root=script_root),
     )
 
 
-def _dispatch_management(tokens: list[str], *, script_root: Path) -> int | None:
+def _dispatch_management(tokens: list[str], *, script_root: Path) -> Optional[int]:
     if not (tokens and tokens[0] in {"version", "update", "uninstall", "reinstall"}):
         return None
 

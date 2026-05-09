@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from dataclasses import dataclass
 
 from provider_backends.pane_log_support.session import PaneLogProjectSessionBase
@@ -22,7 +24,7 @@ class OpenCodeProjectSession(PaneLogProjectSessionBase):
         ).strip()
 
     @property
-    def opencode_session_id_filter(self) -> str | None:
+    def opencode_session_id_filter(self) -> Optional[str]:
         session_id = self.opencode_session_id
         return session_id or None
 
@@ -35,7 +37,7 @@ class OpenCodeProjectSession(PaneLogProjectSessionBase):
 
         return session_module.get_backend_for_session(self.data)
 
-    def update_opencode_binding(self, *, session_id: str | None, project_id: str | None) -> None:
+    def update_opencode_binding(self, *, session_id: Optional[str], project_id: Optional[str]) -> None:
         _update_opencode_binding_impl(self, session_id=session_id, project_id=project_id)
 
 

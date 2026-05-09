@@ -3,7 +3,7 @@ from __future__ import annotations
 from datetime import datetime, timezone
 import json
 from pathlib import Path
-from typing import Any
+from typing import Any, Optional
 
 from storage.atomic import atomic_write_json
 
@@ -14,7 +14,7 @@ def event_path(completion_dir: Path | str, req_id: str) -> Path:
     return Path(completion_dir).expanduser() / 'events' / f'{req_id}.json'
 
 
-def _load_json_dict(path: Path) -> dict[str, Any] | None:
+def _load_json_dict(path: Path) -> Optional[dict[str, Any]]:
     try:
         payload = json.loads(path.read_text(encoding='utf-8'))
     except Exception:
@@ -30,7 +30,7 @@ def _event_matches_req_id(payload: dict[str, Any], req_id: str) -> bool:
     return _normalized_req_id(payload.get('req_id')) == _normalized_req_id(req_id)
 
 
-def _normalized_optional(value: str | None) -> str | None:
+def _normalized_optional(value: Optional[str]) -> Optional[str]:
     normalized = str(value or '').strip()
     return normalized or None
 
@@ -43,10 +43,10 @@ def _normalized_payload(
     req_id: str,
     status: str,
     reply: str,
-    session_id: str | None,
-    hook_event_name: str | None,
-    transcript_path: str | None,
-    diagnostics: dict[str, Any] | None,
+    session_id: Optional[str],
+    hook_event_name: Optional[str],
+    transcript_path: Optional[str],
+    diagnostics: Optional[dict[str, Any]],
 ) -> dict[str, Any]:
     return {
         'schema_version': SCHEMA_VERSION,
@@ -65,7 +65,7 @@ def _normalized_payload(
     }
 
 
-def load_event(completion_dir: Path | str, req_id: str) -> dict[str, Any] | None:
+def load_event(completion_dir: Path | str, req_id: str) -> Optional[dict[str, Any]]:
     path = event_path(completion_dir, req_id)
     if not path.exists():
         return None
@@ -86,10 +86,10 @@ def write_event(
     req_id: str,
     status: str,
     reply: str,
-    session_id: str | None = None,
-    hook_event_name: str | None = None,
-    transcript_path: str | None = None,
-    diagnostics: dict[str, Any] | None = None,
+    session_id: Optional[str] = None,
+    hook_event_name: Optional[str] = None,
+    transcript_path: Optional[str] = None,
+    diagnostics: Optional[dict[str, Any]] = None,
 ) -> Path:
     payload = _event_payload(
         provider=provider,
@@ -116,10 +116,10 @@ def _event_payload(
     req_id: str,
     status: str,
     reply: str,
-    session_id: str | None,
-    hook_event_name: str | None,
-    transcript_path: str | None,
-    diagnostics: dict[str, Any] | None,
+    session_id: Optional[str],
+    hook_event_name: Optional[str],
+    transcript_path: Optional[str],
+    diagnostics: Optional[dict[str, Any]],
 ) -> dict[str, Any]:
     return _normalized_payload(
         provider=provider,

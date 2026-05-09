@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from pathlib import Path
 
 from provider_core.contracts import ProviderRuntimeIdentity
@@ -31,11 +33,11 @@ def resolve_agent_binding(
     provider: str,
     agent_name: str,
     workspace_path: str | Path,
-    project_root: str | Path | None = None,
+    project_root: str | Optional[Path] = None,
     ensure_usable: bool = False,
     adapter_resolver=default_binding_adapter,
     sleep_fn,
-) -> AgentBinding | None:
+) -> Optional[AgentBinding]:
     normalized_provider = str(provider or '').strip().lower()
     adapter = adapter_resolver(normalized_provider)
     if adapter is None:

@@ -1,104 +1,106 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from dataclasses import dataclass
 
 
 @dataclass(frozen=True)
 class ParsedAskCommand:
-    project: str | None
+    project: Optional[str]
     target: str
-    sender: str | None
+    sender: Optional[str]
     message: str
-    task_id: str | None = None
-    reply_to: str | None = None
-    mode: str | None = None
+    task_id: Optional[str] = None
+    reply_to: Optional[str] = None
+    mode: Optional[str] = None
     silence: bool = False
     wait: bool = False
-    output_path: str | None = None
-    timeout_s: float | None = None
+    output_path: Optional[str] = None
+    timeout_s: Optional[float] = None
     kind: str = 'ask'
 
 
 @dataclass(frozen=True)
 class ParsedAskWaitCommand:
-    project: str | None
+    project: Optional[str]
     job_id: str
-    timeout_s: float | None = None
+    timeout_s: Optional[float] = None
     kind: str = 'ask-wait'
 
 
 @dataclass(frozen=True)
 class ParsedCancelCommand:
-    project: str | None
+    project: Optional[str]
     job_id: str
     kind: str = 'cancel'
 
 
 @dataclass(frozen=True)
 class ParsedPendCommand:
-    project: str | None
+    project: Optional[str]
     target: str
-    count: int | None = None
+    count: Optional[int] = None
     kind: str = 'pend'
 
 
 @dataclass(frozen=True)
 class ParsedQueueCommand:
-    project: str | None
+    project: Optional[str]
     target: str
     kind: str = 'queue'
 
 
 @dataclass(frozen=True)
 class ParsedTraceCommand:
-    project: str | None
+    project: Optional[str]
     target: str
     kind: str = 'trace'
 
 
 @dataclass(frozen=True)
 class ParsedResubmitCommand:
-    project: str | None
+    project: Optional[str]
     message_id: str
     kind: str = 'resubmit'
 
 
 @dataclass(frozen=True)
 class ParsedRetryCommand:
-    project: str | None
+    project: Optional[str]
     target: str
     kind: str = 'retry'
 
 
 @dataclass(frozen=True)
 class ParsedWaitCommand:
-    project: str | None
+    project: Optional[str]
     mode: str
     target: str
-    quorum: int | None = None
-    timeout_s: float | None = None
+    quorum: Optional[int] = None
+    timeout_s: Optional[float] = None
     kind: str = 'wait'
 
 
 @dataclass(frozen=True)
 class ParsedWatchCommand:
-    project: str | None
+    project: Optional[str]
     target: str
     kind: str = 'watch'
 
 
 @dataclass(frozen=True)
 class ParsedInboxCommand:
-    project: str | None
+    project: Optional[str]
     agent_name: str
     kind: str = 'inbox'
 
 
 @dataclass(frozen=True)
 class ParsedAckCommand:
-    project: str | None
+    project: Optional[str]
     agent_name: str
-    inbound_event_id: str | None = None
+    inbound_event_id: Optional[str] = None
     kind: str = 'ack'
 
 

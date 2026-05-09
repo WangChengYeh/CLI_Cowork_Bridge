@@ -1,11 +1,11 @@
 from __future__ import annotations
 
-from typing import Any
+from typing import Any, Optional
 
 from .entries import extract_message
 
 
-def structured_event(entry: dict[str, Any]) -> dict[str, Any] | None:
+def structured_event(entry: dict[str, Any]) -> Optional[dict[str, Any]]:
     if not isinstance(entry, dict):
         return None
     entry_type = str(entry.get("type") or "").strip().lower()
@@ -53,7 +53,7 @@ def structured_event(entry: dict[str, Any]) -> dict[str, Any] | None:
     return None
 
 
-def _assistant_stop_reason(entry: dict[str, Any]) -> str | None:
+def _assistant_stop_reason(entry: dict[str, Any]) -> Optional[str]:
     message = entry.get("message")
     if not isinstance(message, dict):
         return None
@@ -65,10 +65,10 @@ def _event_record(
     role: str,
     text: str,
     entry_type: str,
-    subtype: str | None,
-    uuid: str | None,
-    parent_uuid: str | None,
-    stop_reason: str | None,
+    subtype: Optional[str],
+    uuid: Optional[str],
+    parent_uuid: Optional[str],
+    stop_reason: Optional[str],
     entry: dict[str, Any],
 ) -> dict[str, Any]:
     return {
@@ -83,7 +83,7 @@ def _event_record(
     }
 
 
-def _optional_text(value: object, *, lowercase: bool = True) -> str | None:
+def _optional_text(value: object, *, lowercase: bool = True) -> Optional[str]:
     text = str(value or "").strip()
     if not text:
         return None

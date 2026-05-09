@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from storage.paths import PathLayout
 from terminal_runtime import TmuxBackend
 
@@ -23,8 +25,8 @@ class ProjectNamespaceController(ProjectNamespaceControllerStateMixin):
         *,
         clock=utc_now,
         backend_factory=None,
-        state_store: ProjectNamespaceStateStore | None = None,
-        event_store: ProjectNamespaceEventStore | None = None,
+        state_store: Optional[ProjectNamespaceStateStore] = None,
+        event_store: Optional[ProjectNamespaceEventStore] = None,
         layout_version: int = 3,
     ) -> None:
         resolved_project_id = str(project_id or '').strip()
@@ -43,7 +45,7 @@ class ProjectNamespaceController(ProjectNamespaceControllerStateMixin):
             layout_version=resolved_layout_version,
         )
 
-    def load(self) -> ProjectNamespace | None:
+    def load(self) -> Optional[ProjectNamespace]:
         state = self._state_store.load()
         if state is None:
             return None
@@ -52,11 +54,11 @@ class ProjectNamespaceController(ProjectNamespaceControllerStateMixin):
     def ensure(
         self,
         *,
-        layout_signature: str | None = None,
+        layout_signature: Optional[str] = None,
         force_recreate: bool = False,
-        recreate_reason: str | None = None,
-        session_probe_timeout_s: float | None = None,
-        terminal_size: tuple[int, int] | None = None,
+        recreate_reason: Optional[str] = None,
+        session_probe_timeout_s: Optional[float] = None,
+        terminal_size: Optional[tuple[int, int]] = None,
     ) -> ProjectNamespace:
         return ensure_project_namespace(
             self,
@@ -74,9 +76,9 @@ class ProjectNamespaceController(ProjectNamespaceControllerStateMixin):
     def reflow_workspace(
         self,
         *,
-        layout_signature: str | None = None,
-        reason: str | None = None,
-        session_probe_timeout_s: float | None = None,
+        layout_signature: Optional[str] = None,
+        reason: Optional[str] = None,
+        session_probe_timeout_s: Optional[float] = None,
     ) -> ProjectNamespace:
         return reflow_project_workspace(
             self,
@@ -87,9 +89,9 @@ class ProjectNamespaceController(ProjectNamespaceControllerStateMixin):
 
     def root_pane_id(
         self,
-        namespace: ProjectNamespace | None = None,
+        namespace: Optional[ProjectNamespace] = None,
         *,
-        timeout_s: float | None = None,
+        timeout_s: Optional[float] = None,
     ) -> str:
         current = namespace or self.load()
         if current is None:

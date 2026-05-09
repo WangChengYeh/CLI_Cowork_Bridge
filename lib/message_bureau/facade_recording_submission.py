@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from ccbd.api_models import JobRecord, MessageEnvelope
 from mailbox_kernel import InboundEventRecord, InboundEventStatus, InboundEventType
 
@@ -13,10 +15,10 @@ def record_submission(
     request: MessageEnvelope,
     jobs: tuple[JobRecord, ...],
     *,
-    submission_id: str | None,
+    submission_id: Optional[str],
     accepted_at: str,
-    origin_message_id: str | None = None,
-) -> str | None:
+    origin_message_id: Optional[str] = None,
+) -> Optional[str]:
     if not jobs:
         return None
     message_id = new_id('msg')

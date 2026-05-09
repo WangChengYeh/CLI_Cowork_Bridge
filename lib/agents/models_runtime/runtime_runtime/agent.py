@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Any
+from typing import Any, Optional
 
 from agents.models_runtime.enums import AgentState, RuntimeBindingSource
 from agents.models_runtime.names import SCHEMA_VERSION, normalize_agent_name
@@ -13,43 +13,43 @@ from .helpers import normalize_runtime_defaults, validate_runtime_fields
 class AgentRuntime:
     agent_name: str
     state: AgentState
-    pid: int | None
-    started_at: str | None
-    last_seen_at: str | None
-    runtime_ref: str | None
-    session_ref: str | None
-    workspace_path: str | None
+    pid: Optional[int]
+    started_at: Optional[str]
+    last_seen_at: Optional[str]
+    runtime_ref: Optional[str]
+    session_ref: Optional[str]
+    workspace_path: Optional[str]
     project_id: str
     backend_type: str
     queue_depth: int
-    socket_path: str | None
+    socket_path: Optional[str]
     health: str
-    provider: str | None = None
-    runtime_root: str | None = None
-    runtime_pid: int | None = None
-    terminal_backend: str | None = None
-    pane_id: str | None = None
-    active_pane_id: str | None = None
-    pane_title_marker: str | None = None
-    pane_state: str | None = None
-    tmux_socket_name: str | None = None
-    tmux_socket_path: str | None = None
-    session_file: str | None = None
-    session_id: str | None = None
-    slot_key: str | None = None
-    window_id: str | None = None
-    workspace_epoch: int | None = None
-    lifecycle_state: str | None = None
+    provider: Optional[str] = None
+    runtime_root: Optional[str] = None
+    runtime_pid: Optional[int] = None
+    terminal_backend: Optional[str] = None
+    pane_id: Optional[str] = None
+    active_pane_id: Optional[str] = None
+    pane_title_marker: Optional[str] = None
+    pane_state: Optional[str] = None
+    tmux_socket_name: Optional[str] = None
+    tmux_socket_path: Optional[str] = None
+    session_file: Optional[str] = None
+    session_id: Optional[str] = None
+    slot_key: Optional[str] = None
+    window_id: Optional[str] = None
+    workspace_epoch: Optional[int] = None
+    lifecycle_state: Optional[str] = None
     binding_generation: int = 1
     managed_by: str = 'ccbd'
     binding_source: RuntimeBindingSource = RuntimeBindingSource.PROVIDER_SESSION
-    daemon_generation: int | None = None
-    runtime_generation: int | None = None
-    desired_state: str | None = None
-    reconcile_state: str | None = None
+    daemon_generation: Optional[int] = None
+    runtime_generation: Optional[int] = None
+    desired_state: Optional[str] = None
+    reconcile_state: Optional[str] = None
     restart_count: int = 0
-    last_reconcile_at: str | None = None
-    last_failure_reason: str | None = None
+    last_reconcile_at: Optional[str] = None
+    last_failure_reason: Optional[str] = None
 
     def __post_init__(self) -> None:
         self.agent_name = normalize_agent_name(self.agent_name)

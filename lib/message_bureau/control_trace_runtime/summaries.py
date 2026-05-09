@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from message_bureau.reply_metadata import (
     reply_heartbeat_silence_seconds,
     reply_last_progress_at,
@@ -96,7 +98,7 @@ def event_summary(service, event) -> dict[str, object]:
     }
 
 
-def job_summary(service, job_id: str, *, hint_agent: str | None = None) -> dict[str, object] | None:
+def job_summary(service, job_id: str, *, hint_agent: Optional[str] = None) -> Optional[dict[str, object]]:
     job = None
     if hint_agent:
         job = service._job_store.get_latest(hint_agent, job_id)

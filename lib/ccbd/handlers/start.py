@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 
 def build_start_handler(app):
     def handle(payload: dict) -> dict:
@@ -24,7 +26,7 @@ def build_start_handler(app):
     return handle
 
 
-def _terminal_size_from_payload(payload: dict) -> tuple[int, int] | None:
+def _terminal_size_from_payload(payload: dict) -> Optional[tuple[int, int]]:
     try:
         width = int(payload.get('terminal_width') or 0)
         height = int(payload.get('terminal_height') or 0)

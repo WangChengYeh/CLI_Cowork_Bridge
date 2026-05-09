@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from pathlib import Path
 
 from cli.context import CliContext
@@ -40,9 +42,9 @@ def build_start_context(
 def record_namespace_action(
     actions_taken: list[str],
     *,
-    tmux_socket_path: str | None,
-    tmux_session_name: str | None,
-    namespace_epoch: int | None,
+    tmux_socket_path: Optional[str],
+    tmux_session_name: Optional[str],
+    namespace_epoch: Optional[int],
 ) -> None:
     if tmux_socket_path is None or tmux_session_name is None:
         return

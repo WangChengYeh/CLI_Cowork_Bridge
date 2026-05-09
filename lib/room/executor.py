@@ -3,7 +3,7 @@ from __future__ import annotations
 import subprocess
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Callable
+from typing import Callable, Optional
 
 from .dispatcher import RoomDispatchRequest
 from .models import RoomEvent, RoomEventType, RoomSource
@@ -14,7 +14,7 @@ class RoomExecutionError(RuntimeError):
     pass
 
 
-@dataclass(slots=True)
+@dataclass
 class RoomExecutionResult:
     request: RoomDispatchRequest
     returncode: int
@@ -28,8 +28,8 @@ class RoomAskExecutor:
         self,
         *,
         project_root: Path,
-        store: RoomEventStore | None = None,
-        ccb_path: Path | None = None,
+        store: Optional[RoomEventStore] = None,
+        ccb_path: Optional[Path] = None,
         run_fn: Callable[..., subprocess.CompletedProcess[str]] = subprocess.run,
     ) -> None:
         self.project_root = project_root

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Callable
+from typing import Callable, Optional
 
 from imessage.sender import IMessageSendResult, send_imessage
 
@@ -14,7 +14,7 @@ class RoomIMessageDeliveryError(RuntimeError):
     pass
 
 
-@dataclass(slots=True)
+@dataclass
 class RoomIMessageDeliveryPolicy:
     enabled: bool = False
     recipients: list[str] = field(default_factory=list)
@@ -28,15 +28,15 @@ class RoomIMessageDeliveryPolicy:
     mirror_cli_inputs: bool = False
 
 
-@dataclass(slots=True)
+@dataclass
 class RoomIMessageDeliveryResult:
     event: RoomEvent
     delivered: bool
-    reason: str | None = None
+    reason: Optional[str] = None
     send_results: list[IMessageSendResult] = field(default_factory=list)
 
 
-def should_deliver_to_imessage(event: RoomEvent, policy: RoomIMessageDeliveryPolicy) -> tuple[bool, str | None]:
+def should_deliver_to_imessage(event: RoomEvent, policy: RoomIMessageDeliveryPolicy) -> tuple[bool, Optional[str]]:
     if not policy.enabled:
         return False, 'imessage delivery disabled'
 
@@ -64,7 +64,7 @@ class RoomIMessageDelivery:
         *,
         project_root: Path,
         policy: RoomIMessageDeliveryPolicy,
-        store: RoomEventStore | None = None,
+        store: Optional[RoomEventStore] = None,
         send_fn: Callable[..., list[IMessageSendResult]] = send_imessage,
     ) -> None:
         self.project_root = project_root

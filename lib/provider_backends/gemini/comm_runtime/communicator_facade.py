@@ -3,7 +3,7 @@ from __future__ import annotations
 import os
 import time
 from pathlib import Path
-from typing import Any
+from typing import Any, Optional
 
 from terminal_runtime import get_backend_for_session, get_pane_id_from_session
 
@@ -64,7 +64,7 @@ class GeminiCommunicator:
     def _ensure_log_reader(self) -> None:
         _ensure_log_reader_impl(self, log_reader_cls=GeminiLogReader)
 
-    def _find_session_file(self) -> Path | None:
+    def _find_session_file(self) -> Optional[Path]:
         return find_gemini_session_file(cwd=Path.cwd(), finder=find_gemini_project_session_file)
 
     def _prime_log_binding(self) -> None:
@@ -94,7 +94,7 @@ class GeminiCommunicator:
     def ask_async(self, question: str) -> bool:
         return _ask_async_impl(self, question)
 
-    def ask_sync(self, question: str, timeout: int | None = None) -> str | None:
+    def ask_sync(self, question: str, timeout: Optional[int] = None) -> Optional[str]:
         return _ask_sync_impl(self, question, timeout=timeout)
 
     def consume_pending(self, display: bool = True, n: int = 1):

@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 import shlex
 
 from provider_profiles import ResolvedProviderProfile, provider_api_env_keys
@@ -7,8 +9,8 @@ from provider_profiles import ResolvedProviderProfile, provider_api_env_keys
 
 def build_gemini_env_prefix(
     *,
-    profile: ResolvedProviderProfile | None = None,
-    extra_env: dict[str, str] | None = None,
+    profile: Optional[ResolvedProviderProfile] = None,
+    extra_env: Optional[dict[str, str]] = None,
 ) -> str:
     api_keys = provider_api_env_keys("gemini")
     explicit_env = explicit_api_env(profile=profile, extra_env=extra_env, api_keys=api_keys)
@@ -21,8 +23,8 @@ def build_gemini_env_prefix(
 
 def explicit_api_env(
     *,
-    profile: ResolvedProviderProfile | None,
-    extra_env: dict[str, str] | None,
+    profile: Optional[ResolvedProviderProfile],
+    extra_env: Optional[dict[str, str]],
     api_keys: set[str],
 ) -> dict[str, str]:
     explicit_env: dict[str, str] = {}
@@ -39,7 +41,7 @@ def selected_api_env(values: dict[str, str], *, api_keys: set[str]) -> dict[str,
 
 def cleared_api_env_parts(
     *,
-    profile: ResolvedProviderProfile | None,
+    profile: Optional[ResolvedProviderProfile],
     api_keys: set[str],
 ) -> list[str]:
     if profile is None or profile.inherit_api:

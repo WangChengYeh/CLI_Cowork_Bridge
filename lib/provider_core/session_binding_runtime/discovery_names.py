@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from agents.models import normalize_agent_name
 
 
@@ -37,7 +39,7 @@ def agent_name_from_session_filename(
     provider: str,
     base_filename: str,
     filename: str,
-) -> str | None:
+) -> Optional[str]:
     del provider
     name = normalized_filename(filename)
     base = normalized_filename(base_filename)

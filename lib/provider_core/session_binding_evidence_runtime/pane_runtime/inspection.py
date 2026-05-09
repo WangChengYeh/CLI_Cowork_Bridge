@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from collections.abc import Callable
 
 
@@ -9,7 +11,7 @@ def inspect_session_pane(
     session_backend_fn: Callable,
     session_pane_title_marker_fn: Callable,
     resolve_pane_state_fn: Callable,
-) -> dict[str, str | None]:
+) -> dict[str, Optional[str]]:
     terminal = str(getattr(session, 'terminal', '') or '').strip() or 'tmux'
     pane_id = str(getattr(session, 'pane_id', '') or '').strip() or None
     pane_title_marker = session_pane_title_marker_fn(session)

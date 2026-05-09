@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from dataclasses import dataclass
 import os
 from pathlib import Path
@@ -32,7 +34,7 @@ class ProjectResolver:
         self,
         cwd: Path,
         *,
-        explicit_project: Path | None = None,
+        explicit_project: Optional[Path] = None,
         allow_ancestor_anchor: bool = True,
     ) -> ProjectContext:
         current = _resolved_path(cwd)

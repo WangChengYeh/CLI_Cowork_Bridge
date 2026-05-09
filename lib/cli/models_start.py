@@ -1,11 +1,13 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from dataclasses import dataclass
 
 
 @dataclass(frozen=True)
 class ParsedStartCommand:
-    project: str | None
+    project: Optional[str]
     agent_names: tuple[str, ...]
     restore: bool
     auto_permission: bool
@@ -15,42 +17,42 @@ class ParsedStartCommand:
 
 @dataclass(frozen=True)
 class ParsedKillCommand:
-    project: str | None
+    project: Optional[str]
     force: bool = False
     kind: str = 'kill'
 
 
 @dataclass(frozen=True)
 class ParsedPsCommand:
-    project: str | None
+    project: Optional[str]
     alive_only: bool = False
     kind: str = 'ps'
 
 
 @dataclass(frozen=True)
 class ParsedConfigValidateCommand:
-    project: str | None
+    project: Optional[str]
     kind: str = 'config-validate'
 
 
 @dataclass(frozen=True)
 class ParsedDoctorCommand:
-    project: str | None
+    project: Optional[str]
     bundle: bool = False
-    output_path: str | None = None
+    output_path: Optional[str] = None
     kind: str = 'doctor'
 
 
 @dataclass(frozen=True)
 class ParsedLogsCommand:
-    project: str | None
+    project: Optional[str]
     agent_name: str
     kind: str = 'logs'
 
 
 @dataclass(frozen=True)
 class ParsedPingCommand:
-    project: str | None
+    project: Optional[str]
     target: str
     kind: str = 'ping'
 

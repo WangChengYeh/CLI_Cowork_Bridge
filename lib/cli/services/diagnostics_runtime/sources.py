@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 import json
 from pathlib import Path
 
@@ -98,7 +100,7 @@ def iter_agent_dirs(context) -> tuple[Path, ...]:
     return tuple(path for path in sorted(root.iterdir()) if path.is_dir())
 
 
-def session_path_from_runtime(runtime_path: Path) -> Path | None:
+def session_path_from_runtime(runtime_path: Path) -> Optional[Path]:
     try:
         payload = json.loads(runtime_path.read_text(encoding='utf-8'))
     except Exception:

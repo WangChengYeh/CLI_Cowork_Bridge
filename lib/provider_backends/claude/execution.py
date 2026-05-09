@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from pathlib import Path
 
 from ccbd.api_models import JobRecord
@@ -24,7 +26,7 @@ class ClaudeProviderAdapter:
         no_terminal_timeout_s=900.0,
     )
 
-    def start(self, job: JobRecord, *, context: ProviderRuntimeContext | None, now: str) -> ProviderSubmission:
+    def start(self, job: JobRecord, *, context: Optional[ProviderRuntimeContext], now: str) -> ProviderSubmission:
         return _start_active_submission(
             self,
             job,
@@ -36,7 +38,7 @@ class ClaudeProviderAdapter:
             request_anchor_fn=request_anchor_for_job,
         )
 
-    def poll(self, submission: ProviderSubmission, *, now: str) -> ProviderPollResult | None:
+    def poll(self, submission: ProviderSubmission, *, now: str) -> Optional[ProviderPollResult]:
         return _poll_submission(self, submission, now=now)
 
     def export_runtime_state(self, submission: ProviderSubmission) -> dict[str, object]:
@@ -67,10 +69,10 @@ class ClaudeProviderAdapter:
         job: JobRecord,
         submission: ProviderSubmission,
         *,
-        context: ProviderRuntimeContext | None,
+        context: Optional[ProviderRuntimeContext],
         persisted_state,
         now: str,
-    ) -> ProviderSubmission | None:
+    ) -> Optional[ProviderSubmission]:
         del persisted_state, now
         if context is None or not context.workspace_path:
             return None

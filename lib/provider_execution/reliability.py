@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from dataclasses import dataclass
 import os
 
@@ -11,7 +13,7 @@ class CompletionReliabilityPolicy:
     provider: str
     no_terminal_timeout_s: float
     primary_authority: str
-    backend_type: str | None = 'pane-backed'
+    backend_type: Optional[str] = 'pane-backed'
     timeout_status: CompletionStatus = CompletionStatus.INCOMPLETE
     timeout_reason: str = 'completion_timeout'
     timeout_confidence: CompletionConfidence = CompletionConfidence.DEGRADED
@@ -39,7 +41,7 @@ class CompletionReliabilityPolicy:
             return self.no_terminal_timeout_s
 
 
-def adapter_reliability_policy(adapter: object) -> CompletionReliabilityPolicy | None:
+def adapter_reliability_policy(adapter: object) -> Optional[CompletionReliabilityPolicy]:
     policy = getattr(adapter, 'completion_reliability_policy', None)
     if isinstance(policy, CompletionReliabilityPolicy):
         return policy

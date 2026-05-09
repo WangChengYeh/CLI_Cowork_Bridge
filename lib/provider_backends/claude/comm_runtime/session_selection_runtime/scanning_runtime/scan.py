@@ -1,11 +1,13 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from pathlib import Path
 
 from ..membership import project_dir, session_is_sidechain
 
 
-def scan_latest_session_any_project(reader) -> Path | None:
+def scan_latest_session_any_project(reader) -> Optional[Path]:
     if not reader.root.exists():
         return None
     try:
@@ -18,7 +20,7 @@ def scan_latest_session_any_project(reader) -> Path | None:
     return sessions[-1] if sessions else None
 
 
-def scan_latest_session(reader) -> Path | None:
+def scan_latest_session(reader) -> Optional[Path]:
     current_project_dir = project_dir(reader)
     if not current_project_dir.exists():
         return None
@@ -35,8 +37,8 @@ def scan_latest_session(reader) -> Path | None:
     return _best_project_session(sessions)
 
 
-def _best_project_session(sessions: list[Path]) -> Path | None:
-    first_unknown: Path | None = None
+def _best_project_session(sessions: list[Path]) -> Optional[Path]:
+    first_unknown: Optional[Path] = None
     first_any = sessions[0]
     for session in sessions:
         sidechain = session_is_sidechain(session)

@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 import json
 import time
 from pathlib import Path
@@ -19,8 +21,8 @@ def write_session_file(
     runtime_dir: Path,
     run_cwd: Path,
     pane_id: str,
-    tmux_socket_name: str | None,
-    tmux_socket_path: str | None,
+    tmux_socket_name: Optional[str],
+    tmux_socket_path: Optional[str],
     pane_title_marker: str,
     start_cmd: str,
     launch_session_id: str,

@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from pathlib import Path
 
 from ccbd.api_models import JobRecord
@@ -25,7 +27,7 @@ class CodexProviderAdapter:
         no_terminal_timeout_s=900.0,
     )
 
-    def start(self, job: JobRecord, *, context: ProviderRuntimeContext | None, now: str) -> ProviderSubmission:
+    def start(self, job: JobRecord, *, context: Optional[ProviderRuntimeContext], now: str) -> ProviderSubmission:
         return _start_active_submission(
             self,
             job,
@@ -38,7 +40,7 @@ class CodexProviderAdapter:
             wrap_prompt_fn=wrap_codex_turn_prompt,
         )
 
-    def poll(self, submission: ProviderSubmission, *, now: str) -> ProviderPollResult | None:
+    def poll(self, submission: ProviderSubmission, *, now: str) -> Optional[ProviderPollResult]:
         return _poll_submission(submission, now=now)
 
     def export_runtime_state(self, submission: ProviderSubmission) -> dict[str, object]:
@@ -65,10 +67,10 @@ class CodexProviderAdapter:
         job: JobRecord,
         submission: ProviderSubmission,
         *,
-        context: ProviderRuntimeContext | None,
+        context: Optional[ProviderRuntimeContext],
         persisted_state,
         now: str,
-    ) -> ProviderSubmission | None:
+    ) -> Optional[ProviderSubmission]:
         del persisted_state, now
         return _resume_submission(
             job,
@@ -80,7 +82,7 @@ class CodexProviderAdapter:
         )
 
 
-def _reader_factory(session, preferred_log: Path | None):
+def _reader_factory(session, preferred_log: Optional[Path]):
     work_dir = Path(session.work_dir)
     kwargs: dict[str, object] = {
         "log_path": preferred_log if preferred_log is not None else (Path(session.codex_session_path).expanduser() if session.codex_session_path else None),

@@ -4,13 +4,13 @@ import json
 import os
 import sqlite3
 from pathlib import Path
-from typing import Any
+from typing import Any, Optional
 
 
 class OpenCodeStorageAccessor:
     def __init__(self, root: Path) -> None:
         self.root = Path(root).expanduser()
-        self._db_path_hint: Path | None = None
+        self._db_path_hint: Optional[Path] = None
 
     def session_dir(self, project_id: str) -> Path:
         return self.root / "session" / project_id
@@ -65,7 +65,7 @@ class OpenCodeStorageAccessor:
             out.append(candidate)
         return out
 
-    def resolve_opencode_db_path(self) -> Path | None:
+    def resolve_opencode_db_path(self) -> Optional[Path]:
         cached = self._cached_db_path()
         if cached is not None:
             return cached
@@ -117,7 +117,7 @@ class OpenCodeStorageAccessor:
         part_id = part.get("id") if isinstance(part.get("id"), str) else ""
         return started_i, mtime, part_id
 
-    def _cached_db_path(self) -> Path | None:
+    def _cached_db_path(self) -> Optional[Path]:
         candidate = self._db_path_hint
         if candidate is None:
             return None
@@ -128,7 +128,7 @@ class OpenCodeStorageAccessor:
             return None
         return None
 
-    def _existing_db_candidate(self) -> Path | None:
+    def _existing_db_candidate(self) -> Optional[Path]:
         for candidate in self.opencode_db_candidates():
             try:
                 if candidate.exists() and candidate.is_file():
@@ -138,11 +138,11 @@ class OpenCodeStorageAccessor:
         return None
 
 
-def _open_readonly_connection(db_path: Path) -> sqlite3.Connection | None:
+def _open_readonly_connection(db_path: Path) -> Optional[sqlite3.Connection]:
     return _connect_via_uri(db_path) or _connect_direct(db_path)
 
 
-def _connect_via_uri(db_path: Path) -> sqlite3.Connection | None:
+def _connect_via_uri(db_path: Path) -> Optional[sqlite3.Connection]:
     try:
         db_uri = f"{db_path.resolve().as_uri()}?mode=ro"
         return sqlite3.connect(db_uri, uri=True, timeout=0.2)
@@ -150,7 +150,7 @@ def _connect_via_uri(db_path: Path) -> sqlite3.Connection | None:
         return None
 
 
-def _connect_direct(db_path: Path) -> sqlite3.Connection | None:
+def _connect_direct(db_path: Path) -> Optional[sqlite3.Connection]:
     try:
         return sqlite3.connect(str(db_path), timeout=0.2)
     except Exception:
@@ -161,7 +161,7 @@ def _row_results(rows: list[object]) -> list[sqlite3.Row]:
     return [row for row in rows if isinstance(row, sqlite3.Row)]
 
 
-def _close_connection(conn: sqlite3.Connection | None) -> None:
+def _close_connection(conn: Optional[sqlite3.Connection]) -> None:
     try:
         if conn is not None:
             conn.close()

@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from ccbd.system import process_exists, utc_now
 from provider_core.registry import build_default_session_binding_map
 
@@ -24,7 +26,7 @@ class HealthMonitor(HealthMonitorRuntimeStateMixin):
         registry,
         ownership_guard,
         *,
-        project_id: str | None = None,
+        project_id: Optional[str] = None,
         lifecycle_store=None,
         runtime_service=None,
         clock=utc_now,
@@ -57,10 +59,10 @@ class HealthMonitor(HealthMonitorRuntimeStateMixin):
     def _runtime_health(self, runtime) -> str:
         return runtime_health_impl(self, runtime)
 
-    def _pane_health(self, runtime) -> str | None:
+    def _pane_health(self, runtime) -> Optional[str]:
         return pane_health_impl(self, runtime)
 
-    def _provider_pane_health(self, runtime) -> str | None:
+    def _provider_pane_health(self, runtime) -> Optional[str]:
         return provider_pane_health_impl(self, runtime)
 
     def _rebind_runtime(
@@ -69,7 +71,7 @@ class HealthMonitor(HealthMonitorRuntimeStateMixin):
         session,
         binding,
         *,
-        pane_id_override: str | None = None,
+        pane_id_override: Optional[str] = None,
         force_session_ref_update: bool = False,
     ):
         return rebind_runtime_impl(
@@ -84,7 +86,7 @@ class HealthMonitor(HealthMonitorRuntimeStateMixin):
     def _mark_degraded(self, runtime, *, health: str, session=None, binding=None):
         return mark_degraded_impl(self, runtime, health=health, session=session, binding=binding)
 
-    def _provider_runtime_facts(self, runtime, session, binding, *, pane_id_override: str | None = None):
+    def _provider_runtime_facts(self, runtime, session, binding, *, pane_id_override: Optional[str] = None):
         return provider_runtime_facts_impl(self, runtime, session, binding, pane_id_override=pane_id_override)
 
 

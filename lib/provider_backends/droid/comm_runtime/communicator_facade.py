@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Any
+from typing import Any, Optional
 
 from terminal_runtime import get_backend_for_session, get_pane_id_from_session
 
@@ -66,7 +66,7 @@ class DroidCommunicator:
     def _ensure_log_reader(self) -> None:
         ensure_log_reader(self, log_reader_cls=_droid_log_reader_cls())
 
-    def _find_session_file(self) -> Path | None:
+    def _find_session_file(self) -> Optional[Path]:
         return _find_droid_session_file_proxy(Path.cwd())
 
     def _load_session_info(self):

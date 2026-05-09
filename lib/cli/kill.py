@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Callable, Mapping
+from typing import Callable, Mapping, Optional
 
 from .kill_runtime.daemons import terminate_provider_daemon as _terminate_provider_daemon_impl
 from .kill_runtime.processes import kill_pid as _kill_pid_impl
@@ -33,12 +33,12 @@ def cmd_kill(
     *,
     parse_providers: Callable[[list[str]], list[str]],
     cwd: Path,
-    session_finder: Callable[[Path, str], Path | None],
+    session_finder: Callable[[Path, str], Optional[Path]],
     tmux_backend_factory: Callable[[], object],
-    safe_write_session: Callable[[Path, str], tuple[bool, str | None]],
+    safe_write_session: Callable[[Path, str], tuple[bool, Optional[str]]],
     state_file_path_fn: Callable[[str], Path],
     shutdown_daemon_fn: Callable[[str, float, Path], bool],
-    read_state_fn: Callable[[Path], dict | None],
+    read_state_fn: Callable[[Path], Optional[dict]],
     specs_by_provider: Mapping[str, object],
     is_pid_alive: Callable[[int], bool],
 ) -> int:
@@ -73,9 +73,9 @@ def _terminate_provider_session(
     provider: str,
     *,
     cwd: Path,
-    session_finder: Callable[[Path, str], Path | None],
+    session_finder: Callable[[Path, str], Optional[Path]],
     tmux_backend_factory: Callable[[], object],
-    safe_write_session: Callable[[Path, str], tuple[bool, str | None]],
+    safe_write_session: Callable[[Path, str], tuple[bool, Optional[str]]],
 ) -> None:
     _terminate_provider_session_impl(
         provider,
@@ -92,7 +92,7 @@ def _terminate_provider_daemon(
     specs_by_provider: Mapping[str, object],
     state_file_path_fn: Callable[[str], Path],
     shutdown_daemon_fn: Callable[[str, float, Path], bool],
-    read_state_fn: Callable[[Path], dict | None],
+    read_state_fn: Callable[[Path], Optional[dict]],
 ) -> None:
     _terminate_provider_daemon_impl(
         provider,

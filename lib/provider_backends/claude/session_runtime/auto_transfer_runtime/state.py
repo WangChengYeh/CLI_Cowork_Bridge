@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 import threading
 import time
 from pathlib import Path
@@ -12,7 +14,7 @@ def auto_transfer_key(work_dir: Path, session_path: Path) -> str:
     return f"{work_dir}::{session_path}"
 
 
-def claim_auto_transfer(key: str, *, now: float | None = None, ttl_s: float = 3600.0) -> bool:
+def claim_auto_transfer(key: str, *, now: Optional[float] = None, ttl_s: float = 3600.0) -> bool:
     current_time = time.time() if now is None else now
     with AUTO_TRANSFER_LOCK:
         if key in AUTO_TRANSFER_SEEN:

@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from ccbd.api_models import JobRecord
 
 
@@ -26,7 +28,7 @@ def heartbeat_diagnostics(
     *,
     decision,
     snapshot,
-    mailbox_target: str | None,
+    mailbox_target: Optional[str],
     subject_kind: str,
 ) -> dict[str, object]:
     payload: dict[str, object] = {

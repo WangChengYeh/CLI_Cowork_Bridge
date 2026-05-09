@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 import os
 import time
 from dataclasses import dataclass
@@ -31,7 +33,7 @@ def wait_for_runtime_ready(backend: object, pane_id: str, *, timeout_s: float = 
 @dataclass
 class ReadinessState:
     stable_text: str = ''
-    stable_since: float | None = None
+    stable_since: Optional[float] = None
     saw_content: bool = False
 
 
@@ -47,7 +49,7 @@ def resolved_timeout(timeout_s: float) -> float:
         return max(0.0, timeout_s)
 
 
-def read_pane_text(get_pane_content, pane_id: str) -> str | None:
+def read_pane_text(get_pane_content, pane_id: str) -> Optional[str]:
     try:
         return str(get_pane_content(pane_id, lines=120) or '')
     except Exception:

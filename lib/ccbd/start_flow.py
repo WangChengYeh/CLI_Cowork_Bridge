@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from pathlib import Path
 
 from agents.models import build_project_layout_plan
@@ -75,12 +77,12 @@ def run_start_flow(
     auto_permission: bool,
     cleanup_tmux_orphans: bool = True,
     interactive_tmux_layout: bool = True,
-    tmux_socket_path: str | None = None,
-    tmux_session_name: str | None = None,
-    tmux_workspace_window_name: str | None = None,
-    namespace_epoch: int | None = None,
-    workspace_window_id: str | None = None,
-    workspace_epoch: int | None = None,
+    tmux_socket_path: Optional[str] = None,
+    tmux_session_name: Optional[str] = None,
+    tmux_workspace_window_name: Optional[str] = None,
+    namespace_epoch: Optional[int] = None,
+    workspace_window_id: Optional[str] = None,
+    workspace_epoch: Optional[int] = None,
     fresh_namespace: bool = False,
     fresh_workspace: bool = False,
     clock=utc_now,

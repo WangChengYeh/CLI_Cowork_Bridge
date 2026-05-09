@@ -1,7 +1,9 @@
 from __future__ import annotations
 
+from typing import Optional
 
-def binding_pane_id(binding) -> str | None:
+
+def binding_pane_id(binding) -> Optional[str]:
     pane_id = str(getattr(binding, 'active_pane_id', None) or getattr(binding, 'pane_id', None) or '').strip()
     if not pane_id.startswith('%'):
         return None
@@ -19,8 +21,8 @@ def matching_project_namespace_record(
     *,
     binding,
     tmux_socket_path: str,
-    tmux_session_name: str | None,
-    workspace_window_id: str | None,
+    tmux_session_name: Optional[str],
+    workspace_window_id: Optional[str],
     agent_name: str,
     project_id: str,
     tmux_backend_factory,

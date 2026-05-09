@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 import errno
 from pathlib import Path
 import json
@@ -23,7 +25,7 @@ def connect_socket(socket_path: Path, *, timeout_s: float):
     if not hasattr(socket, 'AF_UNIX'):
         raise CcbdClientError('unix domain sockets are not supported on this platform')
     deadline = time.monotonic() + max(0.0, float(timeout_s))
-    last_error: OSError | None = None
+    last_error: Optional[OSError] = None
     for attempt in range(_CONNECT_MAX_RETRIES + 1):
         remaining = deadline - time.monotonic()
         if remaining <= 0:

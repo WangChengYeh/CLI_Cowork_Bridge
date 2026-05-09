@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from mailbox_kernel import InboundEventRecord, InboundEventStatus, InboundEventType
 from message_bureau.reply_payloads import compose_reply_payload
 
@@ -9,7 +11,7 @@ def rewrite_reply_head(
     current,
     *,
     reply_id: str,
-    delivery_job_id: str | None,
+    delivery_job_id: Optional[str],
     status: InboundEventStatus,
     updated_at: str,
     clear_progress: bool,

@@ -3,7 +3,7 @@ from __future__ import annotations
 import json
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Callable
+from typing import Callable, Optional
 
 from .registry_support.pathing import candidate_project_paths, normalize_project_path, project_key_for_path
 
@@ -18,7 +18,7 @@ def candidate_paths_for_work_dir(work_dir: Path, *, include_env_pwd: bool = True
     return set(candidate_project_paths(work_dir, include_env_pwd=include_env_pwd))
 
 
-def resolve_registry_index_location(work_dir: Path, *, root: Path) -> SessionIndexLocation | None:
+def resolve_registry_index_location(work_dir: Path, *, root: Path) -> Optional[SessionIndexLocation]:
     location = project_index_location(root=root, project_dir=root / project_key_for_path(work_dir))
     if location is not None:
         return location
@@ -32,7 +32,7 @@ def resolve_registry_index_location(work_dir: Path, *, root: Path) -> SessionInd
     return project_index_location(root=root, project_dir=root / project_key_for_path(resolved))
 
 
-def project_index_location(*, root: Path, project_dir: Path) -> SessionIndexLocation | None:
+def project_index_location(*, root: Path, project_dir: Path) -> Optional[SessionIndexLocation]:
     del root
     index_path = project_dir / "sessions-index.json"
     if not index_path.exists():
@@ -40,7 +40,7 @@ def project_index_location(*, root: Path, project_dir: Path) -> SessionIndexLoca
     return SessionIndexLocation(index_path=index_path, project_dir=project_dir)
 
 
-def load_index_entries(index_path: Path) -> list[dict[str, object]] | None:
+def load_index_entries(index_path: Path) -> Optional[list[dict[str, object]]]:
     try:
         payload = json.loads(index_path.read_text(encoding="utf-8", errors="replace"))
     except Exception:
@@ -56,9 +56,9 @@ def select_best_session_path(
     *,
     candidates: set[str],
     project_dir: Path,
-    session_filter: Callable[[Path], bool] | None = None,
-) -> Path | None:
-    best_path: Path | None = None
+    session_filter: Callable[[Path], Optional[bool]] = None,
+) -> Optional[Path]:
+    best_path: Optional[Path] = None
     best_mtime = -1
     for entry in entries:
         candidate = entry_session_path(
@@ -81,8 +81,8 @@ def entry_session_path(
     *,
     candidates: set[str],
     project_dir: Path,
-    session_filter: Callable[[Path], bool] | None = None,
-) -> tuple[Path, int] | None:
+    session_filter: Callable[[Path], Optional[bool]] = None,
+) -> Optional[tuple[Path, int]]:
     if entry.get("isSidechain") is True:
         return None
     if not entry_matches_candidates(entry, candidates):
@@ -106,7 +106,7 @@ def entry_matches_candidates(entry: dict[str, object], candidates: set[str]) -> 
     return not candidates
 
 
-def resolve_session_path(entry: dict[str, object], *, project_dir: Path) -> Path | None:
+def resolve_session_path(entry: dict[str, object], *, project_dir: Path) -> Optional[Path]:
     full_path = entry.get("fullPath")
     if not isinstance(full_path, str) or not full_path.strip():
         return None
@@ -121,7 +121,7 @@ def resolve_session_path(entry: dict[str, object], *, project_dir: Path) -> Path
     return session_path
 
 
-def entry_mtime(entry: dict[str, object], session_path: Path) -> int | None:
+def entry_mtime(entry: dict[str, object], session_path: Path) -> Optional[int]:
     mtime_raw = entry.get("fileMtime")
     if isinstance(mtime_raw, (int, float)):
         return int(mtime_raw)

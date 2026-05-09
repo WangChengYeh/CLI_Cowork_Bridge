@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import Any
+from typing import Any, Optional
 
 from agents.models import normalize_agent_name
 
@@ -18,12 +18,12 @@ from ..enums import (
 @dataclass(frozen=True)
 class CompletionCursor:
     source_kind: CompletionSourceKind
-    opaque_cursor: str | None = None
-    session_path: str | None = None
-    offset: int | None = None
-    line_no: int | None = None
-    event_seq: int | None = None
-    updated_at: str | None = None
+    opaque_cursor: Optional[str] = None
+    session_path: Optional[str] = None
+    offset: Optional[int] = None
+    line_no: Optional[int] = None
+    event_seq: Optional[int] = None
+    updated_at: Optional[str] = None
 
     def __post_init__(self) -> None:
         if self.offset is not None and self.offset < 0:
@@ -88,9 +88,9 @@ class ReplyCandidate:
     kind: ReplyCandidateKind
     text: str
     timestamp: str
-    provider_turn_ref: str | None
-    priority: int | None
-    cursor: CompletionCursor | None
+    provider_turn_ref: Optional[str]
+    priority: Optional[int]
+    cursor: Optional[CompletionCursor]
 
     def __post_init__(self) -> None:
         text = (self.text or '').strip()

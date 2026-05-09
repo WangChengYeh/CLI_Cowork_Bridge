@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Any
+from typing import Any, Optional
 
 from opencode_runtime.logs import is_cancel_log_line, latest_opencode_log_file, parse_opencode_log_epoch_s
 
@@ -72,7 +72,7 @@ def _cancel_line_matches(line: str, *, session_id: str, since_epoch_s: float) ->
 
 def _select_active_log_path(
     *,
-    current_path: Path | None,
+    current_path: Optional[Path],
     latest_path: Path,
     offset: int,
     cursor_mtime: float,
@@ -87,7 +87,7 @@ def _select_active_log_path(
     return current_path, offset, cursor_mtime
 
 
-def _normalize_cursor(cursor: dict[str, Any]) -> tuple[Path | None, int, float]:
+def _normalize_cursor(cursor: dict[str, Any]) -> Optional[tuple[Path], int, float]:
     if not isinstance(cursor, dict):
         cursor = {}
     current_path = cursor.get("path")
@@ -103,7 +103,7 @@ def _normalize_cursor(cursor: dict[str, Any]) -> tuple[Path | None, int, float]:
     return path, offset, mtime
 
 
-def _read_log_chunk(path: Path, *, offset: int) -> str | None:
+def _read_log_chunk(path: Path, *, offset: int) -> Optional[str]:
     try:
         with path.open("r", encoding="utf-8", errors="replace") as handle:
             handle.seek(offset)
@@ -112,7 +112,7 @@ def _read_log_chunk(path: Path, *, offset: int) -> str | None:
         return None
 
 
-def _cursor_from_path(path: Path, *, default_offset: bool = False, offset: int | None = None, fallback_mtime: float = 0.0):
+def _cursor_from_path(path: Path, *, default_offset: bool = False, offset: Optional[int] = None, fallback_mtime: float = 0.0):
     size = _safe_stat_size(path) or 0
     mtime = _safe_stat_mtime(path)
     return {
@@ -122,14 +122,14 @@ def _cursor_from_path(path: Path, *, default_offset: bool = False, offset: int |
     }
 
 
-def _safe_stat_size(path: Path) -> int | None:
+def _safe_stat_size(path: Path) -> Optional[int]:
     try:
         return int(path.stat().st_size)
     except Exception:
         return None
 
 
-def _safe_stat_mtime(path: Path) -> float | None:
+def _safe_stat_mtime(path: Path) -> Optional[float]:
     try:
         return float(path.stat().st_mtime)
     except Exception:

@@ -1,10 +1,10 @@
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Any
+from typing import Any, Optional
 
 
-def remember_log_hint(comm, state: dict[str, Any] | None) -> Path | None:
+def remember_log_hint(comm, state: Optional[dict[str, Any]]) -> Optional[Path]:
     log_hint = _state_log_hint(comm, state)
     comm._remember_codex_session(log_hint)
     return log_hint
@@ -16,7 +16,7 @@ def ensure_session_health(comm) -> None:
         raise RuntimeError(f"❌ Session error: {status}")
 
 
-def _state_log_hint(comm, state: dict[str, Any] | None) -> Path | None:
+def _state_log_hint(comm, state: Optional[dict[str, Any]]) -> Optional[Path]:
     if isinstance(state, dict):
         log_hint = state.get("log_path")
         if isinstance(log_hint, Path):

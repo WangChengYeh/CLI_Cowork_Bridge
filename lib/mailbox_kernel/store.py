@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from storage.json_store import JsonStore
 from storage.jsonl_store import JsonlStore
 from storage.paths import PathLayout
@@ -8,11 +10,11 @@ from .models import DeliveryLease, InboundEventRecord, MailboxRecord
 
 
 class MailboxStore:
-    def __init__(self, layout: PathLayout, store: JsonStore | None = None) -> None:
+    def __init__(self, layout: PathLayout, store: Optional[JsonStore] = None) -> None:
         self._layout = layout
         self._store = store or JsonStore()
 
-    def load(self, agent_name: str) -> MailboxRecord | None:
+    def load(self, agent_name: str) -> Optional[MailboxRecord]:
         path = self._layout.agent_mailbox_path(agent_name)
         if not path.exists():
             return None
@@ -39,7 +41,7 @@ class MailboxStore:
 
 
 class InboundEventStore:
-    def __init__(self, layout: PathLayout, store: JsonlStore | None = None) -> None:
+    def __init__(self, layout: PathLayout, store: Optional[JsonlStore] = None) -> None:
         self._layout = layout
         self._store = store or JsonlStore()
 
@@ -64,13 +66,13 @@ class InboundEventStore:
         )
         return line_no, list(rows)
 
-    def get_latest(self, agent_name: str, inbound_event_id: str) -> InboundEventRecord | None:
+    def get_latest(self, agent_name: str, inbound_event_id: str) -> Optional[InboundEventRecord]:
         for record in reversed(self.list_agent(agent_name)):
             if record.inbound_event_id == inbound_event_id:
                 return record
         return None
 
-    def get_latest_for_attempt(self, agent_name: str, attempt_id: str) -> InboundEventRecord | None:
+    def get_latest_for_attempt(self, agent_name: str, attempt_id: str) -> Optional[InboundEventRecord]:
         for record in reversed(self.list_agent(agent_name)):
             if record.attempt_id == attempt_id:
                 return record
@@ -78,11 +80,11 @@ class InboundEventStore:
 
 
 class DeliveryLeaseStore:
-    def __init__(self, layout: PathLayout, store: JsonStore | None = None) -> None:
+    def __init__(self, layout: PathLayout, store: Optional[JsonStore] = None) -> None:
         self._layout = layout
         self._store = store or JsonStore()
 
-    def load(self, agent_name: str) -> DeliveryLease | None:
+    def load(self, agent_name: str) -> Optional[DeliveryLease]:
         path = self._layout.mailbox_lease_path(agent_name)
         if not path.exists():
             return None

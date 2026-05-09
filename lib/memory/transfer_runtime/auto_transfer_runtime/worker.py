@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 import os
 import threading
 import time
@@ -12,9 +14,9 @@ def start_transfer_thread(
     *,
     provider: str,
     work_dir: Path,
-    session_path: Path | None,
-    session_id: str | None,
-    project_id: str | None,
+    session_path: Optional[Path],
+    session_id: Optional[str],
+    project_id: Optional[str],
 ) -> None:
     threading.Thread(
         target=_run_transfer_target(
@@ -32,9 +34,9 @@ def run_transfer(
     *,
     provider: str,
     work_dir: Path,
-    session_path: Path | None,
-    session_id: str | None,
-    project_id: str | None,
+    session_path: Optional[Path],
+    session_id: Optional[str],
+    project_id: Optional[str],
 ) -> None:
     context_transfer_cls = _context_transfer_cls()
     if context_transfer_cls is None:
@@ -70,9 +72,9 @@ def _run_transfer_target(
     *,
     provider: str,
     work_dir: Path,
-    session_path: Path | None,
-    session_id: str | None,
-    project_id: str | None,
+    session_path: Optional[Path],
+    session_id: Optional[str],
+    project_id: Optional[str],
 ):
     return lambda: run_transfer(
         provider=provider,
@@ -108,7 +110,7 @@ def _normalized_env(name: str, *, default: str) -> str:
     return value or default
 
 
-def _transfer_filename(provider: str, *, session_path: Path | None, session_id: str | None) -> str:
+def _transfer_filename(provider: str, *, session_path: Optional[Path], session_id: Optional[str]) -> str:
     ts = time.strftime("%Y%m%d-%H%M%S")
     sid = (session_id or (session_path.stem if session_path else "")) or "unknown"
     return f"{provider}-{ts}-{sid}"

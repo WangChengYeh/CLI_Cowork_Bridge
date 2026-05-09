@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 import re
 
 from ..constants import ANY_DONE_LINE_RE
@@ -26,7 +28,7 @@ def done_line_indexes(lines: list[str]) -> list[int]:
     return [index for index, line in enumerate(lines) if ANY_DONE_LINE_RE.match(line or '')]
 
 
-def target_done_indexes(lines: list[str], *, req_id: str, done_indexes: list[int] | None = None) -> list[int]:
+def target_done_indexes(lines: list[str], *, req_id: str, done_indexes: Optional[list[int]] = None) -> list[int]:
     indexes = done_line_indexes(lines) if done_indexes is None else done_indexes
     target_re = done_target_re(req_id)
     return [index for index in indexes if target_re.match(lines[index] or '')]
@@ -37,7 +39,7 @@ def extract_reply_window(
     *,
     done_indexes: list[int],
     target_index: int,
-    start_index: int | None = None,
+    start_index: Optional[int] = None,
 ) -> str:
     if start_index is None:
         start = previous_done_index(done_indexes, target_index=target_index) + 1

@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from dataclasses import dataclass
 
 from provider_core.protocol import (
@@ -20,7 +22,7 @@ class OpenCodeRequest:
     timeout_s: float
     quiet: bool
     message: str
-    req_id: str | None = None
+    req_id: Optional[str] = None
     caller: str = "claude"
 
 
@@ -31,4 +33,4 @@ class OpenCodeResult:
     req_id: str
     session_key: str
     done_seen: bool
-    done_ms: int | None = None
+    done_ms: Optional[int] = None

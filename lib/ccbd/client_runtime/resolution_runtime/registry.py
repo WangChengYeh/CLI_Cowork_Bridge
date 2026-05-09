@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from pathlib import Path
 
 from runtime_env import env_bool
@@ -13,11 +15,11 @@ def resolve_work_dir_with_registry(
     spec: ProviderClientSpec,
     *,
     provider: str,
-    cli_session_file: str | None = None,
-    env_session_file: str | None = None,
-    default_cwd: Path | None = None,
+    cli_session_file: Optional[str] = None,
+    env_session_file: Optional[str] = None,
+    default_cwd: Optional[Path] = None,
     registry_only_env: str = "CCB_REGISTRY_ONLY",
-) -> tuple[Path, Path | None]:
+) -> tuple[Path, Optional[Path]]:
     raw = _selected_session_file(cli_session_file, env_session_file)
     if raw:
         return resolve_work_dir(

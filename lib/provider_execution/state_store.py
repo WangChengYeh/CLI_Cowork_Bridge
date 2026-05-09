@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from pathlib import Path
 
 from storage.json_store import JsonStore
@@ -9,11 +11,11 @@ from .state_models import PersistedExecutionState
 
 
 class ExecutionStateStore:
-    def __init__(self, layout: PathLayout, store: JsonStore | None = None) -> None:
+    def __init__(self, layout: PathLayout, store: Optional[JsonStore] = None) -> None:
         self._layout = layout
         self._store = store or JsonStore()
 
-    def load(self, job_id: str) -> PersistedExecutionState | None:
+    def load(self, job_id: str) -> Optional[PersistedExecutionState]:
         path = self._layout.execution_state_path(job_id)
         if not path.exists():
             return None

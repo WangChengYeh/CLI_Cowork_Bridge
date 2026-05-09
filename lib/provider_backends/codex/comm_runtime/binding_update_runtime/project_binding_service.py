@@ -5,7 +5,7 @@ import sys
 import time
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any
+from typing import Any, Optional
 
 from project.identity import compute_ccb_project_id
 
@@ -20,8 +20,8 @@ from .persistence import write_project_session
 class CodexBindingState:
     path_str: str
     session_id: str
-    resume_cmd: str | None
-    start_cmd: str | None
+    resume_cmd: Optional[str]
+    start_cmd: Optional[str]
     ccb_project_id: str
 
 
@@ -39,7 +39,7 @@ def update_project_session_binding(
     log_path: Path,
     session_info: dict[str, Any],
     debug_enabled: bool = False,
-) -> CodexBindingState | None:
+) -> Optional[CodexBindingState]:
     data = _load_project_session(project_file)
     if data is None:
         return None
@@ -109,7 +109,7 @@ def binding_is_stale(data: dict[str, Any], log_path: Path, *, debug_enabled: boo
     return True
 
 
-def _load_project_session(project_file: Path) -> dict[str, Any] | None:
+def _load_project_session(project_file: Path) -> Optional[dict[str, Any]]:
     if not project_file.exists():
         return None
     try:
@@ -136,7 +136,7 @@ def _apply_binding_updates(
     session_id: str,
     ccb_project_id: str,
     existing: _ExistingBinding,
-) -> tuple[bool, bool, str | None]:
+) -> tuple[bool, bool, Optional[str]]:
     updated = False
     binding_changed = False
 
@@ -169,7 +169,7 @@ def _apply_binding_updates(
 
 def _update_resume_command(
     data: dict[str, Any], *, session_id: str, existing: _ExistingBinding
-) -> tuple[str | None, bool]:
+) -> Optional[tuple[str], bool]:
     if session_id:
         resume_cmd = persist_resume_start_cmd_fields(data, session_id)
         if resume_cmd is not None and (

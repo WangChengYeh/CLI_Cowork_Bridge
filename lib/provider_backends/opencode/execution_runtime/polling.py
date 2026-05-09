@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from dataclasses import replace
 
 from completion.models import CompletionItemKind
@@ -13,7 +15,7 @@ def poll_submission(
     *,
     now: str,
     state_session_path_fn,
-) -> ProviderPollResult | None:
+) -> Optional[ProviderPollResult]:
     prepared = prepare_active_poll(submission, now=now)
     if prepared is None or isinstance(prepared, ProviderPollResult):
         return prepared
@@ -81,7 +83,7 @@ def _apply_session_rotation(
     runtime: dict[str, object],
     items: list,
     *,
-    new_session_path: str | None,
+    new_session_path: Optional[str],
     provider_session_id,
     now: str,
 ) -> None:
@@ -214,7 +216,7 @@ def _reply_completed(state: dict[str, object]) -> bool:
         return False
 
 
-def _coerce_str(value: object) -> str | None:
+def _coerce_str(value: object) -> Optional[str]:
     text = str(value or "").strip()
     return text or None
 

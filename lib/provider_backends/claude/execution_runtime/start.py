@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 import os
 import time
 from pathlib import Path
@@ -25,7 +27,7 @@ def load_session(load_project_session_fn, work_dir: Path, *, agent_name: str):
     return load_project_session_fn(work_dir)
 
 
-def provider_preferred_session_path(*, session, context: ProviderRuntimeContext) -> Path | None:
+def provider_preferred_session_path(*, session, context: ProviderRuntimeContext) -> Optional[Path]:
     return preferred_session_path(str(getattr(session, "claude_session_path", "") or ""), context.session_ref)
 
 
@@ -104,7 +106,7 @@ def start_active_submission(
     adapter,
     job: JobRecord,
     *,
-    context: ProviderRuntimeContext | None,
+    context: Optional[ProviderRuntimeContext],
     now: str,
     load_session_fn,
     backend_for_session_fn,
@@ -180,11 +182,11 @@ def resume_submission(
     job: JobRecord,
     submission: ProviderSubmission,
     *,
-    context: ProviderRuntimeContext | None,
+    context: Optional[ProviderRuntimeContext],
     load_session_fn,
     backend_for_session_fn,
     reader_factory,
-) -> ProviderSubmission | None:
+) -> Optional[ProviderSubmission]:
     return resume_active_submission(
         job,
         submission,

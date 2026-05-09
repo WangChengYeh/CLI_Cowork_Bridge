@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from completion.models import (
     CompletionConfidence,
     CompletionCursor,
@@ -17,11 +19,11 @@ SCHEMA_VERSION = 2
 
 
 class CompletionSnapshotStore:
-    def __init__(self, layout: PathLayout, store: JsonStore | None = None) -> None:
+    def __init__(self, layout: PathLayout, store: Optional[JsonStore] = None) -> None:
         self._layout = layout
         self._store = store or JsonStore()
 
-    def load(self, job_id: str) -> CompletionSnapshot | None:
+    def load(self, job_id: str) -> Optional[CompletionSnapshot]:
         path = self._layout.snapshot_path(job_id)
         if not path.exists():
             return None
@@ -38,7 +40,7 @@ def _validate_record(record: dict, expected_type: str) -> None:
         raise ValueError(f'record_type must be {expected_type!r}')
 
 
-def _cursor_from_record(record: dict | None) -> CompletionCursor | None:
+def _cursor_from_record(record: Optional[dict]) -> Optional[CompletionCursor]:
     if record is None:
         return None
     _validate_record(record, 'completion_cursor')

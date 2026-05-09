@@ -1,10 +1,12 @@
 from __future__ import annotations
 
+from typing import Optional
+
 import json
 from pathlib import Path
 
 
-def read_droid_session_start(session_path: Path, *, max_lines: int = 30) -> tuple[str | None, str | None]:
+def read_droid_session_start(session_path: Path, *, max_lines: int = 30) -> Optional[tuple[str], Optional[str]]:
     try:
         with session_path.open("r", encoding="utf-8", errors="replace") as handle:
             for _ in range(max_lines):
@@ -19,7 +21,7 @@ def read_droid_session_start(session_path: Path, *, max_lines: int = 30) -> tupl
     return None, None
 
 
-def _read_json_line(line: str) -> dict | None:
+def _read_json_line(line: str) -> Optional[dict]:
     text = line.strip()
     if not text:
         return None
@@ -30,7 +32,7 @@ def _read_json_line(line: str) -> dict | None:
     return entry if isinstance(entry, dict) else None
 
 
-def _normalize_field(value: object) -> str | None:
+def _normalize_field(value: object) -> Optional[str]:
     if not isinstance(value, str):
         return None
     text = value.strip()

@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 import argparse
 import sys
 import traceback
@@ -12,7 +14,7 @@ if str(_LIB_ROOT) not in sys.path:
 from ccbd.app import CcbdApp
 
 
-def main(argv: list[str] | None = None) -> int:
+def main(argv: Optional[list[str]] = None) -> int:
     parser = argparse.ArgumentParser(prog='python -m ccbd.main')
     parser.add_argument('--project', required=True)
     args = parser.parse_args(argv)

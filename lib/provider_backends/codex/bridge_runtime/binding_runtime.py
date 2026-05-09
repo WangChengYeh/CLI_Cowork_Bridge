@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 import os
 from pathlib import Path
 import threading
@@ -19,7 +21,7 @@ class CodexBindingTracker:
         self.runtime_dir = runtime_dir
         self.session_file = session_file_from_env()
         self._poll_interval = env_float("CCB_CODEX_BIND_POLL_INTERVAL", 0.5)
-        self._thread: threading.Thread | None = None
+        self._thread: Optional[threading.Thread] = None
         self._running = False
 
     def start(self) -> None:
@@ -66,14 +68,14 @@ class CodexBindingTracker:
         return before != binding_snapshot(session.data)
 
 
-def session_file_from_env() -> Path | None:
+def session_file_from_env() -> Optional[Path]:
     raw_session_file = str(os.environ.get("CCB_SESSION_FILE") or "").strip()
     if not raw_session_file:
         return None
     return Path(raw_session_file).expanduser()
 
 
-def refresh_context(session_file: Path | None) -> dict[str, object] | None:
+def refresh_context(session_file: Optional[Path]) -> Optional[dict[str, object]]:
     if session_file is None or not session_file.is_file():
         return None
     data = read_session_data(session_file)
@@ -85,7 +87,7 @@ def refresh_context(session_file: Path | None) -> dict[str, object] | None:
     return {"data": data, "work_dir": work_dir, "session_file": session_file}
 
 
-def current_log_path(data: dict[str, object], *, session_file: Path | None) -> Path | None:
+def current_log_path(data: dict[str, object], *, session_file: Optional[Path]) -> Optional[Path]:
     work_dir = session_work_dir(data)
     log_reader = CodexLogReader(
         root=session_root(data),

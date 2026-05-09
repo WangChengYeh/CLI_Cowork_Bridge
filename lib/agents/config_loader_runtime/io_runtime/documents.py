@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 import importlib
 from pathlib import Path
 
@@ -102,10 +104,10 @@ def _parse_compact_config_document(text: str, *, path: Path) -> dict[str, object
     }
 
 
-def _classify_config_document(text: str) -> tuple[str, str, str | None]:
+def _classify_config_document(text: str) -> tuple[str, str, Optional[str]]:
     lines = text.splitlines()
-    first_meaningful_kind: str | None = None
-    first_rich_index: int | None = None
+    first_meaningful_kind: Optional[str] = None
+    first_rich_index: Optional[int] = None
     for index, line in enumerate(lines):
         body = line.split('#', 1)[0].strip()
         if not body:

@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from pathlib import Path
 
 from agents.models import RuntimeBindingSource, normalize_runtime_binding_source
@@ -32,7 +34,7 @@ def _attach_missing_session(*, attach_runtime_fn, agent_name: str, workspace_pat
     )
 
 
-def _resolve_pane_id(session, *, recover: bool) -> str | None:
+def _resolve_pane_id(session, *, recover: bool) -> Optional[str]:
     pane_id = str(getattr(session, 'pane_id', '') or '').strip()
     if not recover:
         return pane_id or None
@@ -50,10 +52,10 @@ def _attach_healthy_runtime(
     runtime,
     provider: str,
     facts,
-    active_pane_id: str | None,
-    slot_key: str | None,
-    window_id: str | None,
-    workspace_epoch: int | None,
+    active_pane_id: Optional[str],
+    slot_key: Optional[str],
+    window_id: Optional[str],
+    workspace_epoch: Optional[int],
 ) -> object:
     return attach_runtime_fn(
         agent_name=agent_name,

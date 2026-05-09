@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 import os
 import shlex
 
@@ -28,10 +30,10 @@ class TmuxTransientServerUnavailable(RuntimeError):
         self,
         message: str,
         *,
-        args: list[str] | tuple[str, ...] | None = None,
-        detail: str | None = None,
-        socket_path: str | None = None,
-        command: list[str] | tuple[str, ...] | None = None,
+        args: list[str] | Optional[tuple[str, ...]] = None,
+        detail: Optional[str] = None,
+        socket_path: Optional[str] = None,
+        command: list[str] | Optional[tuple[str, ...]] = None,
     ) -> None:
         self.message = str(message or '').strip() or 'tmux server unavailable'
         self.tmux_args = tuple(str(item) for item in (args or ()))
@@ -59,10 +61,10 @@ class TmuxCommandError(RuntimeError):
         self,
         message: str,
         *,
-        args: list[str] | tuple[str, ...] | None = None,
-        detail: str | None = None,
-        socket_path: str | None = None,
-        command: list[str] | tuple[str, ...] | None = None,
+        args: list[str] | Optional[tuple[str, ...]] = None,
+        detail: Optional[str] = None,
+        socket_path: Optional[str] = None,
+        command: list[str] | Optional[tuple[str, ...]] = None,
     ) -> None:
         self.message = str(message or '').strip() or 'tmux command failed'
         self.tmux_args = tuple(str(item) for item in (args or ()))
@@ -80,7 +82,7 @@ class TmuxCommandError(RuntimeError):
         )
 
 
-def tmux_failure_detail(cp: object, args: list[str] | tuple[str, ...] | None = None) -> str:
+def tmux_failure_detail(cp: object, args: list[str] | Optional[tuple[str, ...]] = None) -> str:
     stderr = str(getattr(cp, 'stderr', '') or '').strip()
     stdout = str(getattr(cp, 'stdout', '') or '').strip()
     if stderr or stdout:
@@ -93,10 +95,10 @@ def tmux_failure_detail(cp: object, args: list[str] | tuple[str, ...] | None = N
 def tmux_command_failure_message(
     message: str,
     *,
-    args: list[str] | tuple[str, ...] | None = None,
-    detail: str | None = None,
-    socket_path: str | None = None,
-    command: list[str] | tuple[str, ...] | None = None,
+    args: list[str] | Optional[tuple[str, ...]] = None,
+    detail: Optional[str] = None,
+    socket_path: Optional[str] = None,
+    command: list[str] | Optional[tuple[str, ...]] = None,
 ) -> str:
     base = str(message or '').strip() or 'tmux command failed'
     parts = [base]
@@ -115,9 +117,9 @@ def tmux_command_failure_message(
 
 def _tmux_command_text(
     *,
-    args: list[str] | tuple[str, ...] | None,
-    socket_path: str | None,
-    command: list[str] | tuple[str, ...] | None,
+    args: list[str] | Optional[tuple[str, ...]],
+    socket_path: Optional[str],
+    command: list[str] | Optional[tuple[str, ...]],
 ) -> str:
     if command:
         items = [str(item) for item in command]
@@ -129,7 +131,7 @@ def _tmux_command_text(
     return shlex.join(items) if items else ''
 
 
-def _single_line_detail(detail: str | None) -> str:
+def _single_line_detail(detail: Optional[str]) -> str:
     lines = [line.strip() for line in str(detail or '').splitlines() if line.strip()]
     return ' | '.join(lines)
 
@@ -161,7 +163,7 @@ def is_tmux_missing_session_text(text: str) -> bool:
     return any(marker in normalized for marker in _TMUX_MISSING_SESSION_ERROR_MARKERS)
 
 
-def tmux_object_ready_timeout_s(timeout_s: float | None = None) -> float:
+def tmux_object_ready_timeout_s(timeout_s: Optional[float] = None) -> float:
     if timeout_s is not None:
         return max(0.0, float(timeout_s))
     return _env_float_impl('CCB_TMUX_OBJECT_READY_TIMEOUT_S', _TMUX_OBJECT_READY_TIMEOUT_S)

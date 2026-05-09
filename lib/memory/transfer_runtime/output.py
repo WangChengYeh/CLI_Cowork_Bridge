@@ -14,7 +14,7 @@ from provider_sessions.files import resolve_project_config_dir
 from memory.types import TransferContext
 
 
-def build_context(project: str | None, *, cwd: Path | None = None) -> CliContext:
+def build_context(project: Optional[str], *, cwd: Optional[Path] = None) -> CliContext:
     command = ParsedStartCommand(project=project, agent_names=(), restore=False, auto_permission=False)
     context = CliContextBuilder().build(command, cwd=(cwd or Path.cwd()), bootstrap_if_missing=True)
     ensure_bootstrap_project_config(context.project.project_root)
@@ -27,8 +27,8 @@ def submit_agent_target(
     target: str,
     message: str,
     sender: str,
-    task_id: str | None,
-    reply_to: str | None = None,
+    task_id: Optional[str],
+    reply_to: Optional[str] = None,
     mode: str = "ask",
     silence_on_success: bool = False,
 ) -> dict:
@@ -61,7 +61,7 @@ def watch_job(
     return watch_ask_job(context, job_id, out, timeout=timeout, emit_output=emit_output)
 
 
-def exit_code_for_status(status: str | None, *, reply: str) -> int:
+def exit_code_for_status(status: Optional[str], *, reply: str) -> int:
     return exit_code_for_ask_status(status, reply=reply)
 
 
@@ -69,7 +69,7 @@ def send_to_agent(
     *,
     agent_name: str,
     formatted: str,
-    work_dir: Path | None = None,
+    work_dir: Optional[Path] = None,
 ) -> tuple[bool, str]:
     try:
         context = build_context(None, cwd=work_dir)

@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 import os
 
 from agents.models import AgentState
@@ -194,7 +196,7 @@ def record_shutdown_report(
     stopped_agents: tuple[str, ...],
     actions_taken: tuple[str, ...],
     cleanup_summaries,
-    failure_reason: str | None,
+    failure_reason: Optional[str],
 ) -> None:
     try:
         inspection = app.ownership_guard.inspect()
@@ -229,8 +231,8 @@ def record_startup_report(
     trigger: str,
     status: str,
     actions_taken: tuple[str, ...],
-    restore_summary: dict[str, object] | None = None,
-    failure_reason: str | None = None,
+    restore_summary: Optional[dict[str, object]] = None,
+    failure_reason: Optional[str] = None,
 ) -> None:
     try:
         inspection = app.ownership_guard.inspect()

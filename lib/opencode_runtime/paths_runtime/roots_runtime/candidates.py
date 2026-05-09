@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 import os
 from pathlib import Path
 
@@ -54,7 +56,7 @@ def append_preferred_wsl_users(candidates: list[Path], *, users_root: Path, env:
         candidates.append(users_root / name / "AppData" / "Roaming" / "opencode" / "storage")
 
 
-def latest_existing_wsl_storage(users_root: Path) -> Path | None:
+def latest_existing_wsl_storage(users_root: Path) -> Optional[Path]:
     found: list[Path] = []
     try:
         for user_dir in users_root.iterdir():

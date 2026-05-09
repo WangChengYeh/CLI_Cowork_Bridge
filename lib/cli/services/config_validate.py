@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from dataclasses import dataclass
 
 from agents.config_loader import load_project_config
@@ -10,7 +12,7 @@ from cli.context import CliContext
 class ConfigValidationSummary:
     project_root: str
     project_id: str
-    source: str | None
+    source: Optional[str]
     used_default: bool
     default_agents: tuple[str, ...]
     agent_names: tuple[str, ...]

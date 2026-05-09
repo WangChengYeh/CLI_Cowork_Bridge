@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from completion.models import CompletionItemKind, CompletionStatus
 
 
@@ -113,7 +115,7 @@ def resolve_session_reply(
     return first_text(payload, "reply", "content", "text") or reply_buffer or default_reply
 
 
-def first_text(payload: dict[str, object], *keys: str) -> str | None:
+def first_text(payload: dict[str, object], *keys: str) -> Optional[str]:
     for key in keys:
         value = payload.get(key)
         if isinstance(value, str) and value.strip():

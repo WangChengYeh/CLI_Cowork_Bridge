@@ -1,12 +1,14 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from .result import pane_dead_result, runtime_error_result
 from ..models import PreparedActivePoll
 from ...base import ProviderPollResult, ProviderSubmission
 from ...common import is_runtime_target_alive
 
 
-def prepare_active_poll(submission: ProviderSubmission, *, now: str) -> ProviderPollResult | PreparedActivePoll | None:
+def prepare_active_poll(submission: ProviderSubmission, *, now: str) -> ProviderPollResult | Optional[PreparedActivePoll]:
     return _prepare_active_poll(submission, now=now, check_pane_alive=True)
 
 
@@ -14,7 +16,7 @@ def prepare_active_poll_without_liveness(
     submission: ProviderSubmission,
     *,
     now: str,
-) -> ProviderPollResult | PreparedActivePoll | None:
+) -> ProviderPollResult | Optional[PreparedActivePoll]:
     return _prepare_active_poll(submission, now=now, check_pane_alive=False)
 
 
@@ -23,7 +25,7 @@ def _prepare_active_poll(
     *,
     now: str,
     check_pane_alive: bool,
-) -> ProviderPollResult | PreparedActivePoll | None:
+) -> ProviderPollResult | Optional[PreparedActivePoll]:
     runtime_error = runtime_mode_error(submission, now=now)
     if runtime_error is not None:
         return runtime_error
@@ -46,7 +48,7 @@ def _prepare_active_poll(
     return PreparedActivePoll(reader=reader, backend=backend, pane_id=pane_id)
 
 
-def runtime_mode_error(submission: ProviderSubmission, *, now: str) -> ProviderPollResult | None:
+def runtime_mode_error(submission: ProviderSubmission, *, now: str) -> Optional[ProviderPollResult]:
     mode = str(submission.runtime_state.get("mode") or "passive")
     if mode == "passive":
         return runtime_error_result(
@@ -71,7 +73,7 @@ def ensure_active_pane_alive(
     backend: object,
     pane_id: str,
     now: str,
-) -> ProviderPollResult | None:
+) -> Optional[ProviderPollResult]:
     try:
         pane_alive = is_runtime_target_alive(backend, pane_id)
     except Exception:

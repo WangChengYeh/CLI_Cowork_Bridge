@@ -12,7 +12,7 @@ from runtime.worker_health import RuntimeWorkerHealthStore
 from runtime.worker_quarantine import RuntimeWorkerQuarantineStore
 
 
-@dataclass(slots=True)
+@dataclass
 class RuntimeMetricsSnapshot:
     runtime_state: str
     runtime_health: str

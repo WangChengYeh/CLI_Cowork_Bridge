@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from pathlib import Path
 
 from provider_backends.pane_log_support.session import compute_session_key_for_provider
@@ -8,7 +10,7 @@ from .model import DroidProjectSession
 from .pathing import find_project_session_file, read_json
 
 
-def load_project_session(work_dir: Path, instance: str | None = None) -> DroidProjectSession | None:
+def load_project_session(work_dir: Path, instance: Optional[str] = None) -> Optional[DroidProjectSession]:
     session_file = find_project_session_file(work_dir, instance)
     if not session_file:
         return None
@@ -18,7 +20,7 @@ def load_project_session(work_dir: Path, instance: str | None = None) -> DroidPr
     return DroidProjectSession(session_file=session_file, data=data)
 
 
-def compute_session_key(session: DroidProjectSession, instance: str | None = None) -> str:
+def compute_session_key(session: DroidProjectSession, instance: Optional[str] = None) -> str:
     return compute_session_key_for_provider(session, provider="droid", instance=instance)
 
 

@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from terminal_runtime.tmux_theme import render_tmux_session_theme
 
 from .helpers import build_tmux_backend, detect_ccb_version, script_path
@@ -45,7 +47,7 @@ def _apply_session_theme(backend, *, session_name: str, rendered_theme) -> None:
         tmux_run(backend, ['set-option', '-t', session_name, option, value])
 
 
-def _apply_pane_theme(backend, *, session_name: str, border_script: str | None, rendered_theme) -> None:
+def _apply_pane_theme(backend, *, session_name: str, border_script: Optional[str], rendered_theme) -> None:
     for option, value in rendered_theme.window_options.items():
         tmux_run(backend, ['set-window-option', '-t', session_name, option, value])
     if border_script is not None:

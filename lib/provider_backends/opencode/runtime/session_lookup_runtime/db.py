@@ -1,16 +1,18 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from .common import directories_match, session_entry
 
 
-def get_latest_session_from_db(reader) -> dict | None:
+def get_latest_session_from_db(reader) -> Optional[dict]:
     if not reader._work_dir_candidates():
         return None
 
     rows = reader._fetch_opencode_db_rows("SELECT * FROM session ORDER BY time_updated DESC LIMIT 200", ())
-    best_match: dict | None = None
+    best_match: Optional[dict] = None
     best_updated = -1
-    latest_unfiltered: dict | None = None
+    latest_unfiltered: Optional[dict] = None
     latest_unfiltered_updated = -1
 
     for row in rows:
@@ -34,7 +36,7 @@ def get_latest_session_from_db(reader) -> dict | None:
     return best_match
 
 
-def _matching_row_entry(reader, row) -> dict | None:
+def _matching_row_entry(reader, row) -> Optional[dict]:
     directory = row["directory"]
     if not directories_match(reader, directory):
         return None

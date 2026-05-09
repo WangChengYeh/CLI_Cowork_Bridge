@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 import json
 import os
 from pathlib import Path
@@ -16,7 +18,7 @@ def env_float(name: str, default: float) -> float:
     return max(0.0, value)
 
 
-def path_or_none(value: object) -> Path | None:
+def path_or_none(value: object) -> Optional[Path]:
     raw = str(value or '').strip()
     if not raw:
         return None
@@ -34,7 +36,7 @@ def read_session_data(path: Path) -> dict[str, object]:
     return data if isinstance(data, dict) else {}
 
 
-def session_work_dir(data: dict[str, object]) -> Path | None:
+def session_work_dir(data: dict[str, object]) -> Optional[Path]:
     for key in ('work_dir', 'workspace_path', 'start_dir'):
         raw = str(data.get(key) or '').strip()
         if not raw:

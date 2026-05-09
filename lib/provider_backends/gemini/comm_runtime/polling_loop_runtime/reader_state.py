@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 import time
 
 from ..session_selection import scan_latest_session
@@ -54,7 +56,7 @@ def should_wait_for_forced_read(
     )
 
 
-def gemini_reply_changed(cursor, *, last_id: str | None, current_hash: str) -> bool:
+def gemini_reply_changed(cursor, *, last_id: Optional[str], current_hash: str) -> bool:
     return last_id != cursor.prev_last_gemini_id or current_hash != cursor.prev_last_gemini_hash
 
 
@@ -65,7 +67,7 @@ def reply_state_payload(
     current_mtime: float,
     current_mtime_ns: int,
     current_size: int,
-    last_id: str | None,
+    last_id: Optional[str],
     current_hash: str,
     last_tool_call_count: int = 0,
     last_thought_count: int = 0,

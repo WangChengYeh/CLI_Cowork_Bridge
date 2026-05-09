@@ -1,10 +1,12 @@
 from __future__ import annotations
 
+from typing import Optional
+
 import json
 from pathlib import Path
 
 
-def declared_binding_tmux_socket_path(binding) -> tuple[bool, str | None]:
+def declared_binding_tmux_socket_path(binding) -> tuple[bool, Optional[str]]:
     session_file = str(getattr(binding, 'session_file', None) or '').strip()
     if session_file:
         try:

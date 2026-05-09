@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from storage.json_store import JsonStore
 from storage.jsonl_store import JsonlStore
 from storage.paths import PathLayout
@@ -8,11 +10,11 @@ from .models import ProjectNamespaceEvent, ProjectNamespaceState
 
 
 class ProjectNamespaceStateStore:
-    def __init__(self, layout: PathLayout, store: JsonStore | None = None) -> None:
+    def __init__(self, layout: PathLayout, store: Optional[JsonStore] = None) -> None:
         self._layout = layout
         self._store = store or JsonStore()
 
-    def load(self) -> ProjectNamespaceState | None:
+    def load(self) -> Optional[ProjectNamespaceState]:
         path = self._layout.ccbd_state_path
         if not path.exists():
             return None
@@ -27,7 +29,7 @@ class ProjectNamespaceStateStore:
 
 
 class ProjectNamespaceEventStore:
-    def __init__(self, layout: PathLayout, store: JsonlStore | None = None) -> None:
+    def __init__(self, layout: PathLayout, store: Optional[JsonlStore] = None) -> None:
         self._layout = layout
         self._store = store or JsonlStore()
 
@@ -45,12 +47,12 @@ class ProjectNamespaceEventStore:
         )
         return tuple(rows)
 
-    def load_latest(self) -> ProjectNamespaceEvent | None:
+    def load_latest(self) -> Optional[ProjectNamespaceEvent]:
         rows = self.read_all()
         return rows[-1] if rows else None
 
 
-def next_namespace_epoch(current: ProjectNamespaceState | None) -> int:
+def next_namespace_epoch(current: Optional[ProjectNamespaceState]) -> int:
     if current is None:
         return 1
     return current.namespace_epoch + 1

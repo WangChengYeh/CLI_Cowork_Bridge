@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from pathlib import Path
 import os
 import shutil
@@ -43,7 +45,7 @@ def _candidate_roots() -> tuple[Path, ...]:
     return tuple(deduped)
 
 
-def resolve_ccb_executable() -> Path | None:
+def resolve_ccb_executable() -> Optional[Path]:
     runtime_ccb = current_install_root() / 'ccb'
     if runtime_ccb.is_file():
         return runtime_ccb
@@ -60,7 +62,7 @@ def resolve_ccb_executable() -> Path | None:
     return None
 
 
-def script_path(script_name: str) -> str | None:
+def script_path(script_name: str) -> Optional[str]:
     for root in _candidate_roots():
         runtime_copy = root / 'config' / script_name
         if runtime_copy.is_file():

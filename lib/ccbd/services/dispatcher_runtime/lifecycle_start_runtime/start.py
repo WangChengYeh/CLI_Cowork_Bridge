@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from dataclasses import replace
 
 from agents.models import AgentState
@@ -38,7 +40,7 @@ def start_running_job(
     current: JobRecord,
     *,
     slot: QueuedTargetSlot,
-    started_at: str | None = None,
+    started_at: Optional[str] = None,
 ) -> JobRecord:
     started_at = started_at or dispatcher._clock()
     running = replace(current, status=JobStatus.RUNNING, updated_at=started_at)

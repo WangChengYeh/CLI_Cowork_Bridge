@@ -1,10 +1,12 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from .constants import REMOTE_MAIN_COMMIT_API
 from .transport import fetch_json_via_curl, fetch_json_via_urllib
 
 
-def get_remote_version_info() -> dict | None:
+def get_remote_version_info() -> Optional[dict]:
     data = None
     try:
         data = fetch_json_via_urllib(REMOTE_MAIN_COMMIT_API, timeout=5)

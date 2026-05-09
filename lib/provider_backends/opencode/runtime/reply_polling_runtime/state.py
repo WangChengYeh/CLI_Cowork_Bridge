@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Any
+from typing import Any, Optional
 
 from opencode_runtime.replies import observe_latest_assistant
 
@@ -35,7 +35,7 @@ def merge_reply_state(
     session_entry: dict[str, Any],
     current_session_id: str,
     updated_i: int,
-    reply_state: dict[str, Any] | None,
+    reply_state: Optional[dict[str, Any]],
 ) -> dict[str, Any]:
     new_state = dict(state)
     new_state['session_id'] = current_session_id

@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from .backend import (
     create_window,
     ensure_window,
@@ -20,9 +22,9 @@ from ..project_namespace_state import ProjectNamespaceEvent
 def reflow_project_workspace(
     controller,
     *,
-    layout_signature: str | None = None,
-    reason: str | None = None,
-    session_probe_timeout_s: float | None = None,
+    layout_signature: Optional[str] = None,
+    reason: Optional[str] = None,
+    session_probe_timeout_s: Optional[float] = None,
 ) -> ProjectNamespace:
     controller._layout.ccbd_dir.mkdir(parents=True, exist_ok=True)
     context = load_namespace_context(

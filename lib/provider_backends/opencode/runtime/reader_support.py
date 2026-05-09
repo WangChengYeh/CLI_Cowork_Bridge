@@ -44,7 +44,7 @@ def detect_project_id_for_workdir(
         return None
 
     work_candidates = build_work_dir_candidates(work_dir)
-    best_id: str | None = None
+    best_id: Optional[str] = None
     best_score: tuple[int, int, float] = (-1, -1, -1.0)
 
     paths = _project_json_files(projects_dir)
@@ -75,7 +75,7 @@ def _project_json_files(projects_dir: Path) -> list[Path]:
         return []
 
 
-def _project_identity(payload, path: Path) -> tuple[str | None, str | None]:
+def _project_identity(payload, path: Path) -> Optional[tuple[str], Optional[str]]:
     pid = (
         payload.get("id")
         if isinstance(payload.get("id"), str) and payload.get("id")

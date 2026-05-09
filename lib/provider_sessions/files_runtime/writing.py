@@ -1,11 +1,13 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from pathlib import Path
 
 from .writable import check_session_writable
 
 
-def safe_write_session(session_file: Path, content: str) -> tuple[bool, str | None]:
+def safe_write_session(session_file: Path, content: str) -> tuple[bool, Optional[str]]:
     session_file = Path(session_file)
     writable, reason, fix = check_session_writable(session_file)
     if not writable:

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, replace
 from enum import Enum
-from typing import Any
+from typing import Any, Optional
 
 from .common import API_VERSION, SCHEMA_VERSION, CcbdModelError
 
@@ -30,12 +30,12 @@ def _require_positive_int(value: int, *, field_name: str) -> None:
         raise CcbdModelError(f'{field_name} must be positive')
 
 
-def _require_optional_non_empty_text(value: object | None, *, field_name: str) -> None:
+def _require_optional_non_empty_text(value: Optional[object], *, field_name: str) -> None:
     if value is not None:
         _require_non_empty_text(value, field_name=field_name)
 
 
-def _require_optional_positive_int(value: int | None, *, field_name: str) -> None:
+def _require_optional_positive_int(value: Optional[int], *, field_name: str) -> None:
     if value is not None:
         _require_positive_int(value, field_name=field_name)
 
@@ -51,9 +51,9 @@ class CcbdLease:
     last_heartbeat_at: str
     mount_state: MountState
     generation: int = 1
-    config_signature: str | None = None
-    keeper_pid: int | None = None
-    daemon_instance_id: str | None = None
+    config_signature: Optional[str] = None
+    keeper_pid: Optional[int] = None
+    daemon_instance_id: Optional[str] = None
     api_version: int = API_VERSION
 
     def __post_init__(self) -> None:
@@ -98,7 +98,7 @@ class CcbdLease:
 
 @dataclass(frozen=True)
 class LeaseInspection:
-    lease: CcbdLease | None
+    lease: Optional[CcbdLease]
     health: LeaseHealth
     pid_alive: bool
     socket_connectable: bool
@@ -107,7 +107,7 @@ class LeaseInspection:
     reason: str
 
     @property
-    def generation(self) -> int | None:
+    def generation(self) -> Optional[int]:
         if self.lease is None:
             return None
         return self.lease.generation

@@ -1,13 +1,15 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from pathlib import Path
 
 from ...debug import debug_log_reader
 from .candidates import bind_preferred_log, candidate_logs
 
 
-def scan_latest(reader) -> Path | None:
-    latest: Path | None = None
+def scan_latest(reader) -> Optional[Path]:
+    latest: Optional[Path] = None
     latest_mtime = -1.0
     for path, mtime in candidate_logs(reader):
         if mtime >= latest_mtime:
@@ -16,7 +18,7 @@ def scan_latest(reader) -> Path | None:
     return latest
 
 
-def latest_log(reader) -> Path | None:
+def latest_log(reader) -> Optional[Path]:
     preferred = reader._preferred_log
     if _preferred_is_bound(reader, preferred):
         debug_log_reader(f"Using preferred log (bound): {preferred}")
@@ -35,7 +37,7 @@ def latest_log(reader) -> Path | None:
     return bind_preferred_log(reader, latest)
 
 
-def _preferred_is_bound(reader, preferred: Path | None) -> bool:
+def _preferred_is_bound(reader, preferred: Optional[Path]) -> bool:
     if preferred is None or not preferred.exists():
         return False
     from ..state import follow_workspace_sessions
@@ -43,7 +45,7 @@ def _preferred_is_bound(reader, preferred: Path | None) -> bool:
     return bool(reader._session_id_filter and not follow_workspace_sessions(reader))
 
 
-def _select_preferred_or_latest(reader, preferred: Path, latest: Path | None) -> Path | None:
+def _select_preferred_or_latest(reader, preferred: Path, latest: Optional[Path]) -> Optional[Path]:
     if latest is None or latest == preferred:
         debug_log_reader(f"Using preferred log: {preferred}")
         return preferred

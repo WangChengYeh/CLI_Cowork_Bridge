@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 import platform
 import subprocess
 from dataclasses import dataclass
@@ -11,14 +13,14 @@ class IMessageSendError(RuntimeError):
     pass
 
 
-@dataclass(slots=True)
+@dataclass
 class IMessageSendResult:
     recipient: str
     message: str
     success: bool
     dry_run: bool = False
-    stdout: str | None = None
-    stderr: str | None = None
+    stdout: Optional[str] = None
+    stderr: Optional[str] = None
 
 
 MAX_CHUNK_SIZE = 4000

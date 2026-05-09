@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 import re
 
 from provider_core.protocol import BEGIN_PREFIX, strip_done_text
@@ -31,7 +33,7 @@ def extract_reply_for_req(text: str, req_id: str) -> str:
     )
 
 
-def _last_begin_index(lines: list[str], *, begin_re, target_index: int) -> int | None:
+def _last_begin_index(lines: list[str], *, begin_re, target_index: int) -> Optional[int]:
     for index in range(target_index - 1, -1, -1):
         if begin_re.match(lines[index] or ''):
             return index

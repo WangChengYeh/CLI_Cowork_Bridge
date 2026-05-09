@@ -13,7 +13,7 @@ def check_one(
     refresh_interval_s: float,
     scan_limit: int,
     find_session_file_fn: Callable[[Path], Optional[Path]],
-    load_session_fn: Callable[[Path], object | None],
+    load_session_fn: Callable[[Path], Optional[object]],
     refresh_claude_log_binding_fn,
     write_log_fn: Callable[[str], None],
 ) -> None:
@@ -124,14 +124,14 @@ def finalize_refresh(registry, key: str, *, session_file: Path, now: float, refr
         entry.last_check = now
 
 
-def _session_file_exists(session_file: Path | None) -> bool:
+def _session_file_exists(session_file: Optional[Path]) -> bool:
     try:
         return bool(session_file and session_file.exists())
     except Exception:
         return False
 
 
-def _session_mtime(session_file: Path | None) -> float:
+def _session_mtime(session_file: Optional[Path]) -> float:
     try:
         return session_file.stat().st_mtime if session_file else 0.0
     except Exception:

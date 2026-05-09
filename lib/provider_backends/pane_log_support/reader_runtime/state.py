@@ -1,10 +1,10 @@
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Any
+from typing import Any, Optional
 
 
-def set_pane_log_path(reader, path: Path | None) -> None:
+def set_pane_log_path(reader, path: Optional[Path]) -> None:
     if not path:
         return
     try:
@@ -14,7 +14,7 @@ def set_pane_log_path(reader, path: Path | None) -> None:
     reader._pane_log_path = candidate
 
 
-def resolve_log_path(reader) -> Path | None:
+def resolve_log_path(reader) -> Optional[Path]:
     if reader._pane_log_path and reader._pane_log_path.exists():
         return reader._pane_log_path
     return None

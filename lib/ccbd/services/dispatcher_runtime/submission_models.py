@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from dataclasses import dataclass
 
 from ccbd.api_models import DeliveryScope, MessageEnvelope, TargetKind
@@ -12,9 +14,9 @@ class _JobDraft:
     request: MessageEnvelope
     target_kind: TargetKind
     target_name: str
-    provider_instance: str | None = None
-    provider_options: dict[str, object] | None = None
-    workspace_path: str | None = None
+    provider_instance: Optional[str] = None
+    provider_options: Optional[dict[str, object]] = None
+    workspace_path: Optional[str] = None
 
 
 @dataclass(frozen=True)
@@ -22,11 +24,11 @@ class _SubmissionPlan:
     project_id: str
     from_actor: str
     request: MessageEnvelope
-    task_id: str | None
+    task_id: Optional[str]
     drafts: tuple[_JobDraft, ...]
-    submission_id: str | None = None
-    target_scope: str | None = None
-    origin_message_id: str | None = None
+    submission_id: Optional[str] = None
+    target_scope: Optional[str] = None
+    origin_message_id: Optional[str] = None
 
 
 def _message_for_agent(request: MessageEnvelope, *, agent_name: str) -> MessageEnvelope:

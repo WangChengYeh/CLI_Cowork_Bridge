@@ -1,11 +1,13 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from pathlib import Path
 
 from project.discovery import find_nearest_project_anchor, find_workspace_binding, load_workspace_binding, project_ccb_dir
 
 
-def find_project_session_file(work_dir: Path, session_filename: str) -> Path | None:
+def find_project_session_file(work_dir: Path, session_filename: str) -> Optional[Path]:
     try:
         current = Path(work_dir).resolve()
     except Exception:
@@ -22,7 +24,7 @@ def find_project_session_file(work_dir: Path, session_filename: str) -> Path | N
     return candidate if candidate.exists() else None
 
 
-def _session_file_from_workspace_binding(current: Path, session_filename: str) -> Path | None:
+def _session_file_from_workspace_binding(current: Path, session_filename: str) -> Optional[Path]:
     binding_path = find_workspace_binding(current)
     if binding_path is None:
         return None

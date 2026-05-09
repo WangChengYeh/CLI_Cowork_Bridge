@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 import os
 from pathlib import Path
 
@@ -34,7 +36,7 @@ def collect_project_process_candidates(
     *,
     proc_root: Path = Path('/proc'),
     read_proc_cmdline_fn=read_proc_cmdline,
-    current_pid: int | None = None,
+    current_pid: Optional[int] = None,
 ) -> dict[int, list[Path]]:
     current_pid = int(current_pid or os.getpid())
     ccb_root = project_root.expanduser() / '.ccb'

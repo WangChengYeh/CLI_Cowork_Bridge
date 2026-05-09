@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Protocol
+from typing import Optional, Protocol
 
 
 class TmuxLayoutBackend(Protocol):
@@ -13,7 +13,7 @@ class TmuxLayoutBackend(Protocol):
         cwd: str,
         direction: str = 'right',
         percent: int = 50,
-        parent_pane: str | None = None,
+        parent_pane: Optional[str] = None,
     ) -> str: ...
     def split_pane(self, parent_pane_id: str, direction: str, percent: int) -> str: ...
     def set_pane_title(self, pane_id: str, title: str) -> None: ...
@@ -23,8 +23,8 @@ class TmuxLayoutBackend(Protocol):
         *,
         check: bool = False,
         capture: bool = False,
-        input_bytes: bytes | None = None,
-        timeout: float | None = None,
+        input_bytes: Optional[bytes] = None,
+        timeout: Optional[float] = None,
     ): ...
 
 

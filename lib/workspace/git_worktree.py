@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from pathlib import Path
 import subprocess
 
@@ -48,7 +50,7 @@ def branch_exists(repo_root: Path, branch_name: str) -> bool:
     return result.returncode == 0
 
 
-def branch_is_merged_into_head(repo_root: Path, branch_name: str) -> bool | None:
+def branch_is_merged_into_head(repo_root: Path, branch_name: str) -> Optional[bool]:
     if not branch_exists(repo_root, branch_name):
         return None
     result = _git(repo_root, ['merge-base', '--is-ancestor', branch_name, 'HEAD'])
@@ -92,7 +94,7 @@ def is_git_workspace_root(workspace_path: Path) -> bool:
     return git_dir.exists()
 
 
-def workspace_is_dirty(workspace_path: Path) -> bool | None:
+def workspace_is_dirty(workspace_path: Path) -> Optional[bool]:
     target = _normalize_path(workspace_path)
     if not target.exists() or not is_git_workspace_root(target):
         return None

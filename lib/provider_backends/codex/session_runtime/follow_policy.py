@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from collections.abc import Mapping
 from pathlib import Path
 
@@ -8,13 +10,13 @@ from provider_sessions.files import resolve_project_config_dir
 from .pathing import read_json
 
 
-def codex_home_path(data: Mapping[str, object] | None) -> Path | None:
+def codex_home_path(data: Optional[Mapping[str, object]]) -> Optional[Path]:
     if not isinstance(data, Mapping):
         return None
     return _normalize_path(data.get("codex_home"))
 
 
-def codex_session_root_path(data: Mapping[str, object] | None) -> Path | None:
+def codex_session_root_path(data: Optional[Mapping[str, object]]) -> Optional[Path]:
     if not isinstance(data, Mapping):
         return None
     codex_home = codex_home_path(data)
@@ -26,7 +28,7 @@ def codex_session_root_path(data: Mapping[str, object] | None) -> Path | None:
     return None
 
 
-def has_bound_codex_session(data: Mapping[str, object] | None) -> bool:
+def has_bound_codex_session(data: Optional[Mapping[str, object]]) -> bool:
     if not isinstance(data, Mapping):
         return False
     if str(data.get("codex_session_id") or "").strip():
@@ -35,7 +37,7 @@ def has_bound_codex_session(data: Mapping[str, object] | None) -> bool:
 
 
 def should_follow_workspace_sessions(
-    *, work_dir: Path | None, session_file: Path | None, session_data: Mapping[str, object] | None = None
+    *, work_dir: Optional[Path], session_file: Optional[Path], session_data: Optional[Mapping[str, object]] = None
 ) -> bool:
     normalized_work_dir = _normalize_path(work_dir)
     if normalized_work_dir is None:
@@ -79,7 +81,7 @@ def _candidate_session_files(work_dir: Path) -> list[Path]:
     return candidates
 
 
-def _candidate_work_dir(session_file: Path) -> Path | None:
+def _candidate_work_dir(session_file: Path) -> Optional[Path]:
     data = read_json(session_file)
     raw = (
         data.get("work_dir")
@@ -90,7 +92,7 @@ def _candidate_work_dir(session_file: Path) -> Path | None:
     return _normalize_path(raw)
 
 
-def _normalize_path(value: object) -> Path | None:
+def _normalize_path(value: object) -> Optional[Path]:
     if value is None:
         return None
     try:

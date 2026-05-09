@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from ccbd.models import CcbdStartupAgentResult
 
 from .agent_runtime_binding import resolve_runtime_binding_state
@@ -17,17 +19,17 @@ def start_agent_runtime(
     binding,
     raw_binding,
     stale_binding: bool,
-    assigned_pane_id: str | None,
+    assigned_pane_id: Optional[str],
     style_index: int,
     project_id: str,
-    tmux_socket_path: str | None,
-    namespace_epoch: int | None,
+    tmux_socket_path: Optional[str],
+    namespace_epoch: Optional[int],
     ensure_agent_runtime_fn,
     launch_binding_hint_fn,
     relabel_project_namespace_pane_fn,
     same_tmux_socket_path_fn,
-    workspace_window_id: str | None = None,
-    workspace_epoch: int | None = None,
+    workspace_window_id: Optional[str] = None,
+    workspace_epoch: Optional[int] = None,
 ) -> StartAgentExecution:
     binding_state = resolve_runtime_binding_state(
         context=context,

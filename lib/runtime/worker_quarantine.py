@@ -4,23 +4,23 @@ import json
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any
+from typing import Any, Optional
 
 from runtime.worker_health import RuntimeWorkerHealth
 
 
-@dataclass(slots=True)
+@dataclass
 class RuntimeWorkerQuarantinePolicy:
     failure_threshold: int = 3
     cooldown_seconds: int = 300
 
 
-@dataclass(slots=True)
+@dataclass
 class RuntimeWorkerQuarantineRecord:
     worker_name: str
     quarantined: bool
-    reason: str | None = None
-    quarantined_at: str | None = None
+    reason: Optional[str] = None
+    quarantined_at: Optional[str] = None
 
 
 class RuntimeWorkerQuarantineStore:
@@ -97,8 +97,8 @@ class RuntimeWorkerQuarantineStore:
         self,
         worker_name: str,
         *,
-        policy: RuntimeWorkerQuarantinePolicy | None = None,
-        now: datetime | None = None,
+        policy: Optional[RuntimeWorkerQuarantinePolicy] = None,
+        now: Optional[datetime] = None,
     ) -> bool:
         records = self.read_all()
         record = records.get(worker_name)
@@ -130,7 +130,7 @@ class RuntimeWorkerQuarantineStore:
 def evaluate_worker_quarantine(
     *,
     worker_health: RuntimeWorkerHealth,
-    policy: RuntimeWorkerQuarantinePolicy | None = None,
+    policy: Optional[RuntimeWorkerQuarantinePolicy] = None,
 ) -> RuntimeWorkerQuarantineRecord:
     policy = policy or RuntimeWorkerQuarantinePolicy()
 

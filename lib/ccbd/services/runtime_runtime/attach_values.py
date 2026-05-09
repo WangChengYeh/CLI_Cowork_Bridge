@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from agents.models import RuntimeBindingSource
 from agents.runtime_binding import merge_runtime_binding, runtime_binding_from_runtime
 
@@ -21,29 +23,29 @@ def resolve_attach_runtime_values(
     spec,
     workspace_path: str,
     backend_type: str,
-    pid: int | None,
-    runtime_ref: str | None,
-    session_ref: str | None,
-    health: str | None,
-    provider: str | None,
-    runtime_root: str | None,
-    runtime_pid: int | None,
-    terminal_backend: str | None,
-    pane_id: str | None,
-    active_pane_id: str | None,
-    pane_title_marker: str | None,
-    pane_state: str | None,
-    tmux_socket_name: str | None,
-    tmux_socket_path: str | None,
-    session_file: str | None,
-    session_id: str | None,
-    slot_key: str | None,
-    window_id: str | None,
-    workspace_epoch: int | None,
-    lifecycle_state: str | None,
-    daemon_generation: int | None,
-    managed_by: str | None,
-    binding_source: str | RuntimeBindingSource | None,
+    pid: Optional[int],
+    runtime_ref: Optional[str],
+    session_ref: Optional[str],
+    health: Optional[str],
+    provider: Optional[str],
+    runtime_root: Optional[str],
+    runtime_pid: Optional[int],
+    terminal_backend: Optional[str],
+    pane_id: Optional[str],
+    active_pane_id: Optional[str],
+    pane_title_marker: Optional[str],
+    pane_state: Optional[str],
+    tmux_socket_name: Optional[str],
+    tmux_socket_path: Optional[str],
+    session_file: Optional[str],
+    session_id: Optional[str],
+    slot_key: Optional[str],
+    window_id: Optional[str],
+    workspace_epoch: Optional[int],
+    lifecycle_state: Optional[str],
+    daemon_generation: Optional[int],
+    managed_by: Optional[str],
+    binding_source: str | Optional[RuntimeBindingSource],
 ) -> AttachRuntimeValues:
     merged_binding = merge_runtime_binding(
         runtime_binding_from_runtime(existing),
@@ -124,12 +126,12 @@ def resolve_attach_runtime_values(
     )
 
 
-def next_provider(existing, spec, provider: str | None) -> str:
+def next_provider(existing, spec, provider: Optional[str]) -> str:
     current = existing.provider if existing is not None else spec.provider
     return str(provider or current or spec.provider).strip() or spec.provider
 
 
-def preferred_text(existing, field_name: str, explicit_value: str | None, *, default: str | None = None) -> str | None:
+def preferred_text(existing, field_name: str, explicit_value: Optional[str], *, default: Optional[str] = None) -> Optional[str]:
     normalized = normalized_text(explicit_value)
     if normalized is not None:
         return normalized
@@ -138,7 +140,7 @@ def preferred_text(existing, field_name: str, explicit_value: str | None, *, def
     return default
 
 
-def preferred_terminal_backend(existing, *, terminal_backend: str | None, runtime_ref_value: str | None) -> str | None:
+def preferred_terminal_backend(existing, *, terminal_backend: Optional[str], runtime_ref_value: Optional[str]) -> Optional[str]:
     return (
         normalized_text(terminal_backend)
         or terminal_backend_from_runtime_ref(runtime_ref_value)
@@ -146,7 +148,7 @@ def preferred_terminal_backend(existing, *, terminal_backend: str | None, runtim
     )
 
 
-def preferred_pane_id(existing, *, pane_id: str | None, runtime_ref_value: str | None) -> str | None:
+def preferred_pane_id(existing, *, pane_id: Optional[str], runtime_ref_value: Optional[str]) -> Optional[str]:
     return (
         normalized_text(pane_id)
         or pane_id_from_runtime_ref(runtime_ref_value)
@@ -154,7 +156,7 @@ def preferred_pane_id(existing, *, pane_id: str | None, runtime_ref_value: str |
     )
 
 
-def preferred_active_pane_id(existing, *, active_pane_id: str | None, pane_id_value: str | None) -> str | None:
+def preferred_active_pane_id(existing, *, active_pane_id: Optional[str], pane_id_value: Optional[str]) -> Optional[str]:
     return (
         normalized_text(active_pane_id)
         or pane_id_value
@@ -162,11 +164,11 @@ def preferred_active_pane_id(existing, *, active_pane_id: str | None, pane_id_va
     )
 
 
-def preferred_slot_key(existing, *, spec_name: str, slot_key: str | None) -> str:
+def preferred_slot_key(existing, *, spec_name: str, slot_key: Optional[str]) -> str:
     return normalized_text(slot_key) or (existing.slot_key if existing is not None else None) or spec_name
 
 
-def preferred_workspace_epoch(existing, *, workspace_epoch: int | None) -> int | None:
+def preferred_workspace_epoch(existing, *, workspace_epoch: Optional[int]) -> Optional[int]:
     if workspace_epoch is not None:
         return int(workspace_epoch)
     if existing is not None:
@@ -174,7 +176,7 @@ def preferred_workspace_epoch(existing, *, workspace_epoch: int | None) -> int |
     return None
 
 
-def next_runtime_pid(existing, *, runtime_pid: int | None, pid: int | None) -> int | None:
+def next_runtime_pid(existing, *, runtime_pid: Optional[int], pid: Optional[int]) -> Optional[int]:
     if runtime_pid is not None:
         return runtime_pid
     if pid is not None:
@@ -182,7 +184,7 @@ def next_runtime_pid(existing, *, runtime_pid: int | None, pid: int | None) -> i
     return existing.runtime_pid if existing is not None else None
 
 
-def next_lifecycle_state(existing, *, lifecycle_state: str | None, next_state) -> str | None:
+def next_lifecycle_state(existing, *, lifecycle_state: Optional[str], next_state) -> Optional[str]:
     return (
         normalized_text(lifecycle_state)
         or (existing.lifecycle_state if existing is not None else None)
@@ -216,7 +218,7 @@ def positive_generation(value: object) -> int:
     return generation if generation > 0 else 0
 
 
-def next_daemon_generation(existing, *, daemon_generation: int | None) -> int | None:
+def next_daemon_generation(existing, *, daemon_generation: Optional[int]) -> Optional[int]:
     if daemon_generation is not None:
         return int(daemon_generation)
     if existing is None:
@@ -228,15 +230,15 @@ def next_daemon_generation(existing, *, daemon_generation: int | None) -> int | 
 def runtime_authority_changed(
     existing,
     *,
-    runtime_ref: str | None,
-    session_ref: str | None,
-    runtime_root: str | None,
-    runtime_pid: int | None,
-    pane_id: str | None,
-    active_pane_id: str | None,
-    tmux_socket_name: str | None,
-    tmux_socket_path: str | None,
-    daemon_generation: int | None,
+    runtime_ref: Optional[str],
+    session_ref: Optional[str],
+    runtime_root: Optional[str],
+    runtime_pid: Optional[int],
+    pane_id: Optional[str],
+    active_pane_id: Optional[str],
+    tmux_socket_name: Optional[str],
+    tmux_socket_path: Optional[str],
+    daemon_generation: Optional[int],
 ) -> bool:
     if existing is None:
         return True

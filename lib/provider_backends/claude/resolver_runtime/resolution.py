@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from pathlib import Path
 
 from provider_core.session_binding_runtime import find_bound_session_file
@@ -12,8 +14,8 @@ from .pathing import normalize_session_binding
 
 def select_resolution(
     data: dict,
-    session_file: Path | None,
-    record: dict | None,
+    session_file: Optional[Path],
+    record: Optional[dict],
     source: str,
 ) -> ClaudeSessionResolution:
     return ClaudeSessionResolution(
@@ -34,7 +36,7 @@ def _session_work_dir(session_file: Path, fallback_work_dir: Path) -> Path:
     return fallback_work_dir
 
 
-def resolve_claude_session(work_dir: Path) -> ClaudeSessionResolution | None:
+def resolve_claude_session(work_dir: Path) -> Optional[ClaudeSessionResolution]:
     session_file = find_bound_session_file(
         provider="claude",
         base_filename=".claude-session",

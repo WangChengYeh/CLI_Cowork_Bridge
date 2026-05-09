@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 import os
 import shutil
 
@@ -15,7 +17,7 @@ from .tmux_project_cleanup_runtime import (
 def list_project_tmux_panes(
     *,
     project_id: str,
-    socket_name: str | None = None,
+    socket_name: Optional[str] = None,
     backend_factory=TmuxBackend,
 ) -> tuple[str, ...]:
     return list_project_tmux_panes_impl(
@@ -30,7 +32,7 @@ def cleanup_project_tmux_orphans(
     *,
     project_id: str,
     active_panes: tuple[str, ...] = (),
-    socket_name: str | None = None,
+    socket_name: Optional[str] = None,
     backend_factory=TmuxBackend,
 ) -> tuple[str, ...]:
     return cleanup_project_tmux_orphans_impl(
@@ -61,7 +63,7 @@ def cleanup_project_tmux_orphans_by_socket(
 def kill_project_tmux_panes(
     *,
     project_id: str,
-    socket_name: str | None = None,
+    socket_name: Optional[str] = None,
     backend_factory=TmuxBackend,
 ) -> tuple[str, ...]:
     return kill_project_tmux_panes_impl(

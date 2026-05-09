@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from pathlib import Path
 
 from provider_execution.capabilities import execution_restore_capability
@@ -124,7 +126,7 @@ def resolved_workspace_path(context, *, agent_name: str, runtime) -> str:
     return str(context.paths.workspace_path(agent_name))
 
 
-def runtime_session_ref(runtime) -> str | None:
+def runtime_session_ref(runtime) -> Optional[str]:
     if runtime is None:
         return None
     return runtime.session_id or runtime.session_ref or runtime.session_file

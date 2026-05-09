@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 import time
 from pathlib import Path
 
@@ -63,14 +65,14 @@ def _read_new_payload(log_path: Path, state: dict, *, extractor, empty_value):
     return extractor(clean), {'pane_log_path': log_path, 'offset': new_offset}
 
 
-def _read_size(log_path: Path) -> int | None:
+def _read_size(log_path: Path) -> Optional[int]:
     try:
         return log_path.stat().st_size
     except OSError:
         return None
 
 
-def _read_bytes(log_path: Path, offset: int) -> bytes | None:
+def _read_bytes(log_path: Path, offset: int) -> Optional[bytes]:
     try:
         with log_path.open('rb') as handle:
             handle.seek(offset)

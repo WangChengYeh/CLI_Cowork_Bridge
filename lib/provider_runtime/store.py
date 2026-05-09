@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from storage.jsonl_store import JsonlStore
 from storage.paths import PathLayout
 
@@ -7,7 +9,7 @@ from .health import ProviderHealthSnapshot
 
 
 class ProviderHealthSnapshotStore:
-    def __init__(self, layout: PathLayout, store: JsonlStore | None = None) -> None:
+    def __init__(self, layout: PathLayout, store: Optional[JsonlStore] = None) -> None:
         self._layout = layout
         self._store = store or JsonlStore()
 
@@ -24,7 +26,7 @@ class ProviderHealthSnapshotStore:
             loader=ProviderHealthSnapshot.from_record,
         )
 
-    def latest(self, job_id: str) -> ProviderHealthSnapshot | None:
+    def latest(self, job_id: str) -> Optional[ProviderHealthSnapshot]:
         records = self.list_job(job_id)
         if not records:
             return None

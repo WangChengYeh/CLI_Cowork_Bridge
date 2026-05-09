@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from dataclasses import replace
 
 from agents.models import AgentRuntime, RuntimeBindingSource
@@ -68,7 +70,7 @@ class RuntimeService:
         layout: PathLayout,
         registry: AgentRegistry,
         project_id: str,
-        restore_store: AgentRestoreStore | None = None,
+        restore_store: Optional[AgentRestoreStore] = None,
         session_bindings=None,
         daemon_generation_getter=None,
         *,
@@ -88,29 +90,29 @@ class RuntimeService:
         agent_name: str,
         workspace_path: str,
         backend_type: str,
-        pid: int | None = None,
-        runtime_ref: str | None = None,
-        session_ref: str | None = None,
-        health: str | None = None,
-        provider: str | None = None,
-        runtime_root: str | None = None,
-        runtime_pid: int | None = None,
-        terminal_backend: str | None = None,
-        pane_id: str | None = None,
-        active_pane_id: str | None = None,
-        pane_title_marker: str | None = None,
-        pane_state: str | None = None,
-        tmux_socket_name: str | None = None,
-        tmux_socket_path: str | None = None,
-        session_file: str | None = None,
-        session_id: str | None = None,
-        slot_key: str | None = None,
-        window_id: str | None = None,
-        workspace_epoch: int | None = None,
-        lifecycle_state: str | None = None,
-        daemon_generation: int | None = None,
-        managed_by: str | None = None,
-        binding_source: str | RuntimeBindingSource | None = None,
+        pid: Optional[int] = None,
+        runtime_ref: Optional[str] = None,
+        session_ref: Optional[str] = None,
+        health: Optional[str] = None,
+        provider: Optional[str] = None,
+        runtime_root: Optional[str] = None,
+        runtime_pid: Optional[int] = None,
+        terminal_backend: Optional[str] = None,
+        pane_id: Optional[str] = None,
+        active_pane_id: Optional[str] = None,
+        pane_title_marker: Optional[str] = None,
+        pane_state: Optional[str] = None,
+        tmux_socket_name: Optional[str] = None,
+        tmux_socket_path: Optional[str] = None,
+        session_file: Optional[str] = None,
+        session_id: Optional[str] = None,
+        slot_key: Optional[str] = None,
+        window_id: Optional[str] = None,
+        workspace_epoch: Optional[int] = None,
+        lifecycle_state: Optional[str] = None,
+        daemon_generation: Optional[int] = None,
+        managed_by: Optional[str] = None,
+        binding_source: str | Optional[RuntimeBindingSource] = None,
     ) -> AgentRuntime:
         resolved_daemon_generation = daemon_generation
         if resolved_daemon_generation is None and self._daemon_generation_getter is not None:
@@ -157,7 +159,7 @@ class RuntimeService:
         self,
         runtime: AgentRuntime,
         *,
-        daemon_generation: int | None = None,
+        daemon_generation: Optional[int] = None,
     ) -> AgentRuntime:
         return self.mutate_runtime_authority(
             runtime,
@@ -264,7 +266,7 @@ class RuntimeService:
             agent_name=agent_name,
         )
 
-    def refresh_provider_binding(self, agent_name: str, *, recover: bool = False) -> AgentRuntime | None:
+    def refresh_provider_binding(self, agent_name: str, *, recover: bool = False) -> Optional[AgentRuntime]:
         return refresh_provider_binding_impl(
             layout=self._layout,
             registry=self._registry,

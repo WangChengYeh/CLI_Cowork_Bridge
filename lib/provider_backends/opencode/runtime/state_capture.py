@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Any
+from typing import Any, Optional
 
 from opencode_runtime.replies import observe_latest_assistant
 
@@ -23,7 +23,7 @@ def _empty_capture_state() -> dict[str, Any]:
     }
 
 
-def _session_payload_state(session_entry: dict[str, Any]) -> tuple[str | None, int]:
+def _session_payload_state(session_entry: dict[str, Any]) -> Optional[tuple[str], int]:
     payload = session_entry.get("payload") or {}
     session_id = payload.get("id") if isinstance(payload.get("id"), str) else None
     updated_i = coerce_updated((payload.get("time") or {}).get("updated"))
@@ -37,7 +37,7 @@ def capture_state(reader) -> dict[str, Any]:
 
     session_id, updated_i = _session_payload_state(session_entry)
     assistant_count = 0
-    observed: dict[str, Any] | None = None
+    observed: Optional[dict[str, Any]] = None
     if session_id:
         messages = read_messages(reader, session_id)
         assistant_count = sum(1 for message in messages if message.get("role") == "assistant")

@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from dataclasses import replace
 
 from completion.models import seconds_between
@@ -15,7 +17,7 @@ def evaluate_heartbeat(
     owner: str,
     observed_last_progress_at: str,
     now: str,
-    state: HeartbeatState | None = None,
+    state: Optional[HeartbeatState] = None,
 ) -> tuple[HeartbeatState, HeartbeatDecision]:
     progress_at = _progress_timestamp(observed_last_progress_at, now=now)
     current = _current_state(
@@ -59,7 +61,7 @@ def _progress_timestamp(observed_last_progress_at: str, *, now: str) -> str:
 
 
 def _current_state(
-    state: HeartbeatState | None,
+    state: Optional[HeartbeatState],
     *,
     subject_kind: str,
     subject_id: str,

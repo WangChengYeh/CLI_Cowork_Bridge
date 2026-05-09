@@ -1,16 +1,16 @@
 from __future__ import annotations
 
 import time
-from typing import Any, Callable
+from typing import Any, Callable, Optional
 
 
 def resolve_active_session(
     state: dict[str, Any],
     *,
-    session_id: str | None,
-    session_entry: dict[str, Any] | None,
+    session_id: Optional[str],
+    session_entry: Optional[dict[str, Any]],
     reset_state_for_session_fn: Callable,
-) -> tuple[str | None, str | None, dict[str, Any]]:
+) -> Optional[tuple[str], Optional[str], dict[str, Any]]:
     if not session_entry:
         return session_id, None, state
     current_session_id = payload_session_id(session_entry)
@@ -45,7 +45,7 @@ def read_since(
     refresh_observed_state_fn: Callable,
     reset_state_for_session_fn: Callable,
     session_updated_fn: Callable,
-) -> tuple[str | None, dict[str, Any]]:
+) -> Optional[tuple[str], dict[str, Any]]:
     deadline = time.time() + timeout
     last_forced_read = time.time()
     session_id = state_session_id(state)
@@ -95,14 +95,14 @@ def read_since(
             return None, state
 
 
-def state_session_id(state: dict[str, Any]) -> str | None:
+def state_session_id(state: dict[str, Any]) -> Optional[str]:
     session_id = state.get("session_id")
     if isinstance(session_id, str) and session_id:
         return session_id
     return None
 
 
-def payload_session_id(session_entry: dict[str, Any]) -> str | None:
+def payload_session_id(session_entry: dict[str, Any]) -> Optional[str]:
     payload = session_entry.get("payload") or {}
     session_id = payload.get("id")
     return session_id if isinstance(session_id, str) else None
@@ -111,10 +111,10 @@ def payload_session_id(session_entry: dict[str, Any]) -> str | None:
 def advance_session_state(
     state: dict[str, Any],
     *,
-    session_id: str | None,
-    current_session_id: str | None,
+    session_id: Optional[str],
+    current_session_id: Optional[str],
     reset_state_for_session_fn: Callable,
-) -> tuple[str | None, dict[str, Any]]:
+) -> Optional[tuple[str], dict[str, Any]]:
     if session_id and current_session_id and current_session_id != session_id:
         return current_session_id, reset_state_for_session_fn(state, current_session_id)
     if not session_id:
@@ -148,7 +148,7 @@ def scan_current_session(
     find_reply_fn: Callable,
     merge_reply_state_fn: Callable,
     refresh_observed_state_fn: Callable,
-) -> tuple[float, str | None, dict[str, Any]]:
+) -> tuple[float, Optional[str], dict[str, Any]]:
     if block and updated_i == prev_updated:
         last_forced_read = time.time()
     reply, reply_state = find_reply_fn(reader, current_session_id, state)

@@ -1,12 +1,14 @@
 from __future__ import annotations
 
+from typing import Optional
+
 import time
 from pathlib import Path
 
 from ..session_selection import scan_latest
 
 
-def ensure_log(reader, current_path: Path | None) -> Path:
+def ensure_log(reader, current_path: Optional[Path]) -> Path:
     candidates = [
         reader._preferred_log if reader._preferred_log and reader._preferred_log.exists() else None,
         current_path if current_path and current_path.exists() else None,
@@ -25,11 +27,11 @@ def maybe_switch_logs(
     reader,
     *,
     log_path: Path,
-    current_path: Path | None,
+    current_path: Optional[Path],
     offset: int,
     last_rescan: float,
     rescan_interval: float,
-) -> tuple[bool, Path | None, int, float]:
+) -> tuple[bool, Optional[Path], int, float]:
     if time.time() - last_rescan < rescan_interval:
         return False, current_path, offset, last_rescan
 

@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import Any
+from typing import Any, Optional
 
 from agents.models import normalize_agent_name
 from mailbox_runtime.targets import normalize_actor_name
@@ -13,19 +13,19 @@ from .messages import MessageEnvelope
 @dataclass
 class JobRecord:
     job_id: str
-    submission_id: str | None
+    submission_id: Optional[str]
     agent_name: str
     provider: str
     request: MessageEnvelope
     status: JobStatus
-    terminal_decision: dict[str, Any] | None
-    cancel_requested_at: str | None
+    terminal_decision: Optional[dict[str, Any]]
+    cancel_requested_at: Optional[str]
     created_at: str
     updated_at: str
-    workspace_path: str | None = None
+    workspace_path: Optional[str] = None
     target_kind: TargetKind = TargetKind.AGENT
     target_name: str = ""
-    provider_instance: str | None = None
+    provider_instance: Optional[str] = None
     provider_options: dict[str, Any] = field(default_factory=dict)
 
     def __post_init__(self) -> None:
@@ -73,7 +73,7 @@ class SubmissionRecord:
     project_id: str
     from_actor: str
     target_scope: str
-    task_id: str | None
+    task_id: Optional[str]
     job_ids: list[str] = field(default_factory=list)
     created_at: str = ""
     updated_at: str = ""

@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from .tmux_theme import TmuxPaneVisual, pane_visual
 
 
@@ -10,11 +12,11 @@ def apply_ccb_pane_identity(
     title: str,
     agent_label: str,
     project_id: str,
-    order_index: int | None = None,
+    order_index: Optional[int] = None,
     is_cmd: bool = False,
-    slot_key: str | None = None,
-    namespace_epoch: int | None = None,
-    managed_by: str | None = 'ccbd',
+    slot_key: Optional[str] = None,
+    namespace_epoch: Optional[int] = None,
+    managed_by: Optional[str] = 'ccbd',
 ) -> None:
     visual = pane_visual(
         project_id=project_id,

@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import replace
-from typing import Protocol
+from typing import Optional, Protocol
 
 from completion.models import (
     CompletionConfidence,
@@ -29,14 +29,14 @@ class CompletionDetector(Protocol):
 
 
 class TickableCompletionDetector(Protocol):
-    def tick(self, now: str, cursor: CompletionCursor | None = None) -> None: ...
+    def tick(self, now: str, cursor: Optional[CompletionCursor] = None) -> None: ...
 
-    def finalize_timeout(self, now: str, cursor: CompletionCursor | None = None) -> None: ...
+    def finalize_timeout(self, now: str, cursor: Optional[CompletionCursor] = None) -> None: ...
 
 
 class BaseCompletionDetector:
     def __init__(self) -> None:
-        self._request_ctx: CompletionRequestContext | None = None
+        self._request_ctx: Optional[CompletionRequestContext] = None
         self._state = CompletionState()
         self._decision = CompletionDecision.pending()
 
@@ -51,10 +51,10 @@ class BaseCompletionDetector:
     def state(self) -> CompletionState:
         return replace(self._state)
 
-    def tick(self, now: str, cursor: CompletionCursor | None = None) -> None:
+    def tick(self, now: str, cursor: Optional[CompletionCursor] = None) -> None:
         self._sync_cursor(cursor)
 
-    def finalize_timeout(self, now: str, cursor: CompletionCursor | None = None) -> None:
+    def finalize_timeout(self, now: str, cursor: Optional[CompletionCursor] = None) -> None:
         if self._decision.terminal:
             return
         self._sync_cursor(cursor)
@@ -70,7 +70,7 @@ class BaseCompletionDetector:
             raise CompletionValidationError('detector must be bound before use')
         return self._request_ctx
 
-    def _sync_cursor(self, cursor: CompletionCursor | None) -> None:
+    def _sync_cursor(self, cursor: Optional[CompletionCursor]) -> None:
         if cursor is not None:
             self._state.latest_cursor = cursor
 
@@ -103,7 +103,7 @@ class BaseCompletionDetector:
         if provider_turn_ref:
             self._state.provider_turn_ref = provider_turn_ref
 
-    def _record_reply(self, item: CompletionItem, text: str, *, stable: bool = False, fingerprint: str | None = None) -> None:
+    def _record_reply(self, item: CompletionItem, text: str, *, stable: bool = False, fingerprint: Optional[str] = None) -> None:
         message = (text or '').strip()
         if not message:
             return
@@ -130,7 +130,7 @@ class BaseCompletionDetector:
         confidence: CompletionConfidence,
         finished_at: str,
         reply: str = '',
-        diagnostics: dict | None = None,
+        diagnostics: Optional[dict] = None,
     ) -> None:
         self._state.terminal = True
         self._decision = CompletionDecision(

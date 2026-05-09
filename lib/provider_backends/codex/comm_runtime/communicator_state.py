@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 import os
 from pathlib import Path
 
@@ -47,7 +49,7 @@ def prime_log_binding(comm) -> None:
 
 def remember_codex_session(
     comm,
-    log_path: Path | None,
+    log_path: Optional[Path],
     *,
     update_project_session_binding_fn,
     publish_registry_binding_fn,
@@ -131,25 +133,25 @@ def _log_reader_kwargs(comm) -> dict[str, object]:
     return kwargs
 
 
-def _work_dir_path(session_info: dict) -> Path | None:
+def _work_dir_path(session_info: dict) -> Optional[Path]:
     work_dir_raw = str(session_info.get("work_dir") or "").strip()
     if not work_dir_raw:
         return None
     return Path(work_dir_raw).expanduser()
 
 
-def _session_file_path(session_info: dict) -> Path | None:
+def _session_file_path(session_info: dict) -> Optional[Path]:
     session_file_raw = str(session_info.get("_session_file") or "").strip()
     if not session_file_raw:
         return None
     return Path(session_file_raw).expanduser()
 
 
-def _session_root_path(session_info: dict) -> Path | None:
+def _session_root_path(session_info: dict) -> Optional[Path]:
     return codex_session_root_path(session_info)
 
 
-def _log_path_object(log_path: Path | str | None) -> Path | None:
+def _log_path_object(log_path: Path | Optional[str]) -> Optional[Path]:
     if log_path is None:
         return None
     try:

@@ -1,19 +1,21 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from pathlib import Path
 
 from .common import coerce_updated, directories_match
 from .db import get_latest_session_from_db
 
 
-def get_latest_session(reader) -> dict | None:
+def get_latest_session(reader) -> Optional[dict]:
     session = get_latest_session_from_db(reader)
     if session is not None:
         return session
     return get_latest_session_from_files(reader)
 
 
-def get_latest_session_from_files(reader) -> dict | None:
+def get_latest_session_from_files(reader) -> Optional[dict]:
     sessions_dir = reader._session_dir()
     if not sessions_dir.exists():
         return None
@@ -40,7 +42,7 @@ def _session_files(sessions_dir: Path) -> list[Path]:
         return []
 
 
-def _filtered_match(reader, files: list[Path]) -> tuple[dict | None, int]:
+def _filtered_match(reader, files: list[Path]) -> Optional[tuple[dict], int]:
     if not reader._session_id_filter:
         return None, -1
     try:
@@ -54,11 +56,11 @@ def _filtered_match(reader, files: list[Path]) -> tuple[dict | None, int]:
     return None, -1
 
 
-def _scan_file_candidates(reader, files: list[Path]) -> tuple[dict | None, int, dict | None]:
-    best_match: dict | None = None
+def _scan_file_candidates(reader, files: list[Path]) -> Optional[tuple[dict], int, Optional[dict]]:
+    best_match: Optional[dict] = None
     best_updated = -1
     best_mtime = -1.0
-    best_any: dict | None = None
+    best_any: Optional[dict] = None
     best_any_updated = -1
     best_any_mtime = -1.0
 
@@ -87,7 +89,7 @@ def _scan_file_candidates(reader, files: list[Path]) -> tuple[dict | None, int, 
     return best_match, best_updated, best_any
 
 
-def _file_entry(path: Path, payload: dict) -> dict | None:
+def _file_entry(path: Path, payload: dict) -> Optional[dict]:
     sid = payload.get("id")
     if not isinstance(sid, str) or not sid:
         return None

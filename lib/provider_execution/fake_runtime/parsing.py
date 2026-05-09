@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 import json
 
 from completion.models import CompletionConfidence, CompletionStatus
@@ -31,7 +33,7 @@ def normalize_script_event(raw: dict[str, object]) -> FakeScriptEvent:
     return FakeScriptEvent(at_ms=at_ms, kind=kind, payload=payload)
 
 
-def parse_directive(task_id: str | None, *, default_latency_seconds: float) -> FakeDirective:
+def parse_directive(task_id: Optional[str], *, default_latency_seconds: float) -> FakeDirective:
     if task_id is None or not task_id.startswith('fake;'):
         return _default_directive(default_latency_seconds)
 
@@ -78,7 +80,7 @@ def _parse_directive_options(task_id: str) -> dict[str, str]:
 
 
 def _parse_latency_seconds(
-    latency_ms_raw: str | None,
+    latency_ms_raw: Optional[str],
     *,
     default_latency_seconds: float,
 ) -> float:
@@ -87,7 +89,7 @@ def _parse_latency_seconds(
     return max(0.0, int(latency_ms_raw) / 1000.0)
 
 
-def _parse_script(script_raw: str | None) -> tuple[dict[str, object], ...]:
+def _parse_script(script_raw: Optional[str]) -> tuple[dict[str, object], ...]:
     if script_raw is None:
         return ()
     try:

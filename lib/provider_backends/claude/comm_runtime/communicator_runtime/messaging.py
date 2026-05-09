@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 import time
 
 
@@ -17,13 +19,13 @@ def ask_async(comm, question: str) -> bool:
 def ask_sync(
     comm,
     question: str,
-    timeout: int | None = None,
+    timeout: Optional[int] = None,
     *,
     req_id_factory,
     wrap_prompt_fn,
     is_done_text_fn,
     strip_done_text_fn,
-) -> str | None:
+) -> Optional[str]:
     try:
         ensure_healthy_session(comm)
         req_id, prompt, state = sync_request_context(
@@ -82,7 +84,7 @@ def wait_for_sync_reply(
     state,
     *,
     req_id: str,
-    timeout: int | None,
+    timeout: Optional[int],
     is_done_text_fn,
 ) -> tuple[str, bool]:
     deadline = sync_deadline(comm, timeout)
@@ -102,14 +104,14 @@ def wait_for_sync_reply(
     return latest, done_seen
 
 
-def sync_deadline(comm, timeout: int | None) -> float | None:
+def sync_deadline(comm, timeout: Optional[int]) -> Optional[float]:
     wait_timeout = comm.timeout if timeout is None else int(timeout)
     if wait_timeout < 0:
         return None
     return time.time() + wait_timeout
 
 
-def next_wait_step(deadline: float | None) -> float | None:
+def next_wait_step(deadline: Optional[float]) -> Optional[float]:
     if deadline is None:
         return 1.0
     remaining = deadline - time.time()
@@ -124,7 +126,7 @@ def remember_current_session(comm) -> None:
         comm._remember_claude_session(session_path)
 
 
-def cleaned_reply(latest: str, *, req_id: str, strip_done_text_fn) -> str | None:
+def cleaned_reply(latest: str, *, req_id: str, strip_done_text_fn) -> Optional[str]:
     if not latest:
         return None
     return strip_done_text_fn(latest, req_id)

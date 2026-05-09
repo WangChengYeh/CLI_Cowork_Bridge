@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 import time
 from dataclasses import dataclass
 from pathlib import Path
@@ -17,9 +19,9 @@ class GeminiPollingCursor:
     prev_mtime: float
     prev_mtime_ns: int
     prev_size: int
-    prev_session: str | None
-    prev_last_gemini_id: str | None
-    prev_last_gemini_hash: str | None
+    prev_session: Optional[str]
+    prev_last_gemini_id: Optional[str]
+    prev_last_gemini_hash: Optional[str]
     prev_last_tool_call_count: int
     prev_last_thought_count: int
     rescan_interval: float
@@ -70,7 +72,7 @@ def reset_for_session_switch(cursor: GeminiPollingCursor, *, session: Path) -> N
 def update_from_values(
     cursor: GeminiPollingCursor,
     *,
-    session: Path | None,
+    session: Optional[Path],
     current_count: int,
     current_mtime: float,
     current_mtime_ns: int,
@@ -95,7 +97,7 @@ def update_last_gemini(cursor: GeminiPollingCursor, data: dict[str, object]) -> 
         cursor.prev_last_gemini_hash = hash_content(content)
 
 
-def current_state_payload(cursor: GeminiPollingCursor, *, session: Path | None) -> dict[str, object]:
+def current_state_payload(cursor: GeminiPollingCursor, *, session: Optional[Path]) -> dict[str, object]:
     return state_payload(
         session=session,
         msg_count=cursor.prev_count,

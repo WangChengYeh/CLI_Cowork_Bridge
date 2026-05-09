@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from datetime import datetime, timezone
 import time
 
@@ -157,7 +159,7 @@ def _startup_wait_exhausted(
     return now >= last_progress + float(progress_stall_timeout_s)
 
 
-def _timestamp_seconds(value: object) -> float | None:
+def _timestamp_seconds(value: object) -> Optional[float]:
     text = str(value or '').strip()
     if not text:
         return None

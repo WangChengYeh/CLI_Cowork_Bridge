@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 import os
 from pathlib import Path
 
@@ -15,7 +17,7 @@ def resolve_gemini_restore_target(
     spec: AgentSpec,
     runtime_dir: Path,
     restore: bool,
-    workspace_path: Path | None = None,
+    workspace_path: Optional[Path] = None,
     load_project_session_fn,
     load_profile_fn,
 ) -> ProviderRestoreTarget:
@@ -49,11 +51,11 @@ def resolve_gemini_restore_target(
     return default_target
 
 
-def candidate_dirs(workspace_path: Path, project_root: Path | None) -> list[Path]:
+def candidate_dirs(workspace_path: Path, project_root: Optional[Path]) -> list[Path]:
     candidates: list[Path] = []
     seen: set[Path] = set()
 
-    def add_candidate(value: Path | None) -> None:
+    def add_candidate(value: Optional[Path]) -> None:
         if value is None:
             return
         try:
@@ -73,7 +75,7 @@ def candidate_dirs(workspace_path: Path, project_root: Path | None) -> list[Path
     return candidates
 
 
-def gemini_has_history(work_dir: Path, *, gemini_root: Path | None = None) -> bool:
+def gemini_has_history(work_dir: Path, *, gemini_root: Optional[Path] = None) -> bool:
     gemini_root = gemini_root or gemini_root_dir()
     if not gemini_root.is_dir():
         return False
@@ -84,7 +86,7 @@ def gemini_has_history(work_dir: Path, *, gemini_root: Path | None = None) -> bo
     return False
 
 
-def existing_dir(value: object) -> Path | None:
+def existing_dir(value: object) -> Optional[Path]:
     raw = str(value or "").strip()
     if not raw:
         return None
@@ -100,7 +102,7 @@ def gemini_root_dir() -> Path:
     return Path(raw).expanduser()
 
 
-def session_gemini_root(data: dict[str, object]) -> Path | None:
+def session_gemini_root(data: dict[str, object]) -> Optional[Path]:
     layout = gemini_layout_from_session_data(data)
     if layout is None:
         return None
@@ -119,7 +121,7 @@ def _is_within_root(candidate: Path, managed_root: Path) -> bool:
         return False
 
 
-def _normalize_path(value: object) -> Path | None:
+def _normalize_path(value: object) -> Optional[Path]:
     try:
         return Path(value).expanduser().resolve()
     except Exception:

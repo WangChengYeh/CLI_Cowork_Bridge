@@ -4,20 +4,20 @@ import hashlib
 import json
 import time
 from pathlib import Path
-from typing import Any
+from typing import Any, Optional
 
 from .session_selection import latest_session
 from .state import state_payload
 
 
-def _latest_session_path(reader) -> Path | None:
+def _latest_session_path(reader) -> Optional[Path]:
     session = latest_session(reader)
     if not session or not session.exists():
         return None
     return session
 
 
-def read_session_json(reader, session: Path) -> dict[str, Any] | None:
+def read_session_json(reader, session: Path) -> Optional[dict[str, Any]]:
     if not session or not session.exists():
         return None
     for attempt in range(10):
@@ -34,7 +34,7 @@ def read_session_json(reader, session: Path) -> dict[str, Any] | None:
     return None
 
 
-def _payload_messages(payload: dict[str, Any] | None) -> list[dict[str, Any]]:
+def _payload_messages(payload: Optional[dict[str, Any]]) -> list[dict[str, Any]]:
     messages = payload.get("messages", []) if isinstance(payload, dict) else []
     if not isinstance(messages, list):
         return []
@@ -48,14 +48,14 @@ def _message_content(message: dict[str, Any]) -> str:
     return content.strip()
 
 
-def _last_gemini_message(messages: list[dict[str, Any]]) -> dict[str, Any] | None:
+def _last_gemini_message(messages: list[dict[str, Any]]) -> Optional[dict[str, Any]]:
     for message in reversed(messages):
         if message.get("type") == "gemini":
             return message
     return None
 
 
-def last_gemini_details(payload: dict[str, Any]) -> dict[str, Any] | None:
+def last_gemini_details(payload: dict[str, Any]) -> Optional[dict[str, Any]]:
     last = _last_gemini_message(_payload_messages(payload))
     if last is None:
         return None
@@ -69,14 +69,14 @@ def last_gemini_details(payload: dict[str, Any]) -> dict[str, Any] | None:
     }
 
 
-def extract_last_gemini(payload: dict[str, Any]) -> tuple[str | None, str] | None:
+def extract_last_gemini(payload: dict[str, Any]) -> Optional[tuple[str], Optional[str]]:
     details = last_gemini_details(payload)
     if details is None:
         return None
     return details["id"], str(details["content"] or "")
 
 
-def _session_stats(session: Path | None) -> tuple[float, int, int]:
+def _session_stats(session: Optional[Path]) -> tuple[float, int, int]:
     if session is None:
         return 0.0, 0, 0
     try:
@@ -88,7 +88,7 @@ def _session_stats(session: Path | None) -> tuple[float, int, int]:
     return mtime, mtime_ns, stat.st_size
 
 
-def _last_gemini_metadata(payload: dict[str, Any] | None) -> tuple[str | None, str | None, int, int]:
+def _last_gemini_metadata(payload: Optional[dict[str, Any]]) -> Optional[tuple[str], Optional[str], int, int]:
     details = last_gemini_details(payload or {})
     if not details:
         return None, None, 0, 0
@@ -101,16 +101,16 @@ def _last_gemini_metadata(payload: dict[str, Any] | None) -> tuple[str | None, s
     return last_id, hashlib.sha256(content.encode("utf-8")).hexdigest(), tool_call_count, thought_count
 
 
-def _session_payload(reader) -> tuple[Path | None, dict[str, Any] | None]:
+def _session_payload(reader) -> Optional[tuple[Path], Optional[dict[str, Any]]]:
     session = _latest_session_path(reader)
     if session is None:
         return None, None
     return session, read_session_json(reader, session)
 
 
-def _conversation_pairs(payload: dict[str, Any] | None) -> list[tuple[str, str]]:
+def _conversation_pairs(payload: Optional[dict[str, Any]]) -> list[tuple[str, str]]:
     conversations: list[tuple[str, str]] = []
-    pending_question: str | None = None
+    pending_question: Optional[str] = None
     for message in _payload_messages(payload):
         msg_type = message.get("type")
         content = _message_content(message)
@@ -123,7 +123,7 @@ def _conversation_pairs(payload: dict[str, Any] | None) -> list[tuple[str, str]]
     return conversations
 
 
-def _latest_gemini_text(payload: dict[str, Any] | None) -> str | None:
+def _latest_gemini_text(payload: Optional[dict[str, Any]]) -> Optional[str]:
     last = _last_gemini_message(_payload_messages(payload))
     if last is None:
         return None
@@ -131,7 +131,7 @@ def _latest_gemini_text(payload: dict[str, Any] | None) -> str | None:
     return content or None
 
 
-def _state_from_payload(*, session: Path | None, payload: dict[str, Any] | None) -> dict[str, Any]:
+def _state_from_payload(*, session: Optional[Path], payload: Optional[dict[str, Any]]) -> dict[str, Any]:
     mtime, mtime_ns, size = _session_stats(session)
     msg_count = -1 if session is not None and payload is None else len(_payload_messages(payload))
     last_gemini_id, last_gemini_hash, last_tool_call_count, last_thought_count = _last_gemini_metadata(payload)
@@ -153,7 +153,7 @@ def capture_state(reader) -> dict[str, Any]:
     return _state_from_payload(session=session, payload=payload)
 
 
-def latest_message(reader) -> str | None:
+def latest_message(reader) -> Optional[str]:
     _, payload = _session_payload(reader)
     return _latest_gemini_text(payload)
 

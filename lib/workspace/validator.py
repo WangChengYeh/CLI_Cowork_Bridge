@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from pathlib import Path
 
 from agents.models import WorkspaceMode
@@ -8,7 +10,7 @@ from workspace.models import ValidationResult, WorkspacePlan
 
 
 class WorkspaceValidator:
-    def __init__(self, binding_store: WorkspaceBindingStore | None = None) -> None:
+    def __init__(self, binding_store: Optional[WorkspaceBindingStore] = None) -> None:
         self._binding_store = binding_store or WorkspaceBindingStore()
 
     def validate(self, plan: WorkspacePlan) -> ValidationResult:

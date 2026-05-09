@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import re
 from pathlib import Path
-from typing import Any
+from typing import Any, Optional
 
 from .common import load_first_entry, read_first_line
 
@@ -12,7 +12,7 @@ SESSION_ID_PATTERN = re.compile(
 )
 
 
-def extract_session_id(log_path: Path) -> str | None:
+def extract_session_id(log_path: Path) -> Optional[str]:
     session_id = _extract_from_path(log_path)
     if session_id:
         return session_id
@@ -31,7 +31,7 @@ def extract_session_id(log_path: Path) -> str | None:
     return _extract_from_entry(entry)
 
 
-def _extract_from_path(log_path: Path) -> str | None:
+def _extract_from_path(log_path: Path) -> Optional[str]:
     for source in (log_path.stem, log_path.name):
         session_id = _match_session_id(source)
         if session_id:
@@ -39,7 +39,7 @@ def _extract_from_path(log_path: Path) -> str | None:
     return None
 
 
-def _extract_from_entry(entry: dict[str, Any]) -> str | None:
+def _extract_from_entry(entry: dict[str, Any]) -> Optional[str]:
     payload = entry.get("payload", {}) if isinstance(entry, dict) else {}
     nested_session = payload.get("session", {}) if isinstance(payload, dict) else {}
     candidates = [
@@ -54,7 +54,7 @@ def _extract_from_entry(entry: dict[str, Any]) -> str | None:
     return None
 
 
-def _match_session_id(value: Any) -> str | None:
+def _match_session_id(value: Any) -> Optional[str]:
     if not isinstance(value, str):
         return None
     match = SESSION_ID_PATTERN.search(value)

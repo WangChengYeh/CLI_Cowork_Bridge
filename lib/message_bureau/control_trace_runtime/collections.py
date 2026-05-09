@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from .summaries import (
     attempt_summary,
     event_summary,
@@ -74,7 +76,7 @@ def event_summaries_for_attempt(service, attempt) -> tuple[dict[str, object], ..
     return tuple(events)
 
 
-def submission_summary_by_id(service, submission_id: str | None) -> dict[str, object] | None:
+def submission_summary_by_id(service, submission_id: Optional[str]) -> Optional[dict[str, object]]:
     if not submission_id:
         return None
     submission = service._submission_store.get_latest(submission_id)
@@ -88,11 +90,11 @@ def trace_payload(
     *,
     target: str,
     resolved_kind: str,
-    submission: dict[str, object] | None = None,
-    message: dict[str, object] | None = None,
-    attempt: dict[str, object] | None = None,
-    reply: dict[str, object] | None = None,
-    job: dict[str, object] | None = None,
+    submission: Optional[dict[str, object]] = None,
+    message: Optional[dict[str, object]] = None,
+    attempt: Optional[dict[str, object]] = None,
+    reply: Optional[dict[str, object]] = None,
+    job: Optional[dict[str, object]] = None,
     messages: tuple | list = (),
     attempts: tuple | list = (),
     replies: tuple | list = (),
@@ -157,9 +159,9 @@ def _summary_items(records, *, summary_fn) -> list[dict[str, object]]:
 
 
 def _selected_message_id(
-    message: dict[str, object] | None,
+    message: Optional[dict[str, object]],
     message_items: list[dict[str, object]],
-) -> object | None:
+) -> Optional[object]:
     if message is not None:
         return message['message_id']
     if message_items:

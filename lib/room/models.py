@@ -3,7 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from enum import Enum
-from typing import Any
+from typing import Any, Optional
 from uuid import uuid4
 
 
@@ -32,7 +32,7 @@ class RoomEventType(str, Enum):
     TRANSPORT_ERROR = 'transport_error'
 
 
-@dataclass(slots=True)
+@dataclass
 class RoomEvent:
     room_id: str
     source: RoomSource
@@ -44,12 +44,12 @@ class RoomEvent:
     created_at: str = field(
         default_factory=lambda: datetime.now(timezone.utc).isoformat()
     )
-    correlation_id: str | None = None
-    parent_event_id: str | None = None
-    job_id: str | None = None
-    agent_name: str | None = None
-    transport: dict[str, Any] | None = None
-    metadata: dict[str, Any] | None = None
+    correlation_id: Optional[str] = None
+    parent_event_id: Optional[str] = None
+    job_id: Optional[str] = None
+    agent_name: Optional[str] = None
+    transport: Optional[dict[str, Any]] = None
+    metadata: Optional[dict[str, Any]] = None
 
     def __post_init__(self) -> None:
         if not self.room_id.strip():

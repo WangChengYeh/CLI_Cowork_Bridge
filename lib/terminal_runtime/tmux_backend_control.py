@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from terminal_runtime.tmux_respawn_service import TmuxRespawnService
 from terminal_runtime.tmux_send import TmuxTextSender
 from terminal_runtime.tmux_backend_runtime import (
@@ -47,8 +49,8 @@ class TmuxBackendControlMixin:
         pane_id: str,
         *,
         cmd: str,
-        cwd: str | None = None,
-        stderr_log_path: str | None = None,
+        cwd: Optional[str] = None,
+        stderr_log_path: Optional[str] = None,
         remain_on_exit: bool = True,
     ) -> None:
         self._services.respawn_service.respawn_pane(

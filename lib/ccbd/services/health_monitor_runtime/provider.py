@@ -1,7 +1,9 @@
 from __future__ import annotations
 
+from typing import Optional
 
-def provider_pane_health(monitor, runtime) -> str | None:
+
+def provider_pane_health(monitor, runtime) -> Optional[str]:
     assessment = monitor._assess_provider_pane(
         runtime=runtime,
         registry=monitor._registry,

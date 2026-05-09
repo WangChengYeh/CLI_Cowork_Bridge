@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from dataclasses import dataclass
 import json
 from pathlib import Path
@@ -27,8 +29,8 @@ class LogsSummary:
     project_id: str
     agent_name: str
     provider: str
-    runtime_ref: str | None
-    session_ref: str | None
+    runtime_ref: Optional[str]
+    session_ref: Optional[str]
     entries: tuple[LogExcerpt, ...]
 
 
@@ -59,7 +61,7 @@ def agent_logs(context: CliContext, command: ParsedLogsCommand) -> LogsSummary:
     )
 
 
-def _collect_entries(*, agent_dir: Path, provider: str, session_ref: str | None) -> tuple[LogExcerpt, ...]:
+def _collect_entries(*, agent_dir: Path, provider: str, session_ref: Optional[str]) -> tuple[LogExcerpt, ...]:
     seen: set[Path] = set()
     entries: list[LogExcerpt] = []
 
@@ -125,7 +127,7 @@ def _tail_lines(path: Path) -> tuple[str, ...]:
     return tuple(lines) if lines else ('<empty>',)
 
 
-def _maybe_path(value: str | None) -> Path | None:
+def _maybe_path(value: Optional[str]) -> Optional[Path]:
     if not value:
         return None
     candidate = Path(value).expanduser()
@@ -136,7 +138,7 @@ def _maybe_path(value: str | None) -> Path | None:
     return candidate
 
 
-def _runtime_dir_from_session_file(session_path: Path) -> Path | None:
+def _runtime_dir_from_session_file(session_path: Path) -> Optional[Path]:
     try:
         payload = json.loads(session_path.read_text(encoding='utf-8'))
     except Exception:

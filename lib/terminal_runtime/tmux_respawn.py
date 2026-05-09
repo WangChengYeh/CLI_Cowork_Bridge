@@ -1,17 +1,19 @@
 from __future__ import annotations
 
+from typing import Optional
+
 import shlex
 from pathlib import Path
 
 
-def normalize_start_dir(cwd: str | None) -> str:
+def normalize_start_dir(cwd: Optional[str]) -> str:
     start_dir = (cwd or "").strip()
     if start_dir in ("", "."):
         return ""
     return start_dir
 
 
-def append_stderr_redirection(cmd_body: str, stderr_log_path: str | None) -> tuple[str, str | None]:
+def append_stderr_redirection(cmd_body: str, stderr_log_path: Optional[str]) -> tuple[str, Optional[str]]:
     if not stderr_log_path:
         return cmd_body, None
     log_path = str(Path(stderr_log_path).expanduser().resolve())

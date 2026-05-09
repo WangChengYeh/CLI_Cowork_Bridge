@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from dataclasses import dataclass
 
 
@@ -7,9 +9,9 @@ from dataclasses import dataclass
 class HealthMonitorRuntimeState:
     registry: object
     ownership_guard: object
-    project_id: str | None
-    lifecycle_store: object | None
-    runtime_service: object | None
+    project_id: Optional[str]
+    lifecycle_store: Optional[object]
+    runtime_service: Optional[object]
     clock: object
     pid_exists: object
     session_bindings: object

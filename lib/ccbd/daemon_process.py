@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from pathlib import Path
 import os
 import subprocess
@@ -22,7 +24,7 @@ def spawn_ccbd_process(
     socket_path: Path,
     ccbd_dir: Path,
     timeout_s: float,
-    keeper_pid: int | None = None,
+    keeper_pid: Optional[int] = None,
 ) -> None:
     script = Path(__file__).resolve().parent / 'main.py'
     env = _ccbd_env(keeper_pid=keeper_pid)
@@ -42,7 +44,7 @@ def spawn_ccbd_process(
 
 def _wait_for_ccbd_ready(*, process: subprocess.Popen[bytes], socket_path: Path, timeout_s: float) -> None:
     deadline = time.time() + max(0.0, float(timeout_s))
-    last_error: str | None = None
+    last_error: Optional[str] = None
     while time.time() < deadline:
         if socket_path.exists():
             try:
@@ -62,7 +64,7 @@ def _wait_for_ccbd_ready(*, process: subprocess.Popen[bytes], socket_path: Path,
     raise CcbdProcessError(last_error or 'timed out waiting for ccbd to become ready')
 
 
-def _ccbd_env(*, keeper_pid: int | None) -> dict[str, str]:
+def _ccbd_env(*, keeper_pid: Optional[int]) -> dict[str, str]:
     env = control_plane_env(extra={'PYTHONUNBUFFERED': '1'})
     lib_root = str(Path(__file__).resolve().parents[1])
     current_pythonpath = env.get('PYTHONPATH')

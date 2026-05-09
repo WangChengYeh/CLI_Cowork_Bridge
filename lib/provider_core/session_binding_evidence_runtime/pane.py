@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from provider_core.tmux_ownership import inspect_tmux_pane_ownership
 
 from .backend import backend_pane_alive, session_backend
@@ -8,7 +10,7 @@ from .pane_runtime import inspect_session_pane as _inspect_session_pane_impl
 from .pane_runtime import resolve_pane_state as _resolve_pane_state_impl
 
 
-def inspect_session_pane(session) -> dict[str, str | None]:
+def inspect_session_pane(session) -> dict[str, Optional[str]]:
     return _inspect_session_pane_impl(
         session,
         session_backend_fn=session_backend,
@@ -17,7 +19,7 @@ def inspect_session_pane(session) -> dict[str, str | None]:
     )
 
 
-def resolve_pane_state(session, backend, *, terminal: str, pane_id: str | None, pane_title_marker: str | None) -> str | None:
+def resolve_pane_state(session, backend, *, terminal: str, pane_id: Optional[str], pane_title_marker: Optional[str]) -> Optional[str]:
     return _resolve_pane_state_impl(
         session,
         backend,

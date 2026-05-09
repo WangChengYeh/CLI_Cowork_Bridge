@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from completion.tracker import CompletionTrackerView
 
 from .records import append_event, get_job
@@ -29,11 +31,11 @@ def _skip_update(dispatcher, current) -> bool:
     return current is None or current.status in dispatcher._terminal_event_by_status
 
 
-def _ingest_update_items(dispatcher, current, update) -> CompletionTrackerView | None:
+def _ingest_update_items(dispatcher, current, update) -> Optional[CompletionTrackerView]:
     tracker = dispatcher._completion_tracker
     if tracker is not None and tracker.current(update.job_id) is None:
         tracker.start(current, started_at=current.updated_at)
-    tracked: CompletionTrackerView | None = None
+    tracked: Optional[CompletionTrackerView] = None
     for item in update.items:
         append_event(dispatcher, current, 'completion_item', item.to_record(), timestamp=item.timestamp)
         dispatcher._execution_service.acknowledge_item(update.job_id, event_seq=item.cursor.event_seq)

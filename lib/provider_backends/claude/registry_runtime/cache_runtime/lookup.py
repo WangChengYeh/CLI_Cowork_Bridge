@@ -10,7 +10,7 @@ def get_session(
     *,
     find_session_file_fn: Callable[[Path], Optional[Path]],
     write_log_fn: Callable[[str], None],
-    load_and_cache_fn: Callable[[Path], object | None],
+    load_and_cache_fn: Callable[[Path], Optional[object]],
 ):
     key = str(work_dir)
     should_reload = False
@@ -39,14 +39,14 @@ def _session_file(
     *,
     entry,
     find_session_file_fn: Callable[[Path], Optional[Path]],
-) -> Path | None:
+) -> Optional[Path]:
     return (
         entry.session_file
         or find_session_file_fn(work_dir)
     )
 
 
-def _should_reload(entry, session_file: Path | None, *, work_dir: Path, write_log_fn: Callable[[str], None]) -> bool:
+def _should_reload(entry, session_file: Optional[Path], *, work_dir: Path, write_log_fn: Callable[[str], None]) -> bool:
     if not session_file or not session_file.exists():
         return False
     try:

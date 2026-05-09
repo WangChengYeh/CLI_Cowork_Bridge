@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from pathlib import Path
 
 from provider_backends.claude.resolver_runtime.pathing import project_key_for_path
@@ -11,7 +13,7 @@ from provider_backends.claude.session_runtime.pathing import (
 from .pathing_runtime import candidate_project_dirs, candidate_project_paths, normalize_project_path, path_within
 
 
-def ensure_claude_session_work_dir_fields(payload: dict, session_file: Path) -> Path | None:
+def ensure_claude_session_work_dir_fields(payload: dict, session_file: Path) -> Optional[Path]:
     return _ensure_work_dir_fields(payload, session_file=session_file)
 
 

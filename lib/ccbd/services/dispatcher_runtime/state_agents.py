@@ -1,10 +1,12 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from ccbd.api_models import TargetKind
 
 
 class DispatcherStateAgentMixin:
-    def agent_for_job(self, job_id: str) -> str | None:
+    def agent_for_job(self, job_id: str) -> Optional[str]:
         slot = self.target_for_job(job_id)
         if slot is None or slot[0] is not TargetKind.AGENT:
             return None
@@ -19,7 +21,7 @@ class DispatcherStateAgentMixin:
     def enqueue(self, agent_name: str, job_id: str) -> None:
         self.enqueue_for(TargetKind.AGENT, agent_name, job_id)
 
-    def pop_next(self, agent_name: str) -> str | None:
+    def pop_next(self, agent_name: str) -> Optional[str]:
         return self.pop_next_for(TargetKind.AGENT, agent_name)
 
     def remove_queued(self, agent_name: str, job_id: str) -> bool:
@@ -28,10 +30,10 @@ class DispatcherStateAgentMixin:
     def mark_active(self, agent_name: str, job_id: str) -> None:
         self.mark_active_for(TargetKind.AGENT, agent_name, job_id)
 
-    def clear_active(self, agent_name: str, *, job_id: str | None = None) -> None:
+    def clear_active(self, agent_name: str, *, job_id: Optional[str] = None) -> None:
         self.clear_active_for(TargetKind.AGENT, agent_name, job_id=job_id)
 
-    def active_job(self, agent_name: str) -> str | None:
+    def active_job(self, agent_name: str) -> Optional[str]:
         return self.active_job_for(TargetKind.AGENT, agent_name)
 
 

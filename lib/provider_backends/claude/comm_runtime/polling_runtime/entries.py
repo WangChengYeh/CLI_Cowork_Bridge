@@ -1,16 +1,18 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from pathlib import Path
 
 from ..incremental_io import read_incremental_jsonl
 from ..parsing import extract_message, structured_event
 
 
-def read_new_messages(reader, session: Path, state: dict) -> tuple[str | None, dict]:
+def read_new_messages(reader, session: Path, state: dict) -> Optional[tuple[str], dict]:
     offset = int(state.get('offset') or 0)
     carry = state.get('carry') or b''
     entries, updated = read_incremental_jsonl(session, offset, carry)
-    latest: str | None = None
+    latest: Optional[str] = None
     for entry in entries:
         msg = extract_message(entry, 'assistant')
         if msg:

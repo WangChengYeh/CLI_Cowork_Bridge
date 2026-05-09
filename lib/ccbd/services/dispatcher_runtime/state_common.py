@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from dataclasses import dataclass
 
 from ccbd.api_models import JobStatus, TargetKind
@@ -21,7 +23,7 @@ class TargetQueue:
     def push(self, job_id: str) -> None:
         self.items.append(job_id)
 
-    def pop(self) -> str | None:
+    def pop(self) -> Optional[str]:
         if not self.items:
             return None
         return self.items.pop(0)

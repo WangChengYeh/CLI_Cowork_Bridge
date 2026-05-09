@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from dataclasses import replace
 from pathlib import Path
 
@@ -21,7 +23,7 @@ def poll_submission(
     extract_reply_for_req_fn,
     is_done_text_fn,
     strip_done_text_fn,
-) -> ProviderPollResult | None:
+) -> Optional[ProviderPollResult]:
     prepared = prepare_active_poll_without_liveness(submission, now=now)
     if prepared is None or isinstance(prepared, ProviderPollResult):
         return prepared
@@ -206,7 +208,7 @@ def build_session_items(
     extract_reply_for_req_fn,
     is_done_text_fn,
     strip_done_text_fn,
-    new_session_path: str | None,
+    new_session_path: Optional[str],
 ):
     items = []
     no_wrap = bool(submission.runtime_state.get('no_wrap', False))

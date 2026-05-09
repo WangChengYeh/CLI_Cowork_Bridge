@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from pathlib import Path
 
 from completion.models import CompletionItemKind
@@ -29,7 +31,7 @@ def apply_session_rotation(
     runtime: dict[str, object],
     items: list,
     *,
-    new_session_path: str | None,
+    new_session_path: Optional[str],
     now: str,
 ) -> None:
     session_path = str(runtime["session_path"])

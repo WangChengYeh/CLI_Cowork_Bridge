@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Any
+from typing import Any, Optional
 
 from . import (
     capture_state as _capture_reader_state,
@@ -36,8 +36,8 @@ class ClaudeLogReader:
 
     def __init__(
         self,
-        root: Path | None = None,
-        work_dir: Path | None = None,
+        root: Optional[Path] = None,
+        work_dir: Optional[Path] = None,
         *,
         use_sessions_index: bool = True,
         include_subagents: bool = False,
@@ -60,34 +60,34 @@ class ClaudeLogReader:
     def _project_dir(self) -> Path:
         return _project_dir_impl(self)
 
-    def _session_is_sidechain(self, session_path: Path) -> bool | None:
+    def _session_is_sidechain(self, session_path: Path) -> Optional[bool]:
         return _session_is_sidechain_impl(session_path)
 
-    def _parse_sessions_index(self) -> Path | None:
+    def _parse_sessions_index(self) -> Optional[Path]:
         return _parse_sessions_index_impl(self)
 
-    def _scan_latest_session_any_project(self) -> Path | None:
+    def _scan_latest_session_any_project(self) -> Optional[Path]:
         return _scan_latest_session_any_project_impl(self)
 
-    def _scan_latest_session(self) -> Path | None:
+    def _scan_latest_session(self) -> Optional[Path]:
         return _scan_latest_session_impl(self)
 
-    def _latest_session(self) -> Path | None:
+    def _latest_session(self) -> Optional[Path]:
         return _latest_session_impl(self)
 
-    def set_preferred_session(self, session_path: Path | None) -> None:
+    def set_preferred_session(self, session_path: Optional[Path]) -> None:
         _set_preferred_session_impl(self, session_path)
 
-    def current_session_path(self) -> Path | None:
+    def current_session_path(self) -> Optional[Path]:
         return self._latest_session()
 
     def capture_state(self) -> dict[str, Any]:
         return _capture_reader_state(self)
 
-    def wait_for_message(self, state: dict[str, Any], timeout: float) -> tuple[str | None, dict[str, Any]]:
+    def wait_for_message(self, state: dict[str, Any], timeout: float) -> Optional[tuple[str], dict[str, Any]]:
         return self._read_since(state, timeout=timeout, block=True)
 
-    def try_get_message(self, state: dict[str, Any]) -> tuple[str | None, dict[str, Any]]:
+    def try_get_message(self, state: dict[str, Any]) -> Optional[tuple[str], dict[str, Any]]:
         return self._read_since(state, timeout=0.0, block=False)
 
     def wait_for_events(self, state: dict[str, Any], timeout: float) -> tuple[list[tuple[str, str]], dict[str, Any]]:
@@ -102,16 +102,16 @@ class ClaudeLogReader:
     def try_get_entries(self, state: dict[str, Any]) -> tuple[list[dict[str, Any]], dict[str, Any]]:
         return self._read_since_entries(state, timeout=0.0, block=False)
 
-    def latest_message(self) -> str | None:
+    def latest_message(self) -> Optional[str]:
         return _latest_message_impl(self)
 
     def latest_conversations(self, n: int) -> list[tuple[str, str]]:
         return _latest_conversations_impl(self, n)
 
-    def _read_since(self, state: dict[str, Any], timeout: float, block: bool) -> tuple[str | None, dict[str, Any]]:
+    def _read_since(self, state: dict[str, Any], timeout: float, block: bool) -> Optional[tuple[str], dict[str, Any]]:
         return _read_since_impl(self, state, timeout, block)
 
-    def _read_new_messages(self, session: Path, state: dict[str, Any]) -> tuple[str | None, dict[str, Any]]:
+    def _read_new_messages(self, session: Path, state: dict[str, Any]) -> Optional[tuple[str], dict[str, Any]]:
         return _read_new_messages_impl(self, session, state)
 
     def _read_since_events(

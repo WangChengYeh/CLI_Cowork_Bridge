@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 import shlex
 
 from .parsing import find_codex_token_index
@@ -41,7 +43,7 @@ def split_last_shell_segment(command: str) -> tuple[str, str]:
     return prefix.strip(), tail.strip()
 
 
-def strip_resume_from_codex_segment(segment: str) -> str | None:
+def strip_resume_from_codex_segment(segment: str) -> Optional[str]:
     try:
         tokens = shlex.split(segment)
     except Exception:
@@ -62,7 +64,7 @@ def strip_resume_from_codex_segment(segment: str) -> str | None:
     return ' '.join(shlex.quote(str(token)) for token in base_tokens)
 
 
-def rewrite_codex_segment(segment: str, session_id: str) -> str | None:
+def rewrite_codex_segment(segment: str, session_id: str) -> Optional[str]:
     try:
         tokens = shlex.split(segment)
     except Exception:

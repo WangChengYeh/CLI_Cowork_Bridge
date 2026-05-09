@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 import os
 from pathlib import Path
 import re
@@ -40,7 +42,7 @@ class TmuxBackend(
 ):
     _ANSI_RE = re.compile(r'\x1b\[[0-?]*[ -/]*[@-~]')
 
-    def __init__(self, *, socket_name: str | None = None, socket_path: str | None = None):
+    def __init__(self, *, socket_name: Optional[str] = None, socket_path: Optional[str] = None):
         self._socket_path = (
             socket_path or os.environ.get('CCB_TMUX_SOCKET_PATH') or ''
         ).strip() or None
@@ -61,8 +63,8 @@ class TmuxBackend(
         *,
         check: bool = False,
         capture: bool = False,
-        input_bytes: bytes | None = None,
-        timeout: float | None = None,
+        input_bytes: Optional[bytes] = None,
+        timeout: Optional[float] = None,
     ) -> subprocess.CompletedProcess:
         kwargs: dict = {}
         if capture:

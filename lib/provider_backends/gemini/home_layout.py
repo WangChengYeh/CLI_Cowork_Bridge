@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from dataclasses import dataclass
 from pathlib import Path
 import os
@@ -42,7 +44,7 @@ def current_gemini_tmp_root() -> Path:
     return gemini_layout_for_home(Path.home()).tmp_root
 
 
-def gemini_layout_from_session_data(data: dict[str, object] | None) -> GeminiHomeLayout | None:
+def gemini_layout_from_session_data(data: Optional[dict[str, object]]) -> Optional[GeminiHomeLayout]:
     if not isinstance(data, dict):
         return None
     home_root = _path_or_none(data.get('gemini_home'))
@@ -63,7 +65,7 @@ def gemini_layout_from_session_data(data: dict[str, object] | None) -> GeminiHom
     return None
 
 
-def _env_root() -> Path | None:
+def _env_root() -> Optional[Path]:
     raw = str(os.environ.get('GEMINI_ROOT') or '').strip()
     if not raw:
         return None
@@ -73,7 +75,7 @@ def _env_root() -> Path | None:
         return None
 
 
-def _home_root_from_tmp_root(tmp_root: Path) -> Path | None:
+def _home_root_from_tmp_root(tmp_root: Path) -> Optional[Path]:
     root = Path(tmp_root).expanduser()
     if root.name != 'tmp':
         return None
@@ -83,7 +85,7 @@ def _home_root_from_tmp_root(tmp_root: Path) -> Path | None:
     return None
 
 
-def _home_root_from_session_path(session_path: Path) -> Path | None:
+def _home_root_from_session_path(session_path: Path) -> Optional[Path]:
     candidate = Path(session_path).expanduser()
     for parent in candidate.parents:
         if parent.name == '.gemini':
@@ -91,7 +93,7 @@ def _home_root_from_session_path(session_path: Path) -> Path | None:
     return None
 
 
-def _path_or_none(value: object) -> Path | None:
+def _path_or_none(value: object) -> Optional[Path]:
     raw = str(value or '').strip()
     if not raw:
         return None

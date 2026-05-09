@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -11,7 +13,7 @@ class RoomDispatchError(RuntimeError):
     pass
 
 
-@dataclass(slots=True)
+@dataclass
 class RoomDispatchRequest:
     target: str
     body: str
@@ -27,14 +29,14 @@ class RoomDispatchRequest:
         return ['ask', self.target, self.body]
 
 
-@dataclass(slots=True)
+@dataclass
 class RoomDispatchResult:
     request: RoomDispatchRequest
     submitted_event: RoomEvent
 
 
 class RoomDispatcher:
-    def __init__(self, *, project_root: Path, store: RoomEventStore | None = None) -> None:
+    def __init__(self, *, project_root: Path, store: Optional[RoomEventStore] = None) -> None:
         self.project_root = project_root
         self.store = store or RoomEventStore(project_root / '.ccb' / 'room')
 
@@ -57,7 +59,7 @@ class RoomDispatcher:
             is_broadcast=is_broadcast,
         )
 
-    def mark_submitted(self, request: RoomDispatchRequest, *, job_id: str | None = None) -> RoomDispatchResult:
+    def mark_submitted(self, request: RoomDispatchRequest, *, job_id: Optional[str] = None) -> RoomDispatchResult:
         submitted = RoomEvent(
             room_id=request.room_id,
             source=RoomSource.SYSTEM,

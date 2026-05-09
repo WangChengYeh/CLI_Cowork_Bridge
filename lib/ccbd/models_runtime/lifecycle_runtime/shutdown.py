@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Any
+from typing import Any, Optional
 
 from ccbd.models_runtime.common import API_VERSION, SCHEMA_VERSION, CcbdModelError
 
@@ -18,13 +18,13 @@ class CcbdShutdownReport:
     status: str
     forced: bool
     stopped_agents: tuple[str, ...]
-    daemon_generation: int | None = None
-    reason: str | None = None
-    inspection_after: dict[str, Any] | None = None
+    daemon_generation: Optional[int] = None
+    reason: Optional[str] = None
+    inspection_after: Optional[dict[str, Any]] = None
     actions_taken: tuple[str, ...] = ()
     cleanup_summaries: tuple[CcbdTmuxCleanupSummary, ...] = ()
     runtime_snapshots: tuple[CcbdRuntimeSnapshot, ...] = ()
-    failure_reason: str | None = None
+    failure_reason: Optional[str] = None
     api_version: int = API_VERSION
 
     def __post_init__(self) -> None:

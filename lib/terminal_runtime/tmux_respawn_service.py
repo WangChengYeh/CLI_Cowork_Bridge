@@ -4,7 +4,7 @@ import os
 import subprocess
 import time
 from dataclasses import dataclass
-from typing import Callable
+from typing import Callable, Optional
 
 from .tmux_readiness import (
     TmuxTransientServerUnavailable,
@@ -20,8 +20,8 @@ from .tmux_readiness import (
 class TmuxRespawnService:
     tmux_run_fn: Callable[..., object]
     ensure_pane_log_fn: Callable[[str], object]
-    normalize_start_dir_fn: Callable[[str | None], str | None]
-    append_stderr_redirection_fn: Callable[[str, str | None], tuple[str, str | None]]
+    normalize_start_dir_fn: Optional[Callable[[str]], Optional[str]]
+    append_stderr_redirection_fn: Callable[[str, Optional[str]], tuple[str, Optional[str]]]
     resolve_shell_fn: Callable[..., str]
     resolve_shell_flags_fn: Callable[..., list[str]]
     build_shell_command_fn: Callable[..., str]
@@ -34,8 +34,8 @@ class TmuxRespawnService:
         pane_id: str,
         *,
         cmd: str,
-        cwd: str | None = None,
-        stderr_log_path: str | None = None,
+        cwd: Optional[str] = None,
+        stderr_log_path: Optional[str] = None,
         remain_on_exit: bool = True,
     ) -> None:
         cmd_body = _required_cmd_body(pane_id, cmd)
@@ -100,7 +100,7 @@ def _set_remain_on_exit(service: TmuxRespawnService, pane_id: str) -> None:
 
 def _run_respawn_command(service: TmuxRespawnService, tmux_args: list[str]) -> None:
     deadline = time.monotonic() + tmux_object_ready_timeout_s()
-    last_error: RuntimeError | None = None
+    last_error: Optional[RuntimeError] = None
     while True:
         try:
             _run_respawn_once(service, tmux_args)

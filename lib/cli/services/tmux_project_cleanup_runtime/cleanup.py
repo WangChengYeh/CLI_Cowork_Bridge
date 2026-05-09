@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from collections.abc import Mapping
 
 from .killing import kill_panes
@@ -10,7 +12,7 @@ from .models import ProjectTmuxCleanupSummary
 def list_project_tmux_panes(
     *,
     project_id: str,
-    socket_name: str | None,
+    socket_name: Optional[str],
     backend_factory,
     tmux_available_fn,
 ) -> tuple[str, ...]:
@@ -26,10 +28,10 @@ def cleanup_project_tmux_orphans(
     *,
     project_id: str,
     active_panes: tuple[str, ...],
-    socket_name: str | None,
+    socket_name: Optional[str],
     backend_factory,
     tmux_available_fn,
-    current_pane_id: str | None,
+    current_pane_id: Optional[str],
 ) -> tuple[str, ...]:
     active = {str(item).strip() for item in active_panes if str(item).strip().startswith('%')}
     owned = list_project_tmux_panes(
@@ -54,13 +56,13 @@ def cleanup_project_tmux_orphans(
 def cleanup_project_tmux_orphans_by_socket(
     *,
     project_id: str,
-    active_panes_by_socket: Mapping[str | None, tuple[str, ...]],
+    active_panes_by_socket: Optional[Mapping[str], tuple[str, ...]],
     backend_factory,
     tmux_available_fn,
-    current_pane_id: str | None,
+    current_pane_id: Optional[str],
 ) -> tuple[ProjectTmuxCleanupSummary, ...]:
     summaries: list[ProjectTmuxCleanupSummary] = []
-    socket_names: list[str | None] = list(active_panes_by_socket)
+    socket_names: Optional[list[str]] = list(active_panes_by_socket)
     if None not in active_panes_by_socket:
         socket_names.append(None)
     for socket_name in socket_names:
@@ -102,10 +104,10 @@ def cleanup_project_tmux_orphans_by_socket(
 def kill_project_tmux_panes(
     *,
     project_id: str,
-    socket_name: str | None,
+    socket_name: Optional[str],
     backend_factory,
     tmux_available_fn,
-    current_pane_id: str | None,
+    current_pane_id: Optional[str],
 ) -> tuple[str, ...]:
     unique_panes = list(
         list_project_tmux_panes(

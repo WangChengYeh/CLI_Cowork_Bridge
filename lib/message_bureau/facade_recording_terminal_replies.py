@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from ccbd.api_models import JobRecord
 from completion.models import CompletionDecision
 from message_bureau.reply_payloads import compose_reply_payload
@@ -23,7 +25,7 @@ def record_reply(
     *,
     finished_at: str,
     deliver_to_caller: bool = True,
-) -> str | None:
+) -> Optional[str]:
     attempt = service._attempt_store.get_latest_by_job_id(job.job_id)
     if attempt is None:
         return None
@@ -69,11 +71,11 @@ def record_notice(
     job: JobRecord,
     *,
     reply: str,
-    diagnostics: dict[str, object] | None,
+    diagnostics: Optional[dict[str, object]],
     finished_at: str,
     terminal_status: ReplyTerminalStatus = ReplyTerminalStatus.INCOMPLETE,
-    deliver_to_actor: str | None = None,
-) -> str | None:
+    deliver_to_actor: Optional[str] = None,
+) -> Optional[str]:
     attempt = service._attempt_store.get_latest_by_job_id(job.job_id)
     if attempt is None:
         return None
@@ -119,7 +121,7 @@ def record_terminal(
     finished_at: str,
     deliver_to_caller: bool = True,
     record_reply_enabled: bool = True,
-) -> str | None:
+) -> Optional[str]:
     record_attempt_terminal(service, job, decision, finished_at=finished_at)
     if not record_reply_enabled:
         return None

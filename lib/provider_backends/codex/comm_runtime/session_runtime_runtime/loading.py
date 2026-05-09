@@ -3,17 +3,17 @@ from __future__ import annotations
 import json
 import os
 from pathlib import Path
-from typing import Callable
+from typing import Callable, Optional
 
 
-def load_codex_session_info(*, session_finder: Callable[[], Path | None]):
+def load_codex_session_info(*, session_finder: Callable[[], Optional[Path]]):
     env_info = _load_env_session_info(session_finder=session_finder)
     if env_info is not None:
         return env_info
     return _load_project_session_info(session_finder=session_finder)
 
 
-def _load_env_session_info(*, session_finder: Callable[[], Path | None]):
+def _load_env_session_info(*, session_finder: Callable[[], Optional[Path]]):
     if "CCB_SESSION_ID" not in os.environ:
         return None
     result = {
@@ -31,7 +31,7 @@ def _load_env_session_info(*, session_finder: Callable[[], Path | None]):
     return _merge_project_binding(result, session_file=session_file)
 
 
-def _load_project_session_info(*, session_finder: Callable[[], Path | None]):
+def _load_project_session_info(*, session_finder: Callable[[], Optional[Path]]):
     project_session = session_finder()
     if project_session is None:
         return None
@@ -47,7 +47,7 @@ def _load_project_session_info(*, session_finder: Callable[[], Path | None]):
     return data
 
 
-def _merge_project_binding(result: dict[str, object], *, session_file: Path | None):
+def _merge_project_binding(result: dict[str, object], *, session_file: Optional[Path]):
     if session_file is None:
         return result
     file_data = _load_session_file(session_file)
@@ -72,7 +72,7 @@ def _merge_env_root_fields(result: dict[str, object]) -> None:
         result["codex_home"] = codex_home
 
 
-def _load_session_file(session_file: Path) -> dict | None:
+def _load_session_file(session_file: Path) -> Optional[dict]:
     try:
         with open(session_file, "r", encoding="utf-8-sig") as handle:
             data = json.load(handle)

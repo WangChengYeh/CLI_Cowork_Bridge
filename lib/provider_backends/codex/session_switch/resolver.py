@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 import json
 from pathlib import Path
 
@@ -23,7 +25,7 @@ def resolve_switch_decision(
     session_data: dict[str, object],
     *,
     session_file: Path,
-    runtime_dir: Path | None,
+    runtime_dir: Optional[Path],
 ) -> SwitchDecision:
     evidence = _base_evidence(session_data, runtime_dir=runtime_dir)
     if not evidence.managed_root:
@@ -99,7 +101,7 @@ def _candidate_sessions(
     return tuple(candidates)
 
 
-def _base_evidence(session_data: dict[str, object], *, runtime_dir: Path | None) -> SwitchEvidence:
+def _base_evidence(session_data: dict[str, object], *, runtime_dir: Optional[Path]) -> SwitchEvidence:
     root = codex_session_root_path(session_data)
     return SwitchEvidence(
         managed_root=root is not None and root.is_dir(),
@@ -129,11 +131,11 @@ def _evidence_with_candidates(
     )
 
 
-def _decision(state: str, reason: str, candidate: SwitchCandidate | None, evidence: SwitchEvidence) -> SwitchDecision:
+def _decision(state: str, reason: str, candidate: Optional[SwitchCandidate], evidence: SwitchEvidence) -> SwitchDecision:
     return SwitchDecision(state=state, reason=reason, candidate=candidate, evidence=evidence)
 
 
-def _normalized_work_dir(session_data: dict[str, object]) -> str | None:
+def _normalized_work_dir(session_data: dict[str, object]) -> Optional[str]:
     raw = session_data.get("work_dir") or session_data.get("workspace_path") or session_data.get("start_dir")
     if not raw:
         return None
@@ -143,7 +145,7 @@ def _normalized_work_dir(session_data: dict[str, object]) -> str | None:
         return None
 
 
-def _normalized_log_cwd(path: Path) -> str | None:
+def _normalized_log_cwd(path: Path) -> Optional[str]:
     raw = extract_cwd_from_log_file(path)
     if not raw:
         return None
@@ -153,7 +155,7 @@ def _normalized_log_cwd(path: Path) -> str | None:
         return None
 
 
-def _runtime_matches(session_data: dict[str, object], *, runtime_dir: Path | None) -> bool:
+def _runtime_matches(session_data: dict[str, object], *, runtime_dir: Optional[Path]) -> bool:
     if runtime_dir is None:
         return True
     recorded = _normalize_path(session_data.get("runtime_dir"))
@@ -193,7 +195,7 @@ def _read_json(path: Path) -> dict[str, object]:
     return value if isinstance(value, dict) else {}
 
 
-def _normalize_path(value: object) -> Path | None:
+def _normalize_path(value: object) -> Optional[Path]:
     if value is None:
         return None
     try:
@@ -205,7 +207,7 @@ def _normalize_path(value: object) -> Path | None:
             return None
 
 
-def _mtime(path: Path | None) -> float | None:
+def _mtime(path: Optional[Path]) -> Optional[float]:
     if path is None:
         return None
     try:

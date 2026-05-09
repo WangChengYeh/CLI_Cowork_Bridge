@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from .base import ProviderExecutionAdapter
 from provider_core.registry import (
     CORE_PROVIDER_NAMES,
@@ -14,7 +16,7 @@ TEST_DOUBLE_EXECUTION_PROVIDERS = TEST_DOUBLE_PROVIDER_NAMES
 
 
 class ProviderExecutionRegistry:
-    def __init__(self, adapters: list[ProviderExecutionAdapter] | None = None) -> None:
+    def __init__(self, adapters: Optional[list[ProviderExecutionAdapter]] = None) -> None:
         self._adapters: dict[str, ProviderExecutionAdapter] = {}
         for adapter in adapters or []:
             self.register(adapter)
@@ -25,7 +27,7 @@ class ProviderExecutionRegistry:
             raise ValueError(f'duplicate execution adapter: {provider}')
         self._adapters[provider] = adapter
 
-    def get(self, provider: str) -> ProviderExecutionAdapter | None:
+    def get(self, provider: str) -> Optional[ProviderExecutionAdapter]:
         return self._adapters.get(provider.strip().lower())
 
 

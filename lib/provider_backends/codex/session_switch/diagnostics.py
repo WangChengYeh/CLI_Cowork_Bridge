@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 import json
 from datetime import datetime, timezone
 from pathlib import Path
@@ -12,7 +14,7 @@ from .models import STATE_AUTO_REBOUND, SwitchCandidate, SwitchDecision
 FILENAME = "session-switch.json"
 
 
-def diagnostics_path(runtime_dir: Path | None) -> Path | None:
+def diagnostics_path(runtime_dir: Optional[Path]) -> Optional[Path]:
     if runtime_dir is None:
         return None
     try:
@@ -21,7 +23,7 @@ def diagnostics_path(runtime_dir: Path | None) -> Path | None:
         return None
 
 
-def write_decision(runtime_dir: Path | None, decision: SwitchDecision, *, committed: bool = False) -> None:
+def write_decision(runtime_dir: Optional[Path], decision: SwitchDecision, *, committed: bool = False) -> None:
     path = diagnostics_path(runtime_dir)
     if path is None:
         return
@@ -32,7 +34,7 @@ def write_decision(runtime_dir: Path | None, decision: SwitchDecision, *, commit
 
 
 def write_rebound(
-    runtime_dir: Path | None,
+    runtime_dir: Optional[Path],
     *,
     candidate: SwitchCandidate,
     old_session_id: str,
@@ -56,7 +58,7 @@ def write_rebound(
     )
 
 
-def read_diagnostics(runtime_dir: Path | None) -> dict[str, object]:
+def read_diagnostics(runtime_dir: Optional[Path]) -> dict[str, object]:
     path = diagnostics_path(runtime_dir)
     if path is None or not path.is_file():
         return {}

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
-from typing import TYPE_CHECKING
+from typing import Optional, TYPE_CHECKING
 
 if TYPE_CHECKING:
     from agents.models import AgentSpec
@@ -86,7 +86,7 @@ def materialize_provider_profile(
     return profile
 
 
-def load_resolved_provider_profile(runtime_dir: Path) -> ResolvedProviderProfile | None:
+def load_resolved_provider_profile(runtime_dir: Path) -> Optional[ResolvedProviderProfile]:
     path = Path(runtime_dir) / 'provider-profile.json'
     if not path.is_file():
         return None

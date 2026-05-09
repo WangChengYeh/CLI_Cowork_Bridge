@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from dataclasses import dataclass
 
 
@@ -7,7 +9,7 @@ class RoomCommandError(ValueError):
     pass
 
 
-@dataclass(slots=True)
+@dataclass
 class ParsedRoomCommand:
     raw_text: str
     command: str
@@ -28,7 +30,7 @@ def parse_room_command(
     text: str,
     participants: set[str],
     prefix: str = '@',
-    aliases: dict[str, str] | None = None,
+    aliases: Optional[dict[str, str]] = None,
 ) -> ParsedRoomCommand:
     raw = text.strip()
 

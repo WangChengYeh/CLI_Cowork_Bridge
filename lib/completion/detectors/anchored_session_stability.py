@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from completion.detectors.base import BaseCompletionDetector
 from completion.models import (
     CompletionConfidence,
@@ -72,7 +74,7 @@ class AnchoredSessionStabilityDetector(BaseCompletionDetector):
 
         self._set_pending()
 
-    def tick(self, now: str, cursor: CompletionCursor | None = None) -> None:
+    def tick(self, now: str, cursor: Optional[CompletionCursor] = None) -> None:
         super().tick(now, cursor)
         if self._decision.terminal:
             return
@@ -92,7 +94,7 @@ class AnchoredSessionStabilityDetector(BaseCompletionDetector):
         else:
             self._set_pending()
 
-    def finalize_timeout(self, now: str, cursor: CompletionCursor | None = None) -> None:
+    def finalize_timeout(self, now: str, cursor: Optional[CompletionCursor] = None) -> None:
         self._require_bound()
         if self._decision.terminal:
             return

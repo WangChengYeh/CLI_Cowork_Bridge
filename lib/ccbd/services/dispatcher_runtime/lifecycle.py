@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from ccbd.api_models import MessageEnvelope, SubmitReceipt
 from message_bureau import AttemptState, MessageStore
 
@@ -142,7 +144,7 @@ def _retry_request_for_job(job) -> MessageEnvelope:
     )
 
 
-def _retry_provider_options_for_job(job) -> dict[str, object] | None:
+def _retry_provider_options_for_job(job) -> Optional[dict[str, object]]:
     options = dict(job.provider_options or {})
     if _should_retry_with_continue(job):
         options[_RETRY_DELIVERY_MODE_OPTION] = 'continue'

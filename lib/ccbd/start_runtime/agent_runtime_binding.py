@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from .agent_runtime_models import RuntimeBindingState
 
 
@@ -13,11 +15,11 @@ def resolve_runtime_binding_state(
     binding,
     raw_binding,
     stale_binding: bool,
-    assigned_pane_id: str | None,
+    assigned_pane_id: Optional[str],
     style_index: int,
     project_id: str,
-    tmux_socket_path: str | None,
-    namespace_epoch: int | None,
+    tmux_socket_path: Optional[str],
+    namespace_epoch: Optional[int],
     ensure_agent_runtime_fn,
     launch_binding_hint_fn,
     relabel_project_namespace_pane_fn,
@@ -85,9 +87,9 @@ def launch_or_reuse_binding(
     binding,
     raw_binding,
     stale_binding: bool,
-    assigned_pane_id: str | None,
+    assigned_pane_id: Optional[str],
     style_index: int,
-    tmux_socket_path: str | None,
+    tmux_socket_path: Optional[str],
     ensure_agent_runtime_fn,
     launch_binding_hint_fn,
 ):
@@ -124,8 +126,8 @@ def relabel_runtime_pane(
     agent_name: str,
     project_id: str,
     style_index: int,
-    tmux_socket_path: str | None,
-    namespace_epoch: int | None,
+    tmux_socket_path: Optional[str],
+    namespace_epoch: Optional[int],
     relabel_project_namespace_pane_fn,
 ) -> tuple[str, ...]:
     if binding is None:
@@ -150,7 +152,7 @@ def runtime_status(
     agent_name: str,
     agent_action: str,
     actions_taken: list[str],
-) -> tuple[str | None, str | None, str, str, str]:
+) -> Optional[tuple[str], Optional[str], str, str, str]:
     if binding is None and stale_binding:
         actions_taken.append(f'degraded_stale_binding:{agent_name}')
         return '', '', 'degraded', 'degraded', 'degraded'
@@ -174,10 +176,10 @@ def runtime_action_markers(*, agent_name: str, agent_action: str) -> tuple[str, 
 def runtime_pane_facts(
     *,
     binding,
-    runtime_ref: str | None,
-    tmux_socket_path: str | None,
+    runtime_ref: Optional[str],
+    tmux_socket_path: Optional[str],
     same_tmux_socket_path_fn,
-) -> tuple[str | None, str | None, str | None]:
+) -> Optional[tuple[str], Optional[str], Optional[str]]:
     if not runtime_ref or not str(runtime_ref).startswith('tmux:') or binding is None:
         return None, None, None
     runtime_pane_id = str(runtime_ref)[len('tmux:') :]

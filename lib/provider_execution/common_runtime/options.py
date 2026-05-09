@@ -1,12 +1,14 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from ccbd.api_models import JobRecord
 
 
 NO_WRAP_PROVIDER_OPTION = 'no_wrap'
 
 
-def no_wrap_requested(job_or_options: JobRecord | dict[str, object] | None) -> bool:
+def no_wrap_requested(job_or_options: JobRecord | Optional[dict[str, object]]) -> bool:
     if isinstance(job_or_options, JobRecord):
         provider_options = job_or_options.provider_options
     else:

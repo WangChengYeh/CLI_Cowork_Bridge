@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 
 def reply_notice(reply) -> bool:
     diagnostics = _reply_diagnostics(reply)
@@ -8,19 +10,19 @@ def reply_notice(reply) -> bool:
     return bool(reply_notice_kind(reply))
 
 
-def reply_notice_kind(reply) -> str | None:
+def reply_notice_kind(reply) -> Optional[str]:
     diagnostics = _reply_diagnostics(reply)
     value = str(diagnostics.get('notice_kind') or '').strip().lower()
     return value or None
 
 
-def reply_last_progress_at(reply) -> str | None:
+def reply_last_progress_at(reply) -> Optional[str]:
     diagnostics = _reply_diagnostics(reply)
     value = str(diagnostics.get('last_progress_at') or '').strip()
     return value or None
 
 
-def reply_heartbeat_silence_seconds(reply) -> float | None:
+def reply_heartbeat_silence_seconds(reply) -> Optional[float]:
     diagnostics = _reply_diagnostics(reply)
     raw = diagnostics.get('heartbeat_silence_seconds')
     if raw is None:

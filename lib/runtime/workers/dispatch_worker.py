@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Callable
+from typing import Callable, Optional
 
 from room.dispatcher import RoomDispatcher
 from room.models import RoomEvent, RoomEventType
@@ -10,9 +10,9 @@ from room.store import RoomEventStore
 from room.stream_executor import RoomAskStreamExecutor
 
 
-@dataclass(slots=True)
+@dataclass
 class DispatchWorkerResult:
-    submitted_event_id: str | None
+    submitted_event_id: Optional[str]
     streamed_event_count: int
 
 
@@ -22,7 +22,7 @@ class DispatchWorker:
         *,
         project_root: Path,
         store: RoomEventStore,
-        stream_executor_factory: Callable[..., RoomAskStreamExecutor] | None = None,
+        stream_executor_factory: Optional[Callable[..., RoomAskStreamExecutor]] = None,
     ) -> None:
         self.project_root = Path(project_root)
         self.store = store

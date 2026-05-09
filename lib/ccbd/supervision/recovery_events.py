@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from .recovery_context import RecoveryContext
 from .store import SupervisionEvent
 
@@ -12,7 +14,7 @@ def append_recovery_event(
     runtime,
     prior_health: str,
     result_health: str,
-    details: dict[str, object] | None = None,
+    details: Optional[dict[str, object]] = None,
 ) -> None:
     ctx.event_store.append(
         SupervisionEvent(

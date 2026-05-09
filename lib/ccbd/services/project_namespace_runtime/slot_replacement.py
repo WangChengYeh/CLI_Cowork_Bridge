@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from dataclasses import dataclass
 
 from terminal_runtime import TmuxBackend
@@ -16,8 +18,8 @@ class ProjectSlotRecoveryContext:
     tmux_socket_path: str
     tmux_session_name: str
     namespace_epoch: int
-    workspace_window_name: str | None
-    workspace_window_id: str | None
+    workspace_window_name: Optional[str]
+    workspace_window_id: Optional[str]
     workspace_epoch: int
     workspace_root_pane_id: str
     style_index: int
@@ -29,7 +31,7 @@ def resolve_project_slot_recovery_context(
     config,
     runtime,
     agent_name: str,
-) -> ProjectSlotRecoveryContext | None:
+) -> Optional[ProjectSlotRecoveryContext]:
     project_id = str(getattr(runtime, 'project_id', '') or '').strip()
     if not project_id:
         return None
@@ -63,7 +65,7 @@ def resolve_project_slot_recovery_context(
     )
 
 
-def inject_project_slot_recovery_hints(session, context: ProjectSlotRecoveryContext | None) -> None:
+def inject_project_slot_recovery_hints(session, context: Optional[ProjectSlotRecoveryContext]) -> None:
     if context is None:
         return
     data = getattr(session, 'data', None)
@@ -76,7 +78,7 @@ def inject_project_slot_recovery_hints(session, context: ProjectSlotRecoveryCont
     data['ccb_replacement_parent_pane'] = context.workspace_root_pane_id
 
 
-def relabel_project_slot_pane(*, pane_id: str, context: ProjectSlotRecoveryContext | None) -> None:
+def relabel_project_slot_pane(*, pane_id: str, context: Optional[ProjectSlotRecoveryContext]) -> None:
     if context is None:
         return
     pane_text = str(pane_id or '').strip()

@@ -3,18 +3,18 @@ from __future__ import annotations
 import os
 import time
 from dataclasses import dataclass
-from typing import Callable
+from typing import Callable, Optional
 
 from terminal_runtime.layouts import LayoutResult, create_tmux_auto_layout
 
 
 @dataclass
 class TerminalBackendSelection:
-    detect_terminal_fn: Callable[[], object | None]
+    detect_terminal_fn: Callable[[], Optional[object]]
     tmux_backend_factory: Callable[[], object]
-    cached_backend: object | None = None
+    cached_backend: Optional[object] = None
 
-    def get_backend(self, terminal_type: str | None = None) -> object | None:
+    def get_backend(self, terminal_type: Optional[str] = None) -> Optional[object]:
         if self.cached_backend is not None:
             return self.cached_backend
         selected = terminal_type or self.detect_terminal_fn()
@@ -31,7 +31,7 @@ class TerminalBackendSelection:
             return self.tmux_backend_factory()
 
     @staticmethod
-    def get_pane_id_from_session(session_data: dict) -> str | None:
+    def get_pane_id_from_session(session_data: dict) -> Optional[str]:
         return session_data.get('pane_id') or session_data.get('tmux_session')
 
 
@@ -41,15 +41,15 @@ class TerminalLayoutService:
     detached_session_name_fn: Callable[..., str]
     os_getpid_fn: Callable[[], int] = os.getpid
     time_fn: Callable[[], float] = time.time
-    env: dict[str, str] | None = None
+    env: Optional[dict[str, str]] = None
 
     def create_auto_layout(
         self,
         providers: list[str],
         *,
         cwd: str,
-        root_pane_id: str | None = None,
-        tmux_session_name: str | None = None,
+        root_pane_id: Optional[str] = None,
+        tmux_session_name: Optional[str] = None,
         percent: int = 50,
         set_markers: bool = True,
         marker_prefix: str = 'CCB',

@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from agents.models import AgentState
 from agents.config_identity import project_config_identity_payload
 from provider_execution.capabilities import execution_restore_capability
@@ -85,7 +87,7 @@ def _inspection_phase(inspection) -> str:
     return str(getattr(getattr(lease, 'mount_state', None), 'value', '') or 'unmounted')
 
 
-def _inspection_desired_state(inspection) -> str | None:
+def _inspection_desired_state(inspection) -> Optional[str]:
     desired_state = str(getattr(inspection, 'desired_state', '') or '').strip()
     return desired_state or None
 

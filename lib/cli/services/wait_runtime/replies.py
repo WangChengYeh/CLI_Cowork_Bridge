@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 
 def latest_replies(payload: dict) -> tuple[int, tuple[dict, ...], int, int]:
     latest_attempts = latest_attempt_map(payload.get('attempts') or ())
@@ -48,7 +50,7 @@ def materialized_replies(
 def reply_for_attempt(
     attempt: dict,
     replies_by_attempt: dict[str, dict],
-) -> dict | None:
+) -> Optional[dict]:
     reply = replies_by_attempt.get(str(attempt.get('attempt_id') or ''))
     if reply is None:
         return None

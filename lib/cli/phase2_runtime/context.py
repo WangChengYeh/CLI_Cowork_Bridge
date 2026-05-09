@@ -1,9 +1,11 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from pathlib import Path
 
 
-def build_context(command, *, cwd: Path | None, out, builder_cls, reset_project_state_fn, project_discovery_error_cls, confirm_project_reset_fn):
+def build_context(command, *, cwd: Optional[Path], out, builder_cls, reset_project_state_fn, project_discovery_error_cls, confirm_project_reset_fn):
     if getattr(command, 'kind', None) == 'start' and getattr(command, 'reset_context', False):
         return build_reset_start_context(
             command,
@@ -24,7 +26,7 @@ def build_context(command, *, cwd: Path | None, out, builder_cls, reset_project_
 def build_reset_start_context(
     command,
     *,
-    cwd: Path | None,
+    cwd: Optional[Path],
     out,
     builder_cls,
     reset_project_state_fn,

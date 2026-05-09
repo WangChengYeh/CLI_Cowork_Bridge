@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from pathlib import Path
 
 from runtime_env import env_bool
@@ -13,9 +15,9 @@ def maybe_auto_transfer(
     *,
     provider: str,
     work_dir: Path,
-    session_path: Path | None = None,
-    session_id: str | None = None,
-    project_id: str | None = None,
+    session_path: Optional[Path] = None,
+    session_id: Optional[str] = None,
+    project_id: Optional[str] = None,
 ) -> None:
     if not env_bool("CCB_CTX_TRANSFER_ON_SESSION_SWITCH", True):
         return

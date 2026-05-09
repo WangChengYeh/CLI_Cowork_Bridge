@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -20,18 +22,18 @@ from provider_core.session_binding_evidence import (
 
 @dataclass(frozen=True)
 class ProviderRuntimeFacts:
-    runtime_ref: str | None
-    session_ref: str | None
-    runtime_root: str | None
-    runtime_pid: int | None
-    terminal_backend: str | None
-    pane_id: str | None
-    pane_title_marker: str | None
-    pane_state: str | None
-    tmux_socket_name: str | None
-    tmux_socket_path: str | None
-    session_file: str | None
-    session_id: str | None
+    runtime_ref: Optional[str]
+    session_ref: Optional[str]
+    runtime_root: Optional[str]
+    runtime_pid: Optional[int]
+    terminal_backend: Optional[str]
+    pane_id: Optional[str]
+    pane_title_marker: Optional[str]
+    pane_state: Optional[str]
+    tmux_socket_name: Optional[str]
+    tmux_socket_path: Optional[str]
+    session_file: Optional[str]
+    session_id: Optional[str]
 
 
 def load_provider_session(binding, workspace_path: Path, agent_name: str):
@@ -57,7 +59,7 @@ def build_provider_runtime_facts(
     *,
     binding,
     provider: str,
-    pane_id_override: str | None = None,
+    pane_id_override: Optional[str] = None,
 ) -> ProviderRuntimeFacts:
     pane_id = str(pane_id_override or getattr(session, 'pane_id', '') or '').strip() or None
     return ProviderRuntimeFacts(

@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, replace
-from typing import Any
+from typing import Any, Optional
 
 from ccbd.models import SCHEMA_VERSION
 
@@ -18,8 +18,8 @@ class KeeperState:
     last_check_at: str
     state: str
     restart_count: int = 0
-    last_restart_at: str | None = None
-    last_failure_reason: str | None = None
+    last_restart_at: Optional[str] = None
+    last_failure_reason: Optional[str] = None
 
     def __post_init__(self) -> None:
         if self.keeper_pid <= 0:

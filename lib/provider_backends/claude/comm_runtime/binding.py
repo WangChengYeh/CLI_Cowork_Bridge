@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 import time
 from pathlib import Path
 
@@ -33,8 +35,8 @@ def publish_claude_registry(
     *,
     session_info,
     terminal: str,
-    pane_id: str | None,
-    project_session_file: str | None,
+    pane_id: Optional[str],
+    project_session_file: Optional[str],
 ) -> None:
     _publish_claude_registry_impl(
         session_info=session_info,

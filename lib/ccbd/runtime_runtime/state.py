@@ -1,12 +1,14 @@
 from __future__ import annotations
 
+from typing import Optional
+
 import json
 from pathlib import Path
 
 from .files import state_file_path
 
 
-def get_daemon_work_dir(state_file_name: str = "ccbd.json") -> Path | None:
+def get_daemon_work_dir(state_file_name: str = "ccbd.json") -> Optional[Path]:
     try:
         state_path = state_file_path(state_file_name)
         if not state_path.exists():

@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 import os
 from pathlib import Path
 
@@ -12,7 +14,7 @@ def _sorted_session_files(paths) -> list[Path]:
     return sorted(_iter_session_files(paths), key=lambda path: path.stat().st_mtime)
 
 
-def scan_latest_session_any_project(reader) -> Path | None:
+def scan_latest_session_any_project(reader) -> Optional[Path]:
     if not reader.root.exists():
         return None
     try:
@@ -29,8 +31,8 @@ def _maybe_adopt_project_hash(reader, project_hash: str) -> None:
     debug_log_reader(f"Adopted project hash: {project_hash}")
 
 
-def scan_latest_session(reader) -> Path | None:
-    best: Path | None = None
+def scan_latest_session(reader) -> Optional[Path]:
+    best: Optional[Path] = None
     best_mtime = 0.0
     winning_hash = reader._project_hash
     for project_hash in _project_scan_order(reader):
@@ -49,7 +51,7 @@ def scan_latest_session(reader) -> Path | None:
     return best
 
 
-def _valid_preferred_session(reader) -> Path | None:
+def _valid_preferred_session(reader) -> Optional[Path]:
     preferred = reader._preferred_session
     if preferred and not session_belongs_to_current_project(reader, preferred):
         reader._preferred_session = None
@@ -57,7 +59,7 @@ def _valid_preferred_session(reader) -> Path | None:
     return preferred
 
 
-def _fallback_any_project_session(reader) -> Path | None:
+def _fallback_any_project_session(reader) -> Optional[Path]:
     if os.environ.get("GEMINI_ALLOW_ANY_PROJECT_SCAN") not in ("1", "true", "yes"):
         return None
     any_latest = scan_latest_session_any_project(reader)
@@ -69,7 +71,7 @@ def _fallback_any_project_session(reader) -> Path | None:
     return any_latest
 
 
-def latest_session(reader) -> Path | None:
+def latest_session(reader) -> Optional[Path]:
     preferred = _valid_preferred_session(reader)
     scanned = scan_latest_session(reader)
     preferred_or_scanned = _select_preferred_session(reader, preferred=preferred, scanned=scanned)
@@ -78,14 +80,14 @@ def latest_session(reader) -> Path | None:
     return _fallback_any_project_session(reader)
 
 
-def set_preferred_session(reader, session_path: Path | None) -> None:
+def set_preferred_session(reader, session_path: Optional[Path]) -> None:
     if not session_path or not session_belongs_to_current_project(reader, session_path):
         return
     reader._preferred_session = session_path
     adopt_project_hash_from_session(reader, session_path)
 
 
-def _select_preferred_session(reader, *, preferred: Path | None, scanned: Path | None) -> Path | None:
+def _select_preferred_session(reader, *, preferred: Optional[Path], scanned: Optional[Path]) -> Optional[Path]:
     if preferred and preferred.exists():
         newer_scanned = _newer_scanned_session(preferred=preferred, scanned=scanned)
         if newer_scanned is not None:
@@ -103,7 +105,7 @@ def _select_preferred_session(reader, *, preferred: Path | None, scanned: Path |
     return None
 
 
-def _newer_scanned_session(*, preferred: Path, scanned: Path | None) -> tuple[Path, float, float] | None:
+def _newer_scanned_session(*, preferred: Path, scanned: Optional[Path]) -> Optional[tuple[Path, float, float]]:
     if not (scanned and scanned.exists()):
         return None
     try:
@@ -131,13 +133,13 @@ def _project_scan_order(reader) -> list[str]:
     return unique_order
 
 
-def _latest_project_session(reader, project_hash: str) -> tuple[Path, float] | None:
+def _latest_project_session(reader, project_hash: str) -> Optional[tuple[Path, float]]:
     chats = _project_chats_dir(reader, project_hash)
     if chats is None:
         return None
     if not _project_scope_matches(reader, chats):
         return None
-    best: tuple[Path, float] | None = None
+    best: Optional[tuple[Path, float]] = None
     try:
         for path in _iter_session_files(chats.iterdir()):
             try:
@@ -151,7 +153,7 @@ def _latest_project_session(reader, project_hash: str) -> tuple[Path, float] | N
     return best
 
 
-def _project_chats_dir(reader, project_hash: str) -> Path | None:
+def _project_chats_dir(reader, project_hash: str) -> Optional[Path]:
     chats = reader.root / project_hash / "chats"
     return chats if chats.is_dir() else None
 

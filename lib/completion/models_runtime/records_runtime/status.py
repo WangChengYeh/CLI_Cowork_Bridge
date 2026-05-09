@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field, replace
-from typing import Any
+from typing import Any, Optional
 
 from agents.models import normalize_agent_name
 
@@ -22,11 +22,11 @@ class CompletionState:
     reply_stable: bool = False
     tool_active: bool = False
     subagent_activity_seen: bool = False
-    last_reply_hash: str | None = None
-    last_reply_at: str | None = None
-    stable_since: str | None = None
-    provider_turn_ref: str | None = None
-    latest_cursor: CompletionCursor | None = None
+    last_reply_hash: Optional[str] = None
+    last_reply_at: Optional[str] = None
+    stable_since: Optional[str] = None
+    provider_turn_ref: Optional[str] = None
+    latest_cursor: Optional[CompletionCursor] = None
     terminal: bool = False
 
     def to_record(self) -> dict[str, Any]:
@@ -51,15 +51,15 @@ class CompletionState:
 class CompletionDecision:
     terminal: bool
     status: CompletionStatus
-    reason: str | None
-    confidence: CompletionConfidence | None
+    reason: Optional[str]
+    confidence: Optional[CompletionConfidence]
     reply: str
     anchor_seen: bool
     reply_started: bool
     reply_stable: bool
-    provider_turn_ref: str | None
-    source_cursor: CompletionCursor | None
-    finished_at: str | None
+    provider_turn_ref: Optional[str]
+    source_cursor: Optional[CompletionCursor]
+    finished_at: Optional[str]
     diagnostics: dict[str, Any] = field(default_factory=dict)
 
     def __post_init__(self) -> None:
@@ -79,7 +79,7 @@ class CompletionDecision:
         object.__setattr__(self, 'diagnostics', dict(self.diagnostics))
 
     @classmethod
-    def pending(cls, *, cursor: CompletionCursor | None = None) -> CompletionDecision:
+    def pending(cls, *, cursor: Optional[CompletionCursor] = None) -> CompletionDecision:
         return cls(
             terminal=False,
             status=CompletionStatus.INCOMPLETE,

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from enum import Enum
+from typing import Union
 
 from .names import AgentValidationError
 
@@ -56,7 +57,7 @@ class RestoreStatus(str, Enum):
     FAILED = 'failed'
 
 
-def normalize_runtime_mode(value: str | RuntimeMode) -> RuntimeMode:
+def normalize_runtime_mode(value: Union[str, RuntimeMode]) -> RuntimeMode:
     if isinstance(value, RuntimeMode):
         return value
     if not isinstance(value, str):
@@ -77,7 +78,7 @@ def normalize_runtime_mode(value: str | RuntimeMode) -> RuntimeMode:
         ) from exc
 
 
-def normalize_runtime_binding_source(value: str | RuntimeBindingSource) -> RuntimeBindingSource:
+def normalize_runtime_binding_source(value: Union[str, RuntimeBindingSource]) -> RuntimeBindingSource:
     if isinstance(value, RuntimeBindingSource):
         return value
     if not isinstance(value, str):

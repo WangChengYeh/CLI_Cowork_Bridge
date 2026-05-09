@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from .ownership import inspect_tmux_pane_ownership
 
 
@@ -23,7 +25,7 @@ def normalized_pane_id(pane_id: str) -> str:
     return str(pane_id or '').strip()
 
 
-def pane_existence_state(backend, pane_id: str) -> str | None:
+def pane_existence_state(backend, pane_id: str) -> Optional[str]:
     pane_exists = getattr(backend, 'pane_exists', None)
     if not callable(pane_exists):
         return None
@@ -33,7 +35,7 @@ def pane_existence_state(backend, pane_id: str) -> str | None:
         return 'missing'
 
 
-def pane_alive_state(backend, pane_id: str) -> str | None:
+def pane_alive_state(backend, pane_id: str) -> Optional[str]:
     tmux_alive = bool_backend_call(backend, 'is_tmux_pane_alive', pane_id)
     if tmux_alive is not None:
         return 'alive' if tmux_alive else 'dead'
@@ -43,7 +45,7 @@ def pane_alive_state(backend, pane_id: str) -> str | None:
     return None
 
 
-def bool_backend_call(backend, method_name: str, pane_id: str) -> bool | None:
+def bool_backend_call(backend, method_name: str, pane_id: str) -> Optional[bool]:
     method = getattr(backend, method_name, None)
     if not callable(method):
         return None

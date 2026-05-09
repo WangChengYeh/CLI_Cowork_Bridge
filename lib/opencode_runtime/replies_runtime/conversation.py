@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Callable
+from typing import Callable, Optional
 
 from .extraction import extract_text
 
@@ -12,7 +12,7 @@ def conversations_from_messages(
     n: int = 1,
 ) -> list[tuple[str, str]]:
     conversations: list[tuple[str, str]] = []
-    pending_question: str | None = None
+    pending_question: Optional[str] = None
 
     for message in messages:
         message_id = message.get('id')

@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 import os
 import tempfile
 import time
@@ -21,7 +23,7 @@ def _should_check_shrink(path: Path, *, interval_s: float) -> bool:
     return True
 
 
-def _read_tail_bytes(path: Path, *, max_bytes: int) -> bytes | None:
+def _read_tail_bytes(path: Path, *, max_bytes: int) -> Optional[bytes]:
     try:
         size = int(path.stat().st_size)
     except Exception:

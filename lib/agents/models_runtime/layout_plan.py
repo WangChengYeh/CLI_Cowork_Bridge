@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Iterable
+from typing import Iterable, Optional
 
 from .config import ProjectConfig
 from .layout import LayoutNode, parse_layout_spec, prune_layout
@@ -36,7 +36,7 @@ def build_project_layout_plan(
     config: ProjectConfig,
     *,
     requested_agents: Iterable[str] = (),
-    target_agent_names: Iterable[str] | None = None,
+    target_agent_names: Optional[Iterable[str]] = None,
 ) -> ProjectLayoutPlan:
     targets = (
         tuple(normalize_agent_name(item) for item in target_agent_names)
@@ -66,7 +66,7 @@ def project_layout_signature(
     config: ProjectConfig,
     *,
     requested_agents: Iterable[str] = (),
-    target_agent_names: Iterable[str] | None = None,
+    target_agent_names: Optional[Iterable[str]] = None,
 ) -> str:
     return build_project_layout_plan(
         config,

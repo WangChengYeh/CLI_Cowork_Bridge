@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from dataclasses import dataclass
 
 from ccbd.models import LeaseHealth
@@ -8,7 +10,7 @@ from ccbd.services.lifecycle import lifecycle_from_inspection
 
 @dataclass(frozen=True)
 class ProjectDaemonInspection:
-    lease: object | None
+    lease: Optional[object]
     health: object
     pid_alive: bool
     socket_connectable: bool
@@ -17,16 +19,16 @@ class ProjectDaemonInspection:
     reason: str
     phase: str
     desired_state: str
-    last_failure_reason: str | None = None
-    shutdown_intent: str | None = None
-    startup_id: str | None = None
-    startup_stage: str | None = None
-    last_progress_at: str | None = None
-    startup_deadline_at: str | None = None
-    lifecycle: object | None = None
+    last_failure_reason: Optional[str] = None
+    shutdown_intent: Optional[str] = None
+    startup_id: Optional[str] = None
+    startup_stage: Optional[str] = None
+    last_progress_at: Optional[str] = None
+    startup_deadline_at: Optional[str] = None
+    lifecycle: Optional[object] = None
 
     @property
-    def generation(self) -> int | None:
+    def generation(self) -> Optional[int]:
         lifecycle_generation = getattr(self.lifecycle, 'generation', None)
         if lifecycle_generation is not None:
             return int(lifecycle_generation)
@@ -35,7 +37,7 @@ class ProjectDaemonInspection:
         return int(getattr(self.lease, 'generation', 0) or 0) or None
 
     @property
-    def socket_path(self) -> str | None:
+    def socket_path(self) -> Optional[str]:
         value = str(getattr(self.lifecycle, 'socket_path', '') or '').strip()
         if value:
             return value

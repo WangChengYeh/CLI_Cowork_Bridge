@@ -3,18 +3,18 @@ from __future__ import annotations
 import signal
 from dataclasses import dataclass, field
 from types import FrameType
-from typing import Callable
+from typing import Callable, Optional
 
 
-SignalHandler = Callable[[int, FrameType | None], None]
+SignalHandler = Callable[[int, Optional[FrameType]], None]
 
 
-@dataclass(slots=True)
+@dataclass
 class RuntimeSignalStopFlag:
     requested: bool = False
     received_signals: list[int] = field(default_factory=list)
 
-    def request_stop(self, signum: int, frame: FrameType | None = None) -> None:
+    def request_stop(self, signum: int, frame: Optional[FrameType] = None) -> None:
         del frame
         self.requested = True
         self.received_signals.append(signum)

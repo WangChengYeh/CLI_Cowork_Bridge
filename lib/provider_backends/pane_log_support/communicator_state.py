@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 import os
 from pathlib import Path
 
@@ -39,12 +41,12 @@ def _required_session_info(comm):
     raise RuntimeError(comm.missing_session_message)
 
 
-def _work_dir_hint(session_info: dict) -> Path | None:
+def _work_dir_hint(session_info: dict) -> Optional[Path]:
     work_dir = session_info.get('work_dir')
     return Path(work_dir) if isinstance(work_dir, str) and work_dir else None
 
 
-def _pane_log_path(session_info: dict) -> Path | None:
+def _pane_log_path(session_info: dict) -> Optional[Path]:
     raw_log_path = session_info.get('pane_log_path')
     if raw_log_path:
         return Path(str(raw_log_path)).expanduser()

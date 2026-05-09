@@ -2,15 +2,15 @@ from __future__ import annotations
 
 import os
 from pathlib import Path
-from typing import Any, Callable
+from typing import Any, Callable, Optional
 
 
 def publish_claude_registry(
     *,
     session_info: dict[str, Any],
     terminal: str,
-    pane_id: str | None,
-    project_session_file: str | None,
+    pane_id: Optional[str],
+    project_session_file: Optional[str],
     compute_ccb_project_id_fn: Callable[[Path], str],
     upsert_registry_fn: Callable[[dict[str, object]], None],
     cwd_fn: Callable[[], Path],

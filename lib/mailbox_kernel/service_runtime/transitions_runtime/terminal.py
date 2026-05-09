@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from dataclasses import replace
 
 from ..mailbox import refresh_mailbox
@@ -12,8 +14,8 @@ def ack_reply(
     agent_name: str,
     inbound_event_id: str,
     *,
-    started_at: str | None = None,
-    finished_at: str | None = None,
+    started_at: Optional[str] = None,
+    finished_at: Optional[str] = None,
 ):
     normalized = service._normalize_agent_name(agent_name)
     head = head_pending_event(service, normalized)
@@ -52,7 +54,7 @@ def mark_terminal(
     inbound_event_id: str,
     *,
     status,
-    finished_at: str | None = None,
+    finished_at: Optional[str] = None,
 ):
     normalized = service._normalize_agent_name(agent_name)
     timestamp = finished_at or service._clock()
@@ -69,7 +71,7 @@ def mark_terminal(
     return updated
 
 
-def _ack_timestamp(service, *, started_at: str | None, finished_at: str | None) -> str:
+def _ack_timestamp(service, *, started_at: Optional[str], finished_at: Optional[str]) -> str:
     return finished_at or started_at or service._clock()
 
 

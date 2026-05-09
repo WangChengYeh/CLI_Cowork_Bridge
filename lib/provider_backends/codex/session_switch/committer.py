@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from pathlib import Path
 
 from provider_backends.codex.session import CodexProjectSession
@@ -13,7 +15,7 @@ def commit_rebind(
     session_file: Path,
     session_data: dict[str, object],
     candidate: SwitchCandidate,
-    runtime_dir: Path | None,
+    runtime_dir: Optional[Path],
     reason: str,
 ) -> bool:
     old_session_id = str(session_data.get("codex_session_id") or "").strip()

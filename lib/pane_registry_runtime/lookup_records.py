@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Any
+from typing import Any, Optional
 
 from .common import (
     coerce_updated_at,
@@ -16,8 +16,8 @@ from .common import (
 def load_fresh_registry(
     path: Path,
     *,
-    stale_debug_message: str | None = None,
-) -> tuple[dict[str, Any], int] | None:
+    stale_debug_message: Optional[str] = None,
+) -> Optional[tuple[dict[str, Any], int]]:
     if not path.exists():
         return None
     data = load_registry_file(path)
@@ -33,7 +33,7 @@ def load_fresh_registry(
 
 def iter_fresh_registry_records(
     *,
-    work_dir: str | Path | None = None,
+    work_dir: str | Optional[Path] = None,
     stale_debug_message_fn=None,
 ):
     for path in iter_registry_files(work_dir=work_dir):
@@ -43,8 +43,8 @@ def iter_fresh_registry_records(
             yield record
 
 
-def latest_registry_record(records) -> tuple[dict[str, Any], int] | None:
-    best: tuple[dict[str, Any], int] | None = None
+def latest_registry_record(records) -> Optional[tuple[dict[str, Any], int]]:
+    best: Optional[tuple[dict[str, Any], int]] = None
     best_ts = -1
     for data, updated_at in records:
         if updated_at > best_ts:
@@ -53,7 +53,7 @@ def latest_registry_record(records) -> tuple[dict[str, Any], int] | None:
     return best
 
 
-def claude_pane_id(data: dict[str, Any]) -> str | None:
+def claude_pane_id(data: dict[str, Any]) -> Optional[str]:
     providers = get_providers_map(data)
     claude = providers.get('claude')
     if not isinstance(claude, dict):
