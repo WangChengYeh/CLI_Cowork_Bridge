@@ -274,20 +274,6 @@ ccb reinstall
 
 ---
 
-## Community
-
-📧 Email: `bfly123@126.com`
-💬 WeChat: `seemseam-com`
-
-Thanks to the [Linux.do community](https://linux.do) for testing, feedback, and discussion support.
-
-<div align="center">
-<img src="assets/weixin.png" alt="WeChat Group" width="300">
-</div>
-
----
-
-
 ## Release Notes
 
 Historical note: older release notes below may mention `askd`, legacy flags, or removed commands. Those references are kept only as changelog history and do not redefine the current CLI surface.

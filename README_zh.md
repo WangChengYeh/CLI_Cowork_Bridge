@@ -272,20 +272,6 @@ ccb reinstall
 
 ---
 
-## 社区
-
-📧 Email: `bfly123@126.com`
-💬 微信: `seemseam-com`
-
-感谢 [Linux.do 社区](https://linux.do) 在测试、反馈和讨论中的支持。
-
-<div align="center">
-<img src="assets/weixin.png" alt="微信群" width="300">
-</div>
-
----
-
-
 ## 新版本记录
 
 历史说明：下面较旧的发布记录里仍可能出现 `askd`、旧 flag 或已移除命令。这些内容仅作为 changelog 历史保留，不代表当前 CLI 入口。
