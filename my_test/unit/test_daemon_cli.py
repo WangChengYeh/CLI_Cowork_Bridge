@@ -41,19 +41,22 @@ def test_daemon_poll_once_reports_processed_events(tmp_path: Path):
     assert 'next_offset=' in output
 
 
-def test_daemon_start_reports_running(tmp_path: Path):
+def test_daemon_start_foreground_reports_running(tmp_path: Path):
     stdout = StringIO()
     stderr = StringIO()
 
     result = run_daemon_cli(
-        ['start'],
+        ['start', '--foreground'],
         project_root=tmp_path,
         stdout=stdout,
         stderr=stderr,
     )
 
+    output = stdout.getvalue()
+
     assert result == 0
-    assert stdout.getvalue().strip() == 'running'
+    assert 'running' in output
+    assert 'foreground_iterations=' in output
 
 
 def test_daemon_stop_reports_stopped(tmp_path: Path):
@@ -67,5 +70,25 @@ def test_daemon_stop_reports_stopped(tmp_path: Path):
         stderr=stderr,
     )
 
+    output = stdout.getvalue()
+
     assert result == 0
-    assert stdout.getvalue().strip() == 'stopped'
+    assert 'stopped' in output
+    assert 'signaled=' in output
+
+
+def test_daemon_restart_reports_recovery_state(tmp_path: Path):
+    stdout = StringIO()
+    stderr = StringIO()
+
+    result = run_daemon_cli(
+        ['restart'],
+        project_root=tmp_path,
+        stdout=stdout,
+        stderr=stderr,
+    )
+
+    output = stdout.getvalue()
+
+    assert result == 0
+    assert 'restarted=' in output
