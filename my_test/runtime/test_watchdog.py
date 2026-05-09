@@ -2,7 +2,10 @@ from pathlib import Path
 
 from runtime.background import launch_background_daemon
 from runtime.daemon_state import RuntimeDaemonStateStore
-from runtime.watchdog import run_watchdog_tick
+from runtime.watchdog import (
+    run_watchdog_loop,
+    run_watchdog_tick,
+)
 
 
 class FakeProcess:
@@ -79,3 +82,33 @@ def test_watchdog_tick_restarts_stale_runtime(tmp_path: Path):
     )
 
     assert result.restarted is True
+
+
+
+def test_watchdog_loop_runs_multiple_iterations(tmp_path: Path):
+    fake_popen = FakePopen()
+
+    result = run_watchdog_loop(
+        project_root=tmp_path,
+        argv=['ccb'],
+        popen_fn=fake_popen,
+        max_iterations=3,
+        sleep_fn=lambda seconds: None,
+    )
+
+    assert result.iterations == 3
+
+
+
+def test_watchdog_loop_respects_stop_condition(tmp_path: Path):
+    fake_popen = FakePopen()
+
+    result = run_watchdog_loop(
+        project_root=tmp_path,
+        argv=['ccb'],
+        popen_fn=fake_popen,
+        sleep_fn=lambda seconds: None,
+        should_stop=lambda: True,
+    )
+
+    assert result.iterations == 0
