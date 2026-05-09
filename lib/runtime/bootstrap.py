@@ -11,6 +11,7 @@ from room.store import RoomEventStore
 from runtime.event_loop import RuntimeEventLoop
 from runtime.supervisor import RuntimeSupervisor
 from runtime.worker import RuntimeWorker
+from runtime.workers.delivery_worker import DeliveryWorker
 from runtime.workers.dispatch_worker import DispatchWorker
 
 
@@ -20,6 +21,7 @@ class RuntimeBootstrap:
     store: RoomEventStore
     supervisor: RuntimeSupervisor
     dispatch_worker: DispatchWorker
+    delivery_worker: DeliveryWorker
     delivery: RoomIMessageDelivery
 
 
@@ -62,10 +64,23 @@ def bootstrap_runtime(
         ),
     )
 
+    delivery_worker = DeliveryWorker(
+        delivery=delivery,
+        dry_run=True,
+    )
+
+    supervisor.register_worker(
+        RuntimeWorker(
+            name='delivery-worker',
+            handler=delivery_worker.handle,
+        )
+    )
+
     return RuntimeBootstrap(
         project_root=project_root,
         store=store,
         supervisor=supervisor,
         dispatch_worker=dispatch_worker,
+        delivery_worker=delivery_worker,
         delivery=delivery,
     )
