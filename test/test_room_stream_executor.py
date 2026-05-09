@@ -65,16 +65,20 @@ def test_stream_executor_generates_agent_messages(tmp_path: Path):
         returncode=0,
     )
 
+    emitted_events = []
+
     executor = RoomAskStreamExecutor(
         project_root=tmp_path,
         store=store,
         popen_fn=fake_popen,
+        on_event=emitted_events.append,
     )
 
     result = executor.execute(make_request())
 
     assert result.returncode == 0
     assert len(result.output_events) == 3
+    assert len(emitted_events) == 4
 
     events = store.list_events()
 
