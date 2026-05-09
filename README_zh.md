@@ -277,6 +277,32 @@ ccb reinstall
 历史说明：下面较旧的发布记录里仍可能出现 `askd`、旧 flag 或已移除命令。这些内容仅作为 changelog 历史保留，不代表当前 CLI 入口。
 
 <details open>
+<summary><b>v7.2.0</b> - 项目更名与稳定性增强</summary>
+
+- **更名为 CLI Cowork Bridge**: 更新了文档和 CLI 中的项目名称，以更好地体现其作为跨 Agent 团队桥梁的角色。
+- **Daemon 稳定性增强**: 修复了前台模式下的测试挂起问题，并完成了运行循环的依赖注入，确保 CI 和生产运行的可靠性。
+- **macOS 运行环境优化**: 使用原生的 `ps` 和 `lsof` 命令改进了 macOS 上的进程清理和 PID 追踪。
+- **扩展 Python 支持**: 通过重构类型联合 (type unions) 并移除 3.10+ 特有语法，恢复了对 Python 3.9 的兼容性。
+
+</details>
+
+<details>
+<summary><b>v7.1.0</b> - 基础设施升级</summary>
+
+- **Python 3.13 支持**: 提升了最低版本要求，并在 Python 3.13 上验证了运行性能。
+- **元数据同步**: 将内部 CLI 脚本元数据与最新的仓库状态同步，确保部署一致性。
+
+</details>
+
+<details>
+<summary><b>v7.0.0</b> - iMessage 与生命周期控制</summary>
+
+- **iMessage 集成**: 为 Agent 更新、任务完成和状态通知增加了原生的 iMessage 推送支持。
+- **精细化 Daemon 控制**: 在 daemon start 命令中增加了 `--iterations`、`--imessage` 和 `--recipients` 标志，实现对运行生命周期的精细化管理。
+
+</details>
+
+<details>
 <summary><b>v6.0.29</b> - WSL Runtime State 迁移</summary>
 
 - **运行态移出挂载盘**：在 `/mnt/<drive>/...` 下的 WSL 项目中，项目 authority 仍留在 `.ccb`，`ccbd/` 和 agent runtime state 会迁移到本机 Linux state root，并写入显式 marker

@@ -279,6 +279,32 @@ ccb reinstall
 Historical note: older release notes below may mention `askd`, legacy flags, or removed commands. Those references are kept only as changelog history and do not redefine the current CLI surface.
 
 <details open>
+<summary><b>v7.2.0</b> - Project Rename and Stabilization</summary>
+
+- **Renamed to CLI Cowork Bridge**: updated project identity across documentation and CLI to reflect its role as a cross-agent team bridge.
+- **Daemon Stabilization**: resolved test hangs in foreground mode and completed dependency injection for the runtime loop to ensure reliable CI and production runs.
+- **macOS Runtime Enhancements**: improved process cleanup and PID tracking using native macOS `ps` and `lsof` commands.
+- **Expanded Python Support**: restored compatibility with Python 3.9 by refactoring type unions and removing 3.10+ specific syntax.
+
+</details>
+
+<details>
+<summary><b>v7.1.0</b> - Infrastructure Upgrade</summary>
+
+- **Python 3.13 Support**: bumped minimum requirement and validated runtime performance on Python 3.13.
+- **Metadata Synchronization**: aligned internal CLI script metadata with the latest repository state for consistent deployments.
+
+</details>
+
+<details>
+<summary><b>v7.0.0</b> - iMessage and Lifecycle Control</summary>
+
+- **iMessage Integration**: added native iMessage delivery for agent updates, completions, and status notifications.
+- **Granular Daemon Control**: introduced `--iterations`, `--imessage`, and `--recipients` flags for fine-tuned runtime lifecycle management.
+
+</details>
+
+<details>
 <summary><b>v6.0.29</b> - WSL Runtime State Relocation</summary>
 
 - **Runtime State Moved Off Mounted Drives**: on WSL projects rooted under `/mnt/<drive>/...`, project authority remains in `.ccb` while `ccbd/` and agent runtime state relocate to a local Linux state root with explicit marker files
