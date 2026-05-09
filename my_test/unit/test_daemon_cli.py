@@ -19,6 +19,7 @@ def test_daemon_status_prints_runtime_fields(tmp_path: Path):
     output = stdout.getvalue()
 
     assert result == 0
+    assert 'lifecycle_state=' in output
     assert 'worker_count=' in output
     assert 'cursor_name=' in output
 
