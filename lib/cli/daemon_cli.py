@@ -5,6 +5,7 @@ from pathlib import Path
 from typing import TextIO
 
 from runtime.bootstrap import bootstrap_runtime
+from runtime.daemon_runner import run_runtime_forever
 from runtime.daemon_state import RuntimeDaemonStateStore
 
 
@@ -12,11 +13,19 @@ STATE_STOPPED = 'stopped'
 STATE_RUNNING = 'running'
 
 
+DEFAULT_FOREGROUND_ITERATIONS = 1
+
+
 def build_daemon_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog='ccb daemon')
     subparsers = parser.add_subparsers(dest='command', required=True)
 
-    subparsers.add_parser('start')
+    start_parser = subparsers.add_parser('start')
+    start_parser.add_argument(
+        '--foreground',
+        action='store_true',
+    )
+
     subparsers.add_parser('stop')
     subparsers.add_parser('status')
     subparsers.add_parser('poll-once')
@@ -47,6 +56,21 @@ def run_daemon_cli(
         state = daemon_state.mark_running()
         stdout.write(f'{state.state}\n')
         stdout.write(f'pid={state.pid}\n')
+
+        if args.foreground:
+            result = run_runtime_forever(
+                project_root=project_root,
+                bootstrap=runtime,
+                max_iterations=DEFAULT_FOREGROUND_ITERATIONS,
+            )
+
+            stdout.write(
+                f'foreground_iterations={result.iterations}\n'
+            )
+            stdout.write(
+                f'foreground_processed_events={result.processed_events}\n'
+            )
+
         return 0
 
     if args.command == 'stop':
