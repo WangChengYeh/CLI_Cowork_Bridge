@@ -5,6 +5,7 @@ from pathlib import Path
 from typing import TextIO
 
 from runtime.bootstrap import bootstrap_runtime
+from runtime.daemon_state import RuntimeDaemonStateStore
 
 
 STATE_STOPPED = 'stopped'
@@ -38,22 +39,41 @@ def run_daemon_cli(
     runtime = bootstrap_runtime(project_root=project_root)
     supervisor = runtime.supervisor
 
+    daemon_state = RuntimeDaemonStateStore(
+        project_root=project_root,
+    )
+
     if args.command == 'start':
-        stdout.write(f'{STATE_RUNNING}\n')
+        state = daemon_state.mark_running()
+        stdout.write(f'{state.state}\n')
+        stdout.write(f'pid={state.pid}\n')
         return 0
 
     if args.command == 'stop':
-        stdout.write(f'{STATE_STOPPED}\n')
+        state = daemon_state.mark_stopped()
+        stdout.write(f'{state.state}\n')
         return 0
 
     if args.command == 'status':
-        status = supervisor.status()
-        stdout.write(f'worker_count={status.worker_count}\n')
-        stdout.write(f'cursor_name={status.cursor_name}\n')
+        runtime_status = supervisor.status()
+        daemon_runtime_state = daemon_state.read()
+
+        stdout.write(f'state={daemon_runtime_state.state}\n')
+        stdout.write(f'pid={daemon_runtime_state.pid}\n')
+        stdout.write(f'worker_count={runtime_status.worker_count}\n')
+        stdout.write(f'cursor_name={runtime_status.cursor_name}\n')
+        stdout.write(
+            f'heartbeat_at={daemon_runtime_state.heartbeat_at}\n'
+        )
         return 0
 
     if args.command == 'poll-once':
+        daemon_state.heartbeat()
+
         result = supervisor.poll_once()
+
+        daemon_state.heartbeat()
+
         stdout.write(f'processed_events={result.processed_events}\n')
         stdout.write(f'next_offset={result.next_offset}\n')
         return 0
