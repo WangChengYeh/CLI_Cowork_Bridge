@@ -7,6 +7,7 @@ from typing import Any
 from runtime.backoff import RestartBackoffStore
 from runtime.daemon_state import RuntimeDaemonStateStore
 from runtime.health import evaluate_runtime_health
+from runtime.state_machine import map_runtime_health_to_lifecycle_state
 from runtime.worker_health import RuntimeWorkerHealthStore
 from runtime.worker_quarantine import RuntimeWorkerQuarantineStore
 
@@ -16,6 +17,7 @@ class RuntimeMetricsSnapshot:
     runtime_state: str
     runtime_health: str
     runtime_health_score: int
+    lifecycle_state: str
     restart_count: int
     worker_count: int
     quarantined_workers: int
@@ -37,6 +39,10 @@ def collect_runtime_metrics(
 
     daemon_state = daemon_store.read_resolved()
     runtime_health = evaluate_runtime_health(daemon_state)
+    lifecycle_state = map_runtime_health_to_lifecycle_state(
+        runtime_state=daemon_state.state,
+        health_status=runtime_health.status,
+    )
 
     backoff = RestartBackoffStore(
         project_root=project_root,
@@ -64,6 +70,7 @@ def collect_runtime_metrics(
         runtime_state=daemon_state.state,
         runtime_health=runtime_health.status,
         runtime_health_score=runtime_health.score,
+        lifecycle_state=lifecycle_state.value,
         restart_count=int(backoff.get('restart_count') or 0),
         worker_count=len(worker_health),
         quarantined_workers=len(quarantine),
