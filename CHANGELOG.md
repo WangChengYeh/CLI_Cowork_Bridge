@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+## v7.1.0 (2026-05-10)
+
+### Infrastructure & Scripting
+
+- **Python 3.13 Upgrade**: bumped minimum Python requirement to 3.13 to leverage latest runtime performance and features.
+- **CCB Metadata Sync**: synchronized internal ccb script metadata with recent repository commits for consistent deployment.
+
 ## v7.0.0 (2026-05-09)
 
 ### Daemon & IMessage Enhancements
