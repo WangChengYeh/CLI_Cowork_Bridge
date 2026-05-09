@@ -6,6 +6,96 @@ Scope is intentionally limited to the new design work. This plan does not requir
 
 ---
 
+# Document Role
+
+This document is both:
+
+- the focused test strategy for the new runtime architecture
+- the current coverage tracker for tests under `my_test/`
+
+Related documents:
+
+- `docs/proposals/ccb-cli-imessage-room.md` — architecture vision
+- `docs/proposals/ccb-cli-imessage-room-todo.md` — original backlog
+- `docs/proposals/milestone-1-to-10-status.md` — implementation status snapshot
+
+---
+
+# Current Implementation Snapshot
+
+The focused runtime test layer has started under:
+
+```text
+my_test/
+  helpers/
+  unit/
+  runtime/
+  integration/
+```
+
+Implemented helper files:
+
+```text
+my_test/helpers/fake_process.py
+```
+
+Implemented unit tests:
+
+```text
+my_test/unit/test_room_models.py
+my_test/unit/test_room_parser.py
+my_test/unit/test_room_store.py
+my_test/unit/test_room_dispatcher.py
+my_test/unit/test_room_executor.py
+my_test/unit/test_room_stream_executor.py
+my_test/unit/test_room_imessage_delivery.py
+my_test/unit/test_imessage_sender.py
+my_test/unit/test_imessage_doctor.py
+my_test/unit/test_imessage_watcher.py
+my_test/unit/test_imessage_correlation.py
+my_test/unit/test_imessage_dispatch.py
+my_test/unit/test_room_cli.py
+my_test/unit/test_imessage_cli.py
+my_test/unit/test_daemon_cli.py
+```
+
+Implemented runtime tests:
+
+```text
+my_test/runtime/test_runtime_event_loop.py
+my_test/runtime/test_runtime_worker_registry.py
+my_test/runtime/test_runtime_supervisor.py
+```
+
+Implemented integration tests:
+
+```text
+my_test/integration/test_stream_delivery_flow.py
+my_test/integration/test_imessage_dispatch_flow.py
+```
+
+Known remaining focused tests:
+
+```text
+my_test/integration/test_runtime_polling_flow.py
+```
+
+Future tests after bootstrap workers exist:
+
+```text
+my_test/runtime/test_dispatch_worker.py
+my_test/runtime/test_delivery_worker.py
+my_test/runtime/test_watch_worker.py
+my_test/e2e/test_full_runtime_loop.py
+```
+
+Recent API alignment fixes:
+
+- `run_imessage_doctor()` now supports dependency injection for platform / osascript / chat.db checks.
+- sender tests now use `split_imessage_chunks()` and import AppleScript escaping from `imessage.applescript`.
+
+---
+
 # Goals
 
 Provide high confidence for the new event-driven runtime architecture:
@@ -110,10 +200,15 @@ Create:
 my_test/helpers/
 ```
 
-Suggested helpers:
+Implemented helpers:
 
 ```text
 fake_process.py
+```
+
+Suggested future helpers:
+
+```text
 fake_delivery.py
 fake_imessage.py
 fake_runtime.py
@@ -159,6 +254,47 @@ Responsibilities:
 
 ---
 
+# Coverage Map
+
+## Implemented Coverage
+
+Current `my_test` coverage protects:
+
+- RoomEvent serialization and validation
+- shared command grammar
+- event store persistence
+- cursor progression
+- dispatcher lifecycle
+- subprocess executor lifecycle
+- stream executor lifecycle
+- delivery deduplication
+- transport binding persistence
+- iMessage inbound filtering
+- iMessage reply correlation
+- iMessage dispatch bridge
+- CLI room commands
+- iMessage CLI commands
+- daemon CLI skeleton
+- runtime event loop polling
+- worker registry fanout
+- runtime supervisor dispatch
+- stream-to-delivery integration
+- iMessage-to-dispatch integration
+
+## Known Coverage Gaps
+
+Still needed:
+
+- runtime polling flow integration test
+- malformed JSONL audit behavior
+- invalid cursor name rejection
+- real delivery policy skipped cases for missing recipients
+- CLI parser error behavior tests
+- pytest.ini / marker setup
+- bootstrap worker tests after workers exist
+
+---
+
 # Unit Test Plan
 
 ## RoomEvent Model
@@ -168,6 +304,8 @@ Target file:
 ```text
 my_test/unit/test_room_models.py
 ```
+
+Status: partially implemented.
 
 Cases:
 
@@ -189,6 +327,8 @@ Target file:
 ```text
 my_test/unit/test_room_parser.py
 ```
+
+Status: implemented for current grammar.
 
 Cases:
 
@@ -217,6 +357,8 @@ Target file:
 my_test/unit/test_room_store.py
 ```
 
+Status: partially implemented.
+
 Cases:
 
 1. store creates runtime layout.
@@ -241,6 +383,8 @@ Target file:
 my_test/unit/test_room_dispatcher.py
 ```
 
+Status: implemented for core lifecycle.
+
 Cases:
 
 1. USER_MESSAGE to `codex` builds dispatch request.
@@ -262,6 +406,8 @@ Target file:
 my_test/unit/test_room_executor.py
 ```
 
+Status: implemented for subprocess success/failure lifecycle.
+
 Cases:
 
 1. successful subprocess returns TASK_COMPLETED.
@@ -282,6 +428,8 @@ Target file:
 ```text
 my_test/unit/test_room_stream_executor.py
 ```
+
+Status: implemented for line streaming, terminal events, and callback emission.
 
 Cases:
 
@@ -306,6 +454,8 @@ Target file:
 my_test/unit/test_imessage_sender.py
 ```
 
+Status: partially implemented for escaping and chunking.
+
 Cases:
 
 1. AppleScript string escaping handles quotes.
@@ -328,6 +478,8 @@ Target file:
 my_test/unit/test_imessage_doctor.py
 ```
 
+Status: implemented.
+
 Cases:
 
 1. non-Darwin platform reports unsupported.
@@ -345,6 +497,8 @@ Target file:
 ```text
 my_test/unit/test_imessage_watcher.py
 ```
+
+Status: implemented for evaluation path; poll cursor test still pending.
 
 Cases:
 
@@ -372,6 +526,8 @@ Target file:
 my_test/unit/test_room_imessage_delivery.py
 ```
 
+Status: implemented for delivery, binding, dedupe, and multiple recipients.
+
 Cases:
 
 1. disabled policy skips delivery.
@@ -397,6 +553,8 @@ Target file:
 my_test/unit/test_imessage_correlation.py
 ```
 
+Status: implemented.
+
 Cases:
 
 1. iMessage source event creates binding.
@@ -416,6 +574,8 @@ Target file:
 ```text
 my_test/unit/test_imessage_dispatch.py
 ```
+
+Status: implemented.
 
 Cases:
 
@@ -437,6 +597,8 @@ Target file:
 my_test/unit/test_room_cli.py
 ```
 
+Status: implemented for happy paths.
+
 Cases:
 
 1. `room send` appends event and prints event ID.
@@ -455,6 +617,8 @@ Target file:
 my_test/unit/test_imessage_cli.py
 ```
 
+Status: partially implemented.
+
 Cases:
 
 1. `imessage send --dry-run` calls sender.
@@ -472,6 +636,8 @@ Target file:
 ```text
 my_test/unit/test_daemon_cli.py
 ```
+
+Status: implemented for skeleton behavior.
 
 Cases:
 
@@ -493,6 +659,8 @@ Target file:
 my_test/runtime/test_runtime_event_loop.py
 ```
 
+Status: implemented for polling, cursor, and ordering.
+
 Cases:
 
 1. poll_once consumes new events.
@@ -513,6 +681,8 @@ Target file:
 my_test/runtime/test_runtime_worker_registry.py
 ```
 
+Status: implemented.
+
 Cases:
 
 1. register worker by name.
@@ -530,6 +700,8 @@ Target file:
 ```text
 my_test/runtime/test_runtime_supervisor.py
 ```
+
+Status: implemented.
 
 Cases:
 
@@ -551,6 +723,8 @@ Target file:
 my_test/integration/test_stream_delivery_flow.py
 ```
 
+Status: implemented with fake delivery callback.
+
 Scenario:
 
 ```text
@@ -562,7 +736,7 @@ AGENT_MESSAGE events
   ↓
 on_event callback
   ↓
-RoomIMessageDelivery
+RoomIMessageDelivery / fake delivery
 ```
 
 Cases:
@@ -581,6 +755,8 @@ Target file:
 ```text
 my_test/integration/test_imessage_dispatch_flow.py
 ```
+
+Status: implemented.
 
 Scenario:
 
@@ -614,6 +790,8 @@ Target file:
 ```text
 my_test/integration/test_runtime_polling_flow.py
 ```
+
+Status: pending.
 
 Scenario:
 
@@ -670,6 +848,8 @@ This should be added after bootstrap workers exist.
 
 ## Pass 1 — Fast Unit Coverage
 
+Status: mostly implemented.
+
 Create:
 
 ```text
@@ -694,6 +874,8 @@ Reason:
 
 ## Pass 2 — Runtime Coverage
 
+Status: implemented.
+
 Create:
 
 ```text
@@ -711,6 +893,8 @@ Reason:
 ---
 
 ## Pass 3 — Integration Coverage
+
+Status: partially implemented.
 
 Create:
 
