@@ -1,8 +1,15 @@
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 from room.models import RoomEvent
 from runtime.worker import RuntimeWorker, RuntimeWorkerRegistry
-from runtime.worker_quarantine import RuntimeWorkerQuarantineStore
+from runtime.worker_quarantine import (
+    RuntimeWorkerQuarantinePolicy,
+    RuntimeWorkerQuarantineStore,
+)
+
+
+NOW = datetime(2026, 1, 1, tzinfo=timezone.utc)
 
 
 
@@ -62,3 +69,31 @@ def test_worker_quarantine_recovery_clears_quarantine(tmp_path: Path):
     quarantine.recover('worker-a')
 
     assert quarantine.is_quarantined('worker-a') is False
+
+
+
+def test_worker_quarantine_cooldown_recovers_worker(tmp_path: Path):
+    quarantine = RuntimeWorkerQuarantineStore(
+        project_root=tmp_path,
+    )
+
+    record = quarantine.quarantine(
+        'worker-a',
+        'failure threshold exceeded',
+    )
+
+    records = quarantine.read_all()
+    records['worker-a'].quarantined_at = (
+        NOW - timedelta(seconds=600)
+    ).isoformat()
+    quarantine.write_all(records)
+
+    result = quarantine.is_quarantined(
+        'worker-a',
+        policy=RuntimeWorkerQuarantinePolicy(
+            cooldown_seconds=300,
+        ),
+        now=NOW,
+    )
+
+    assert result is False
