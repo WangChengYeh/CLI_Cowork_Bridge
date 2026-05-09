@@ -18,30 +18,43 @@ class IMessageDoctorResult:
         return self.platform_supported and self.osascript_available
 
 
-def run_imessage_doctor() -> IMessageDoctorResult:
+def run_imessage_doctor(
+    *,
+    platform_name: str | None = None,
+    osascript_available: bool | None = None,
+    chat_db_exists: bool | None = None,
+) -> IMessageDoctorResult:
     notes: list[str] = []
 
-    platform_supported = platform.system() == 'Darwin'
+    detected_platform = platform_name if platform_name is not None else platform.system()
+    platform_supported = detected_platform == 'Darwin'
 
     if not platform_supported:
         notes.append('iMessage integration currently requires macOS')
 
-    osascript_available = shutil.which('osascript') is not None
+    detected_osascript = (
+        osascript_available
+        if osascript_available is not None
+        else shutil.which('osascript') is not None
+    )
 
-    if not osascript_available:
+    if not detected_osascript:
         notes.append('osascript command not found')
 
-    messages_db = Path.home() / 'Library' / 'Messages' / 'chat.db'
-    messages_db_exists = messages_db.exists()
+    if chat_db_exists is None:
+        messages_db = Path.home() / 'Library' / 'Messages' / 'chat.db'
+        detected_chat_db = messages_db.exists()
+    else:
+        detected_chat_db = chat_db_exists
 
-    if not messages_db_exists:
+    if not detected_chat_db:
         notes.append('Messages chat.db not found')
 
     notes.append('Inbound iMessage support requires Full Disk Access')
 
     return IMessageDoctorResult(
         platform_supported=platform_supported,
-        osascript_available=osascript_available,
-        messages_db_exists=messages_db_exists,
+        osascript_available=detected_osascript,
+        messages_db_exists=detected_chat_db,
         notes=notes,
     )
