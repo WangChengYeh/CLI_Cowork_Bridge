@@ -1,5 +1,47 @@
 # CCB CLI + iMessage Unified Room Proposal
 
+## Document Role
+
+This document is the high-level architecture proposal for the CCB CLI + iMessage unified room design.
+
+For implementation tracking, use:
+
+- `docs/proposals/ccb-cli-imessage-room-todo.md` — original task breakdown and backlog
+- `docs/proposals/milestone-1-to-10-status.md` — current implementation status snapshot
+- `docs/proposals/ccb-runtime-test-plan.md` — focused test strategy for the new runtime design
+
+---
+
+## Current Status
+
+The proposal has moved beyond design-only status. The repository now includes implemented foundations for:
+
+- shared RoomEvent model
+- shared command parser
+- RoomEvent JSONL store
+- CLI room helpers and command routing
+- iMessage outbound sender
+- iMessage inbound watcher
+- Room-to-iMessage delivery policy
+- dispatch bridge
+- reply correlation
+- subprocess executor
+- stream executor
+- runtime supervisor skeleton
+- focused `my_test` runtime validation layer
+
+Remaining major work is runtime composition:
+
+```text
+bootstrap wiring
+real DispatchWorker
+real DeliveryWorker
+real WatchWorker
+persistent daemon lifecycle
+```
+
+---
+
 ## Vision
 
 Create a unified collaboration room between:
@@ -86,6 +128,22 @@ Supported on both CLI and iMessage:
 @status
 ```
 
+Implemented aliases:
+
+```text
+@code     → codex
+@review   → claude
+@research → gemini
+```
+
+Future grammar candidates:
+
+```text
+@stop <target>
+default agent fallback
+config-driven aliases
+```
+
 ---
 
 ## Shared Room Event Schema
@@ -157,6 +215,10 @@ iMessage inbound command watcher.
 ### Phase 5
 
 Cross-transport synchronization.
+
+### Phase 6
+
+Runtime supervisor and always-on orchestration.
 
 ---
 
