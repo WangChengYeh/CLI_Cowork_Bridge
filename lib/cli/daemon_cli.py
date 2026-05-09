@@ -3,7 +3,7 @@ from __future__ import annotations
 import argparse
 import json
 from pathlib import Path
-from typing import TextIO
+from typing import Callable, TextIO
 
 from runtime.background import (
     launch_background_daemon,
@@ -42,20 +42,14 @@ def build_daemon_parser() -> argparse.ArgumentParser:
     subparsers = parser.add_subparsers(dest='command', required=True)
 
     start_parser = subparsers.add_parser('start')
-    start_parser.add_argument(
-        '--foreground',
-        action='store_true',
-    )
+    start_parser.add_argument('--foreground', action='store_true')
 
     subparsers.add_parser('stop')
     subparsers.add_parser('restart')
     subparsers.add_parser('metrics')
 
     watchdog_parser = subparsers.add_parser('watchdog')
-    watchdog_parser.add_argument(
-        '--loop',
-        action='store_true',
-    )
+    watchdog_parser.add_argument('--loop', action='store_true')
     watchdog_parser.add_argument(
         '--iterations',
         type=int,
@@ -74,6 +68,11 @@ def run_daemon_cli(
     project_root: Path,
     stdout: TextIO,
     stderr: TextIO,
+    launch_daemon_fn: Callable = launch_background_daemon,
+    stop_daemon_fn: Callable = stop_background_daemon,
+    restart_daemon_fn: Callable = restart_background_daemon_if_needed,
+    run_watchdog_tick_fn: Callable = run_watchdog_tick,
+    run_watchdog_loop_fn: Callable = run_watchdog_loop,
 ) -> int:
     parser = build_daemon_parser()
     args = parser.parse_args(argv)
@@ -81,16 +80,12 @@ def run_daemon_cli(
     runtime = bootstrap_runtime(project_root=project_root)
     supervisor = runtime.supervisor
 
-    daemon_state = RuntimeDaemonStateStore(
-        project_root=project_root,
-    )
+    daemon_state = RuntimeDaemonStateStore(project_root=project_root)
 
     if args.command == 'start':
         try:
             if not args.foreground:
-                launch = launch_background_daemon(
-                    project_root=project_root,
-                )
+                launch = launch_daemon_fn(project_root=project_root)
 
                 stdout.write(f'{STATE_RUNNING}\n')
                 stdout.write(f'pid={launch.pid}\n')
@@ -118,13 +113,10 @@ def run_daemon_cli(
         stdout.write(f'foreground_iterations={result.iterations}\n')
         stdout.write(f'foreground_processed_events={result.processed_events}\n')
         stdout.write(f'foreground_stopped={result.stopped_by_condition}\n')
-
         return 0
 
     if args.command == 'stop':
-        result = stop_background_daemon(
-            project_root=project_root,
-        )
+        result = stop_daemon_fn(project_root=project_root)
 
         stdout.write(f'{STATE_STOPPED}\n')
         stdout.write(f'signaled={result.signaled}\n')
@@ -136,9 +128,7 @@ def run_daemon_cli(
         return 0
 
     if args.command == 'restart':
-        result = restart_background_daemon_if_needed(
-            project_root=project_root,
-        )
+        result = restart_daemon_fn(project_root=project_root)
 
         stdout.write(f'restarted={result.restarted}\n')
 
@@ -152,18 +142,14 @@ def run_daemon_cli(
         return 0
 
     if args.command == 'metrics':
-        metrics = collect_runtime_metrics(
-            project_root=project_root,
-        )
-
+        metrics = collect_runtime_metrics(project_root=project_root)
         stdout.write(json.dumps(metrics.to_record(), indent=2, sort_keys=True))
         stdout.write('\n')
-
         return 0
 
     if args.command == 'watchdog':
         if args.loop:
-            result = run_watchdog_loop(
+            result = run_watchdog_loop_fn(
                 project_root=project_root,
                 max_iterations=args.iterations,
             )
@@ -181,9 +167,7 @@ def run_daemon_cli(
 
             return 0
 
-        result = run_watchdog_tick(
-            project_root=project_root,
-        )
+        result = run_watchdog_tick_fn(project_root=project_root)
         lifecycle_state = map_runtime_health_to_lifecycle_state(
             runtime_state=result.runtime_state,
             health_status=result.health.status,
