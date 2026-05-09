@@ -6,6 +6,7 @@ Related proposal:
 
 - `docs/proposals/ccb-cli-imessage-room.md`
 - `docs/proposals/ccb-cli-imessage-room-todo.md`
+- `docs/proposals/ccb-runtime-test-plan.md`
 
 ---
 
@@ -39,13 +40,14 @@ The system currently supports:
 - reply correlation
 - runtime supervisor skeleton
 - daemon CLI skeleton
+- focused `my_test` runtime validation layer
 - transport synchronization foundation
 
 ---
 
 # Architectural Evolution
 
-The project has evolved through four major phases.
+The project has evolved through five major phases.
 
 ## Phase 1 — CLI Bridge
 
@@ -122,6 +124,22 @@ persistent multi-agent orchestration
 
 ---
 
+## Phase 5 — Runtime Validation Layer
+
+The repository now contains a focused validation layer for the new architecture:
+
+```text
+my_test/
+  helpers/
+  unit/
+  runtime/
+  integration/
+```
+
+This layer is intentionally separate from legacy tests and focuses only on newly added runtime design.
+
+---
+
 # Milestone Completion Status
 
 ## Milestone 1 — Shared Room Event Model
@@ -133,6 +151,13 @@ Implemented:
 ```text
 lib/room/models.py
 lib/room/parser.py
+```
+
+Validation:
+
+```text
+my_test/unit/test_room_models.py
+my_test/unit/test_room_parser.py
 ```
 
 Features:
@@ -157,6 +182,12 @@ Implemented:
 
 ```text
 lib/room/store.py
+```
+
+Validation:
+
+```text
+my_test/unit/test_room_store.py
 ```
 
 Features:
@@ -214,6 +245,12 @@ lib/cli/room.py
 lib/cli/room_cli.py
 ```
 
+Validation:
+
+```text
+my_test/unit/test_room_cli.py
+```
+
 Features:
 
 - send_room_message()
@@ -244,6 +281,15 @@ lib/room/executor.py
 lib/room/stream_executor.py
 ```
 
+Validation:
+
+```text
+my_test/unit/test_room_dispatcher.py
+my_test/unit/test_room_executor.py
+my_test/unit/test_room_stream_executor.py
+my_test/integration/test_stream_delivery_flow.py
+```
+
 Features:
 
 - RoomDispatchRequest
@@ -269,6 +315,13 @@ lib/imessage/sender.py
 lib/imessage/doctor.py
 ```
 
+Validation:
+
+```text
+my_test/unit/test_imessage_sender.py
+my_test/unit/test_imessage_doctor.py
+```
+
 Features:
 
 - AppleScript generation
@@ -276,6 +329,7 @@ Features:
 - dry-run support
 - message chunking
 - doctor checks
+- injectable doctor checks for stable tests
 
 ---
 
@@ -287,6 +341,13 @@ Implemented:
 
 ```text
 lib/room/imessage_delivery.py
+```
+
+Validation:
+
+```text
+my_test/unit/test_room_imessage_delivery.py
+my_test/integration/test_stream_delivery_flow.py
 ```
 
 Features:
@@ -308,6 +369,12 @@ Implemented:
 
 ```text
 lib/imessage/watcher.py
+```
+
+Validation:
+
+```text
+my_test/unit/test_imessage_watcher.py
 ```
 
 Features:
@@ -332,6 +399,13 @@ Implemented:
 lib/room/imessage_dispatch.py
 ```
 
+Validation:
+
+```text
+my_test/unit/test_imessage_dispatch.py
+my_test/integration/test_imessage_dispatch_flow.py
+```
+
 Features:
 
 - iMessage event dispatch
@@ -348,6 +422,13 @@ Implemented:
 
 ```text
 lib/room/imessage_correlation.py
+```
+
+Validation:
+
+```text
+my_test/unit/test_imessage_correlation.py
+my_test/integration/test_imessage_dispatch_flow.py
 ```
 
 Features:
@@ -369,6 +450,12 @@ Implemented:
 lib/runtime/event_loop.py
 ```
 
+Validation:
+
+```text
+my_test/runtime/test_runtime_event_loop.py
+```
+
 Features:
 
 - cursor-driven polling
@@ -386,11 +473,18 @@ Implemented:
 lib/runtime/worker.py
 ```
 
+Validation:
+
+```text
+my_test/runtime/test_runtime_worker_registry.py
+```
+
 Features:
 
 - worker registration
 - event dispatching
 - enable/disable controls
+- fanout semantics
 
 ---
 
@@ -400,6 +494,12 @@ Implemented:
 
 ```text
 lib/runtime/supervisor.py
+```
+
+Validation:
+
+```text
+my_test/runtime/test_runtime_supervisor.py
 ```
 
 Features:
@@ -417,6 +517,12 @@ Implemented:
 
 ```text
 lib/cli/daemon_cli.py
+```
+
+Validation:
+
+```text
+my_test/unit/test_daemon_cli.py
 ```
 
 Supported commands:
@@ -441,6 +547,60 @@ The daemon currently supports:
 - runtime status reporting
 
 Persistent background orchestration is not yet complete.
+
+---
+
+# Runtime Validation Layer
+
+Current test structure:
+
+```text
+my_test/
+  helpers/fake_process.py
+  unit/
+  runtime/
+  integration/
+```
+
+Current focused coverage:
+
+```text
+RoomEvent model
+Room parser
+Room store
+Room dispatcher
+Room executor
+Room stream executor
+iMessage sender
+iMessage doctor
+iMessage watcher
+iMessage delivery
+iMessage correlation
+iMessage dispatch bridge
+Room CLI runner
+iMessage CLI runner
+Daemon CLI runner
+Runtime event loop
+Runtime worker registry
+Runtime supervisor
+Stream-to-delivery flow
+iMessage-to-dispatch flow
+```
+
+This validation layer currently protects:
+
+- event ordering
+- cursor progression
+- duplicate processing prevention
+- duplicate iMessage delivery prevention
+- stream lifecycle correctness
+- callback ordering
+- reply routing
+- transport metadata restoration
+- inbound command filtering
+- worker fanout
+- subprocess lifecycle metadata
+- CLI command entrypoints
 
 ---
 
