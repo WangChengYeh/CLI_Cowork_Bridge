@@ -25,6 +25,7 @@ from runtime.health import (
 
 @dataclass(slots=True)
 class RuntimeWatchdogTickResult:
+    runtime_state: str
     health: RuntimeHealth
     restarted: bool
     restart: BackgroundDaemonRestartResult | None = None
@@ -57,6 +58,7 @@ def run_watchdog_tick(
         RestartBackoffStore(project_root=project_root).reset()
 
         return RuntimeWatchdogTickResult(
+            runtime_state=state.state,
             health=health,
             restarted=False,
             restart=None,
@@ -71,6 +73,7 @@ def run_watchdog_tick(
 
     if not decision.allowed:
         return RuntimeWatchdogTickResult(
+            runtime_state=state.state,
             health=health,
             restarted=False,
             restart=None,
@@ -87,6 +90,7 @@ def run_watchdog_tick(
         backoff_store.record_restart()
 
     return RuntimeWatchdogTickResult(
+        runtime_state=state.state,
         health=health,
         restarted=restart.restarted,
         restart=restart,
