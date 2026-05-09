@@ -91,3 +91,26 @@ class RuntimeLifecycleStateMachine:
 
     def can_transition(self, event: RuntimeLifecycleEvent) -> bool:
         return event in TRANSITIONS.get(self.state, {})
+
+
+def map_runtime_health_to_lifecycle_state(
+    *,
+    runtime_state: str,
+    health_status: str,
+) -> RuntimeLifecycleState:
+    if runtime_state == 'stopped':
+        return RuntimeLifecycleState.STOPPED
+
+    if health_status == 'healthy':
+        return RuntimeLifecycleState.RUNNING
+
+    if health_status == 'stale':
+        return RuntimeLifecycleState.DEGRADED
+
+    if health_status == 'stopped':
+        return RuntimeLifecycleState.STOPPED
+
+    if health_status == 'unknown':
+        return RuntimeLifecycleState.FAILED
+
+    return RuntimeLifecycleState.FAILED
