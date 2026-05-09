@@ -3,6 +3,8 @@ from __future__ import annotations
 from typing import Optional
 
 import os
+import sys
+import subprocess
 from pathlib import Path
 
 from provider_runtime.helper_manifest import load_helper_manifest
@@ -44,6 +46,34 @@ def collect_project_process_candidates(
     if not markers:
         return {}
     candidates: dict[int, list[Path]] = {}
+
+    if sys.platform == 'darwin':
+        try:
+            output = subprocess.check_output(
+                ['ps', '-ax', '-o', 'pid,args'],
+                encoding='utf-8',
+                stderr=subprocess.DEVNULL,
+            )
+            lines = output.splitlines()
+            if len(lines) < 2:
+                return candidates
+            # Skip header "  PID ARGS"
+            for line in lines[1:]:
+                parts = line.strip().split(None, 1)
+                if len(parts) < 2:
+                    continue
+                pid = coerce_pid(parts[0])
+                if pid is None or pid == current_pid:
+                    continue
+                cmdline = parts[1]
+                matched_markers = tuple(marker for marker in markers if str(marker) in cmdline)
+                if not matched_markers:
+                    continue
+                candidates.setdefault(pid, []).extend(matched_markers)
+            return candidates
+        except Exception:
+            return candidates
+
     try:
         entries = list(proc_root.iterdir())
     except Exception:
