@@ -6,6 +6,11 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Callable, Sequence
 
+from runtime.backoff import (
+    RestartBackoffPolicy,
+    RestartBackoffStore,
+    evaluate_restart_backoff,
+)
 from runtime.background import (
     BackgroundDaemonRestartResult,
     restart_background_daemon_if_needed,
@@ -23,6 +28,7 @@ class RuntimeWatchdogTickResult:
     health: RuntimeHealth
     restarted: bool
     restart: BackgroundDaemonRestartResult | None = None
+    backoff_reason: str | None = None
 
 
 @dataclass(slots=True)
@@ -38,6 +44,7 @@ def run_watchdog_tick(
     argv: Sequence[str] | None = None,
     popen_fn: Callable[..., subprocess.Popen] = subprocess.Popen,
     heartbeat_timeout_seconds: int = 60,
+    restart_policy: RestartBackoffPolicy | None = None,
 ) -> RuntimeWatchdogTickResult:
     state_store = RuntimeDaemonStateStore(project_root=project_root)
     state = state_store.read_resolved()
@@ -47,10 +54,27 @@ def run_watchdog_tick(
     )
 
     if health.status == HEALTH_HEALTHY:
+        RestartBackoffStore(project_root=project_root).reset()
+
         return RuntimeWatchdogTickResult(
             health=health,
             restarted=False,
             restart=None,
+            backoff_reason=None,
+        )
+
+    backoff_store = RestartBackoffStore(project_root=project_root)
+    decision = evaluate_restart_backoff(
+        store=backoff_store,
+        policy=restart_policy,
+    )
+
+    if not decision.allowed:
+        return RuntimeWatchdogTickResult(
+            health=health,
+            restarted=False,
+            restart=None,
+            backoff_reason=decision.reason,
         )
 
     restart = restart_background_daemon_if_needed(
@@ -59,10 +83,14 @@ def run_watchdog_tick(
         popen_fn=popen_fn,
     )
 
+    if restart.restarted:
+        backoff_store.record_restart()
+
     return RuntimeWatchdogTickResult(
         health=health,
         restarted=restart.restarted,
         restart=restart,
+        backoff_reason=decision.reason,
     )
 
 
@@ -76,6 +104,7 @@ def run_watchdog_loop(
     max_iterations: int | None = None,
     sleep_fn: Callable[[float], None] = time.sleep,
     should_stop: Callable[[], bool] | None = None,
+    restart_policy: RestartBackoffPolicy | None = None,
 ) -> RuntimeWatchdogLoopResult:
     iterations = 0
     restarts = 0
@@ -90,6 +119,7 @@ def run_watchdog_loop(
             argv=argv,
             popen_fn=popen_fn,
             heartbeat_timeout_seconds=heartbeat_timeout_seconds,
+            restart_policy=restart_policy,
         )
 
         iterations += 1
