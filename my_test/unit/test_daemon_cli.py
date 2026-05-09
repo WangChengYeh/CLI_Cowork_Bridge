@@ -2,6 +2,12 @@ from io import StringIO
 from pathlib import Path
 
 from cli.daemon_cli import run_daemon_cli
+from runtime.background import (
+    BackgroundDaemonRestartResult,
+    BackgroundDaemonStopResult,
+)
+from runtime.health import RuntimeHealth
+from runtime.watchdog import RuntimeWatchdogLoopResult, RuntimeWatchdogTickResult
 
 
 
@@ -67,11 +73,19 @@ def test_daemon_stop_reports_stopped(tmp_path: Path):
     stdout = StringIO()
     stderr = StringIO()
 
+    def fake_stop_daemon(*, project_root):
+        return BackgroundDaemonStopResult(
+            signaled=False,
+            pid=None,
+            reason='not-running',
+        )
+
     result = run_daemon_cli(
         ['stop'],
         project_root=tmp_path,
         stdout=stdout,
         stderr=stderr,
+        stop_daemon_fn=fake_stop_daemon,
     )
 
     output = stdout.getvalue()
@@ -86,11 +100,19 @@ def test_daemon_restart_reports_recovery_state(tmp_path: Path):
     stdout = StringIO()
     stderr = StringIO()
 
+    def fake_restart_daemon(*, project_root):
+        return BackgroundDaemonRestartResult(
+            restarted=False,
+            launch=None,
+            reason='already-running',
+        )
+
     result = run_daemon_cli(
         ['restart'],
         project_root=tmp_path,
         stdout=stdout,
         stderr=stderr,
+        restart_daemon_fn=fake_restart_daemon,
     )
 
     output = stdout.getvalue()
@@ -123,11 +145,23 @@ def test_daemon_watchdog_reports_health(tmp_path: Path):
     stdout = StringIO()
     stderr = StringIO()
 
+    def fake_watchdog_tick(*, project_root):
+        return RuntimeWatchdogTickResult(
+            runtime_state='stopped',
+            health=RuntimeHealth(
+                status='stopped',
+                score=0,
+                reason='not-running',
+            ),
+            restarted=False,
+        )
+
     result = run_daemon_cli(
         ['watchdog'],
         project_root=tmp_path,
         stdout=stdout,
         stderr=stderr,
+        run_watchdog_tick_fn=fake_watchdog_tick,
     )
 
     output = stdout.getvalue()
@@ -143,11 +177,27 @@ def test_daemon_watchdog_loop_reports_iterations(tmp_path: Path):
     stdout = StringIO()
     stderr = StringIO()
 
+    def fake_watchdog_loop(*, project_root, max_iterations):
+        return RuntimeWatchdogLoopResult(
+            iterations=max_iterations,
+            restarts=0,
+            last_tick=RuntimeWatchdogTickResult(
+                runtime_state='stopped',
+                health=RuntimeHealth(
+                    status='stopped',
+                    score=0,
+                    reason='not-running',
+                ),
+                restarted=False,
+            ),
+        )
+
     result = run_daemon_cli(
         ['watchdog', '--loop', '--iterations', '2'],
         project_root=tmp_path,
         stdout=stdout,
         stderr=stderr,
+        run_watchdog_loop_fn=fake_watchdog_loop,
     )
 
     output = stdout.getvalue()
