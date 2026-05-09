@@ -14,6 +14,8 @@ sys.path.insert(0, str(script_dir / "lib"))
 from stdio_runtime import setup_windows_encoding
 from terminal_runtime.backend_env import get_backend_env
 from cli.entrypoint import run_cli_entrypoint
+from cli.imessage_cli import run_imessage_cli
+from cli.room_cli import run_room_cli
 
 setup_windows_encoding()
 
@@ -27,8 +29,26 @@ GIT_DATE = "2026-05-07"
 
 
 def main():
+    argv = sys.argv[1:]
+
+    if argv and argv[0] == "room":
+        return run_room_cli(
+            argv[1:],
+            project_root=Path.cwd(),
+            stdout=sys.stdout,
+            stderr=sys.stderr,
+        )
+
+    if argv and argv[0] == "imessage":
+        return run_imessage_cli(
+            argv[1:],
+            project_root=Path.cwd(),
+            stdout=sys.stdout,
+            stderr=sys.stderr,
+        )
+
     return run_cli_entrypoint(
-        sys.argv[1:],
+        argv,
         version=VERSION,
         script_root=script_dir,
         cwd=Path.cwd(),
