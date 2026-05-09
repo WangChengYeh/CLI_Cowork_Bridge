@@ -1,6 +1,6 @@
 # CCB Room + iMessage Runtime Status
 
-Status snapshot for milestones 1 through 10.
+Status snapshot for milestones 1 through 10 plus runtime integration progress.
 
 Related proposal:
 
@@ -11,7 +11,7 @@ Related proposal:
 
 # Current System State
 
-The repository now contains a functional architectural foundation for:
+The repository now contains a functional runtime foundation for:
 
 ```text
 CLI ↔ RoomEvent Bus ↔ iMessage
@@ -31,12 +31,94 @@ The system currently supports:
 - shared room event model
 - shared parser grammar
 - room event persistence
-- CLI transport helpers
 - dispatcher preparation layer
+- subprocess runtime execution
+- streaming agent output
 - iMessage outbound delivery
 - iMessage inbound watcher
 - reply correlation
+- runtime supervisor skeleton
+- daemon CLI skeleton
 - transport synchronization foundation
+
+---
+
+# Architectural Evolution
+
+The project has evolved through four major phases.
+
+## Phase 1 — CLI Bridge
+
+Original system:
+
+```text
+Human
+  ↓
+ccb ask
+  ↓
+Provider CLI
+```
+
+This phase focused primarily on:
+
+- Codex integration
+- Claude integration
+- Gemini integration
+- tmux coordination
+
+---
+
+## Phase 2 — Shared RoomEvent Bus
+
+The repository evolved into:
+
+```text
+CLI ↔ RoomEvent Bus
+```
+
+with:
+
+- shared events
+- shared parsing
+- event persistence
+- correlation metadata
+
+---
+
+## Phase 3 — Multi-Transport Runtime
+
+The system now supports:
+
+```text
+CLI ↔ RoomEvent Bus ↔ iMessage
+```
+
+including:
+
+- outbound iMessage delivery
+- inbound iMessage parsing
+- transport synchronization
+- correlation bindings
+- delivery policies
+
+---
+
+## Phase 4 — Always-On Runtime Foundation
+
+The repository now contains:
+
+```text
+RuntimeSupervisor
+RuntimeEventLoop
+RuntimeWorkerRegistry
+RoomAskStreamExecutor
+```
+
+This is the beginning of:
+
+```text
+persistent multi-agent orchestration
+```
 
 ---
 
@@ -123,12 +205,13 @@ Shared between:
 
 ## Milestone 4 — CLI Transport Integration
 
-Status: partially completed.
+Status: completed.
 
 Implemented:
 
 ```text
 lib/cli/room.py
+lib/cli/room_cli.py
 ```
 
 Features:
@@ -136,23 +219,29 @@ Features:
 - send_room_message()
 - list_room_events()
 - render_room_events()
+- standalone room CLI
+- room command routing from ccb
 
-Pending:
+Supported commands:
 
-- real CLI entrypoint wiring
-- ccb room subcommands
-- live tail mode
+```bash
+ccb room send
+ccb room events
+ccb room status
+```
 
 ---
 
 ## Milestone 5 — Dispatcher Bridge
 
-Status: foundation completed.
+Status: completed.
 
 Implemented:
 
 ```text
 lib/room/dispatcher.py
+lib/room/executor.py
+lib/room/stream_executor.py
 ```
 
 Features:
@@ -160,13 +249,11 @@ Features:
 - RoomDispatchRequest
 - TASK_SUBMITTED lifecycle events
 - ask argv normalization
-- broadcast detection
-- correlation preparation
-
-Pending:
-
-- real ccb ask runtime execution
-- live agent streaming
+- subprocess runtime execution
+- stdout streaming
+- AGENT_MESSAGE streaming
+- TASK_COMPLETED/TASK_FAILED generation
+- callback-based event emission
 
 ---
 
@@ -209,6 +296,7 @@ Features:
 - dedupe
 - transport delivery events
 - iMessage formatting
+- live stream callback compatibility
 
 ---
 
@@ -271,127 +359,244 @@ Features:
 
 ---
 
-# Remaining Major Work
+# Runtime Supervisor Progress
 
-The architecture layer is now mostly complete.
+## Runtime Event Loop
 
-The remaining work is primarily:
+Implemented:
 
 ```text
-real runtime integration
+lib/runtime/event_loop.py
 ```
+
+Features:
+
+- cursor-driven polling
+- continuous runtime loop
+- event callbacks
+- audit integration
 
 ---
 
-# Remaining Critical Integration Tasks
+## Runtime Worker Registry
 
-## 1. Real ccb ask runtime integration
-
-Currently:
+Implemented:
 
 ```text
-RoomDispatcher
-  ↓
-ask argv preparation
+lib/runtime/worker.py
 ```
 
-Needed:
+Features:
 
-```text
-RoomDispatcher
-  ↓
-actual ccb ask runtime execution
-```
-
-The room layer must invoke the real execution path for:
-
-- Codex
-- Claude
-- Gemini
+- worker registration
+- event dispatching
+- enable/disable controls
 
 ---
 
-## 2. Agent reply streaming
+## Runtime Supervisor
 
-Currently:
-
-```text
-reply events are synthetic helpers
-```
-
-Needed:
+Implemented:
 
 ```text
-real streaming replies
+lib/runtime/supervisor.py
 ```
 
-The runtime should convert live provider output into:
+Features:
 
-- AGENT_MESSAGE
-- TASK_COMPLETED
-- TASK_FAILED
-- APPROVAL_NEEDED
+- shared orchestration layer
+- event loop integration
+- worker registry integration
+- supervisor status reporting
 
 ---
 
-## 3. Real CLI integration
+## Daemon CLI
 
-Currently:
+Implemented:
 
 ```text
-CLI helper module only
+lib/cli/daemon_cli.py
 ```
 
-Needed:
+Supported commands:
 
 ```bash
-ccb room send
-ccb room tail
-ccb room status
-ccb imessage watch
+ccb daemon start
+ccb daemon stop
+ccb daemon status
+ccb daemon poll-once
 ```
 
-wired into the real CLI entrypoint.
+Current status:
+
+```text
+skeleton implementation
+```
+
+The daemon currently supports:
+
+- supervisor creation
+- polling execution
+- runtime status reporting
+
+Persistent background orchestration is not yet complete.
 
 ---
 
-## 4. Background watch mode
+# Current Runtime Topology
+
+The repository now contains the architectural foundation for:
+
+```text
+iPhone
+   ↓
+IMessageWatcher
+   ↓
+RoomEvent Bus
+   ↓
+RuntimeSupervisor
+   ↓
+Dispatch Layer
+   ↓
+Codex / Claude / Gemini
+   ↓
+Streaming Executor
+   ↓
+Delivery Layer
+   ↓
+iPhone
+```
+
+---
+
+# Remaining Critical Work
+
+The repository is now in:
+
+```text
+runtime integration phase
+```
+
+rather than:
+
+```text
+architecture design phase
+```
+
+The remaining work is primarily runtime composition.
+
+---
+
+# Remaining Integration Tasks
+
+## 1. Runtime bootstrap wiring
+
+Needed:
+
+```text
+lib/runtime/bootstrap.py
+```
+
+Responsibilities:
+
+- instantiate supervisor
+- instantiate shared store
+- instantiate shared delivery policy
+- register runtime workers
+- wire callbacks
+- inject dependencies
+
+---
+
+## 2. Real DispatchWorker
+
+Needed:
+
+```text
+lib/runtime/workers/dispatch_worker.py
+```
+
+Responsibilities:
+
+```text
+USER_MESSAGE
+  ↓
+RoomDispatcher
+  ↓
+RoomAskStreamExecutor
+```
+
+---
+
+## 3. Real DeliveryWorker
+
+Needed:
+
+```text
+lib/runtime/workers/delivery_worker.py
+```
+
+Responsibilities:
+
+```text
+AGENT_MESSAGE
+TASK_COMPLETED
+TASK_FAILED
+  ↓
+RoomIMessageDelivery
+```
+
+---
+
+## 4. Real WatchWorker
+
+Needed:
+
+```text
+lib/runtime/workers/imessage_watch_worker.py
+```
+
+Responsibilities:
+
+```text
+chat.db polling
+  ↓
+RoomEvent append
+```
+
+---
+
+## 5. Persistent daemon lifecycle
 
 Currently:
 
 ```text
-manual polling only
+daemon CLI skeleton only
 ```
 
 Needed:
 
 ```text
-persistent watch/daemon mode
-```
-
-Potential future:
-
-```text
-ccbd room supervisor
+blocking forever loop
+background execution
+PID management
+restart recovery
+heartbeat
 ```
 
 ---
 
-## 5. Multi-agent orchestration
+## 6. Parallel orchestration
 
-Currently:
-
-```text
-single-event dispatch preparation
-```
-
-Needed:
+Future work:
 
 ```text
-parallel @all fanout
+@all fanout
+parallel execution
+approval workflows
 agent-to-agent coordination
 shared summaries
-approval workflows
 ```
 
 ---
@@ -401,7 +606,7 @@ approval workflows
 The repository now contains the foundation for:
 
 ```text
-human-in-the-loop
+persistent human-in-the-loop
 multi-agent collaboration runtime
 ```
 
@@ -424,4 +629,14 @@ Claude
 Gemini
 ```
 
-The remaining work is primarily runtime execution integration rather than foundational architecture.
+The repository has evolved beyond:
+
+```text
+CLI bridge
+```
+
+and is now transitioning into:
+
+```text
+always-on multi-agent operating runtime
+```
