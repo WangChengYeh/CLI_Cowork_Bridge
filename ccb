@@ -14,6 +14,7 @@ sys.path.insert(0, str(script_dir / "lib"))
 from stdio_runtime import setup_windows_encoding
 from terminal_runtime.backend_env import get_backend_env
 from cli.entrypoint import run_cli_entrypoint
+from cli.daemon_cli import run_daemon_cli
 from cli.imessage_cli import run_imessage_cli
 from cli.room_cli import run_room_cli
 
@@ -41,6 +42,14 @@ def main():
 
     if argv and argv[0] == "imessage":
         return run_imessage_cli(
+            argv[1:],
+            project_root=Path.cwd(),
+            stdout=sys.stdout,
+            stderr=sys.stderr,
+        )
+
+    if argv and argv[0] == "daemon":
+        return run_daemon_cli(
             argv[1:],
             project_root=Path.cwd(),
             stdout=sys.stdout,
