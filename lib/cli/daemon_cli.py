@@ -4,6 +4,7 @@ import argparse
 from pathlib import Path
 from typing import TextIO
 
+from runtime.background import launch_background_daemon
 from runtime.bootstrap import bootstrap_runtime
 from runtime.daemon_runner import run_runtime_forever
 from runtime.daemon_state import (
@@ -59,6 +60,16 @@ def run_daemon_cli(
 
     if args.command == 'start':
         try:
+            if not args.foreground:
+                launch = launch_background_daemon(
+                    project_root=project_root,
+                )
+
+                stdout.write(f'{STATE_RUNNING}\n')
+                stdout.write(f'pid={launch.pid}\n')
+                stdout.write(f'log_path={launch.log_path}\n')
+                return 0
+
             state = daemon_state.mark_running()
         except RuntimeDaemonAlreadyRunning as error:
             stderr.write(f'{error}\n')
@@ -67,26 +78,25 @@ def run_daemon_cli(
         stdout.write(f'{state.state}\n')
         stdout.write(f'pid={state.pid}\n')
 
-        if args.foreground:
-            stop_flag = RuntimeSignalStopFlag()
-            install_runtime_signal_handlers(stop_flag)
+        stop_flag = RuntimeSignalStopFlag()
+        install_runtime_signal_handlers(stop_flag)
 
-            result = run_runtime_forever(
-                project_root=project_root,
-                bootstrap=runtime,
-                max_iterations=DEFAULT_FOREGROUND_ITERATIONS,
-                should_stop=stop_flag.should_stop,
-            )
+        result = run_runtime_forever(
+            project_root=project_root,
+            bootstrap=runtime,
+            max_iterations=DEFAULT_FOREGROUND_ITERATIONS,
+            should_stop=stop_flag.should_stop,
+        )
 
-            stdout.write(
-                f'foreground_iterations={result.iterations}\n'
-            )
-            stdout.write(
-                f'foreground_processed_events={result.processed_events}\n'
-            )
-            stdout.write(
-                f'foreground_stopped={result.stopped_by_condition}\n'
-            )
+        stdout.write(
+            f'foreground_iterations={result.iterations}\n'
+        )
+        stdout.write(
+            f'foreground_processed_events={result.processed_events}\n'
+        )
+        stdout.write(
+            f'foreground_stopped={result.stopped_by_condition}\n'
+        )
 
         return 0
 
