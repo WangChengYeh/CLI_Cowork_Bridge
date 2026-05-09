@@ -22,6 +22,22 @@ def test_collect_runtime_metrics_aggregates_runtime_state(
 
 
 
+def test_collect_runtime_metrics_exposes_lifecycle_state(
+    tmp_path: Path,
+):
+    metrics = collect_runtime_metrics(
+        project_root=tmp_path,
+    )
+
+    assert metrics.lifecycle_state in {
+        'stopped',
+        'running',
+        'degraded',
+        'failed',
+    }
+
+
+
 def test_collect_runtime_metrics_counts_worker_health(
     tmp_path: Path,
 ):
