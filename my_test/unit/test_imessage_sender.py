@@ -1,7 +1,7 @@
+from imessage.applescript import escape_applescript_string
 from imessage.sender import (
     IMessageSendError,
-    chunk_imessage_text,
-    escape_applescript_string,
+    split_imessage_chunks,
 )
 
 
@@ -18,22 +18,22 @@ def test_escape_applescript_string_handles_backslashes():
     assert '\\\\\\\\' in escaped
 
 
-def test_chunk_imessage_text_splits_long_messages():
-    chunks = chunk_imessage_text('a' * 9000, limit=3000)
+def test_split_imessage_chunks_splits_long_messages():
+    chunks = split_imessage_chunks('a' * 9000, chunk_size=3000)
 
     assert len(chunks) == 3
     assert all(len(chunk) <= 3000 for chunk in chunks)
 
 
-def test_chunk_imessage_text_preserves_short_messages():
-    chunks = chunk_imessage_text('hello world', limit=3000)
+def test_split_imessage_chunks_preserves_short_messages():
+    chunks = split_imessage_chunks('hello world', chunk_size=3000)
 
     assert chunks == ['hello world']
 
 
-def test_chunk_imessage_text_rejects_empty_limit():
+def test_split_imessage_chunks_rejects_empty_limit():
     try:
-        chunk_imessage_text('hello', limit=0)
+        split_imessage_chunks('hello', chunk_size=0)
     except IMessageSendError:
         pass
     else:
