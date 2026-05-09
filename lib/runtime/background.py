@@ -10,6 +10,7 @@ from typing import Callable, Sequence
 
 from runtime.daemon_state import (
     STATE_RUNNING,
+    STATE_STALE,
     RuntimeDaemonStateStore,
 )
 
@@ -25,6 +26,13 @@ class BackgroundDaemonLaunchResult:
 class BackgroundDaemonStopResult:
     signaled: bool
     pid: int | None
+    reason: str | None = None
+
+
+@dataclass(slots=True)
+class BackgroundDaemonRestartResult:
+    restarted: bool
+    launch: BackgroundDaemonLaunchResult | None
     reason: str | None = None
 
 
@@ -109,5 +117,37 @@ def stop_background_daemon(
     return BackgroundDaemonStopResult(
         signaled=True,
         pid=state.pid,
+        reason=None,
+    )
+
+
+def restart_background_daemon_if_needed(
+    *,
+    project_root: Path,
+    argv: Sequence[str] | None = None,
+    popen_fn: Callable[..., subprocess.Popen] = subprocess.Popen,
+) -> BackgroundDaemonRestartResult:
+    state_store = RuntimeDaemonStateStore(project_root=project_root)
+    state = state_store.read_resolved()
+
+    if state.state == STATE_RUNNING:
+        return BackgroundDaemonRestartResult(
+            restarted=False,
+            launch=None,
+            reason=f'daemon already running with pid={state.pid}',
+        )
+
+    if state.state == STATE_STALE:
+        state_store.mark_stopped()
+
+    launch = launch_background_daemon(
+        project_root=project_root,
+        argv=argv,
+        popen_fn=popen_fn,
+    )
+
+    return BackgroundDaemonRestartResult(
+        restarted=True,
+        launch=launch,
         reason=None,
     )
