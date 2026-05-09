@@ -4,7 +4,7 @@ import argparse
 from pathlib import Path
 from typing import TextIO
 
-from runtime.supervisor import RuntimeSupervisor
+from runtime.bootstrap import bootstrap_runtime
 
 
 STATE_STOPPED = 'stopped'
@@ -35,7 +35,8 @@ def run_daemon_cli(
     parser = build_daemon_parser()
     args = parser.parse_args(argv)
 
-    supervisor = RuntimeSupervisor(project_root=project_root)
+    runtime = bootstrap_runtime(project_root=project_root)
+    supervisor = runtime.supervisor
 
     if args.command == 'start':
         stdout.write(f'{STATE_RUNNING}\n')
