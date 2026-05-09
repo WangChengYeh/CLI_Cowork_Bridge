@@ -13,6 +13,7 @@ from runtime.daemon_state import RuntimeDaemonStateStore
 class RuntimeDaemonRunResult:
     iterations: int
     processed_events: int
+    stopped_by_condition: bool = False
 
 
 def run_runtime_forever(
@@ -22,6 +23,7 @@ def run_runtime_forever(
     max_iterations: int | None = None,
     bootstrap: RuntimeBootstrap | None = None,
     sleep_fn: Callable[[float], None] = time.sleep,
+    should_stop: Callable[[], bool] | None = None,
 ) -> RuntimeDaemonRunResult:
     runtime = bootstrap or bootstrap_runtime(project_root=project_root)
     state_store = RuntimeDaemonStateStore(project_root=project_root)
@@ -30,8 +32,13 @@ def run_runtime_forever(
 
     iterations = 0
     processed_events = 0
+    stopped_by_condition = False
 
     while True:
+        if should_stop is not None and should_stop():
+            stopped_by_condition = True
+            break
+
         state_store.heartbeat()
         result = runtime.supervisor.poll_once()
         processed_events += result.processed_events
@@ -46,4 +53,5 @@ def run_runtime_forever(
     return RuntimeDaemonRunResult(
         iterations=iterations,
         processed_events=processed_events,
+        stopped_by_condition=stopped_by_condition,
     )
