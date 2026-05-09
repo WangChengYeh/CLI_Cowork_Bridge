@@ -3,6 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from pathlib import Path
 
+from imessage.watcher import IMessageWatcher
 from room.imessage_delivery import (
     RoomIMessageDelivery,
     RoomIMessageDeliveryPolicy,
@@ -13,6 +14,14 @@ from runtime.supervisor import RuntimeSupervisor
 from runtime.worker import RuntimeWorker
 from runtime.workers.delivery_worker import DeliveryWorker
 from runtime.workers.dispatch_worker import DispatchWorker
+from runtime.workers.imessage_watch_worker import IMessageWatchWorker
+
+
+DEFAULT_PARTICIPANTS = {
+    'codex',
+    'claude',
+    'gemini',
+}
 
 
 @dataclass(slots=True)
@@ -22,13 +31,16 @@ class RuntimeBootstrap:
     supervisor: RuntimeSupervisor
     dispatch_worker: DispatchWorker
     delivery_worker: DeliveryWorker
+    watch_worker: IMessageWatchWorker
     delivery: RoomIMessageDelivery
+    watcher: IMessageWatcher
 
 
 def bootstrap_runtime(
     *,
     project_root: Path,
     enable_imessage: bool = False,
+    imessage_allow_senders: set[str] | None = None,
 ) -> RuntimeBootstrap:
     project_root = Path(project_root)
 
@@ -76,11 +88,32 @@ def bootstrap_runtime(
         )
     )
 
+    watcher = IMessageWatcher(
+        project_root=project_root,
+        allow_senders=imessage_allow_senders or set(),
+        participants=DEFAULT_PARTICIPANTS,
+        store=store,
+    )
+
+    watch_worker = IMessageWatchWorker(
+        watcher=watcher,
+        dry_run=True,
+    )
+
+    supervisor.register_worker(
+        RuntimeWorker(
+            name='imessage-watch-worker',
+            handler=watch_worker.handle,
+        )
+    )
+
     return RuntimeBootstrap(
         project_root=project_root,
         store=store,
         supervisor=supervisor,
         dispatch_worker=dispatch_worker,
         delivery_worker=delivery_worker,
+        watch_worker=watch_worker,
         delivery=delivery,
+        watcher=watcher,
     )
