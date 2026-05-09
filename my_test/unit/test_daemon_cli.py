@@ -99,6 +99,25 @@ def test_daemon_restart_reports_recovery_state(tmp_path: Path):
 
 
 
+def test_daemon_metrics_exports_json(tmp_path: Path):
+    stdout = StringIO()
+    stderr = StringIO()
+
+    result = run_daemon_cli(
+        ['metrics'],
+        project_root=tmp_path,
+        stdout=stdout,
+        stderr=stderr,
+    )
+
+    output = stdout.getvalue()
+
+    assert result == 0
+    assert 'runtime_state' in output
+    assert 'runtime_health' in output
+
+
+
 def test_daemon_watchdog_reports_health(tmp_path: Path):
     stdout = StringIO()
     stderr = StringIO()
