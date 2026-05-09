@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+## v7.0.0 (2026-05-09)
+
+### Daemon & IMessage Enhancements
+
+- **Daemon Start Options**: added `--iterations`, `--imessage`, and `--recipients` to daemon start command for more granular control over runtime lifecycle and notification routing
+- **IMessage Integration**: bootstrapped runtime now supports native iMessage delivery for agent updates and completions
+
 ## v6.0.29 (2026-05-07)
 
 ### WSL Runtime State Relocation
