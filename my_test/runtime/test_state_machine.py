@@ -3,6 +3,7 @@ from runtime.state_machine import (
     RuntimeLifecycleState,
     RuntimeLifecycleStateMachine,
     RuntimeLifecycleTransitionError,
+    map_runtime_health_to_lifecycle_state,
 )
 
 
@@ -71,15 +72,17 @@ def test_runtime_state_machine_stop_flow():
 def test_runtime_state_machine_rejects_invalid_transition():
     machine = RuntimeLifecycleStateMachine()
 
+    raised = False
+
     try:
         machine.transition(
             RuntimeLifecycleEvent.RECOVERED,
         )
 
-        assert False
-
     except RuntimeLifecycleTransitionError:
-        assert True
+        raised = True
+
+    assert raised is True
 
 
 
@@ -93,3 +96,33 @@ def test_runtime_state_machine_can_transition_checks():
     assert machine.can_transition(
         RuntimeLifecycleEvent.RECOVERED,
     ) is False
+
+
+
+def test_map_runtime_health_to_running_state():
+    result = map_runtime_health_to_lifecycle_state(
+        runtime_state='running',
+        health_status='healthy',
+    )
+
+    assert result == RuntimeLifecycleState.RUNNING
+
+
+
+def test_map_runtime_health_to_degraded_state():
+    result = map_runtime_health_to_lifecycle_state(
+        runtime_state='running',
+        health_status='stale',
+    )
+
+    assert result == RuntimeLifecycleState.DEGRADED
+
+
+
+def test_map_runtime_health_to_failed_state():
+    result = map_runtime_health_to_lifecycle_state(
+        runtime_state='running',
+        health_status='unknown',
+    )
+
+    assert result == RuntimeLifecycleState.FAILED
