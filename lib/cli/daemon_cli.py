@@ -80,7 +80,7 @@ def run_daemon_cli(
 
     if args.command == 'status':
         runtime_status = supervisor.status()
-        daemon_runtime_state = daemon_state.read()
+        daemon_runtime_state = daemon_state.read_resolved()
 
         stdout.write(f'state={daemon_runtime_state.state}\n')
         stdout.write(f'pid={daemon_runtime_state.pid}\n')
