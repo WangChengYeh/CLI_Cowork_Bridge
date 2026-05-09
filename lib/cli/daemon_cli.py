@@ -20,7 +20,10 @@ from runtime.signals import (
     RuntimeSignalStopFlag,
     install_runtime_signal_handlers,
 )
-from runtime.watchdog import run_watchdog_tick
+from runtime.watchdog import (
+    run_watchdog_loop,
+    run_watchdog_tick,
+)
 
 
 STATE_STOPPED = 'stopped'
@@ -28,6 +31,7 @@ STATE_RUNNING = 'running'
 
 
 DEFAULT_FOREGROUND_ITERATIONS = 1
+DEFAULT_WATCHDOG_ITERATIONS = 1
 
 
 def build_daemon_parser() -> argparse.ArgumentParser:
@@ -42,7 +46,18 @@ def build_daemon_parser() -> argparse.ArgumentParser:
 
     subparsers.add_parser('stop')
     subparsers.add_parser('restart')
-    subparsers.add_parser('watchdog')
+
+    watchdog_parser = subparsers.add_parser('watchdog')
+    watchdog_parser.add_argument(
+        '--loop',
+        action='store_true',
+    )
+    watchdog_parser.add_argument(
+        '--iterations',
+        type=int,
+        default=DEFAULT_WATCHDOG_ITERATIONS,
+    )
+
     subparsers.add_parser('status')
     subparsers.add_parser('poll-once')
 
@@ -139,6 +154,22 @@ def run_daemon_cli(
         return 0
 
     if args.command == 'watchdog':
+        if args.loop:
+            result = run_watchdog_loop(
+                project_root=project_root,
+                max_iterations=args.iterations,
+            )
+
+            stdout.write(f'watchdog_iterations={result.iterations}\n')
+            stdout.write(f'watchdog_restarts={result.restarts}\n')
+
+            if result.last_tick is not None:
+                stdout.write(
+                    f'health_status={result.last_tick.health.status}\n'
+                )
+
+            return 0
+
         result = run_watchdog_tick(
             project_root=project_root,
         )
