@@ -3,7 +3,7 @@ name = "cli-bridge"
 version = "7.0.0"
 description = "CCB - Agent CLI Hub and Teams"
 readme = "README.md"
-requires-python = ">=3.10"
+requires-python = ">=3.13"
 dependencies = [
     "tomli; python_version < '3.11'",
     "watchdog",
