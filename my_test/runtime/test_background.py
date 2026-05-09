@@ -4,6 +4,7 @@ import pytest
 
 from runtime.background import (
     launch_background_daemon,
+    restart_background_daemon_if_needed,
     stop_background_daemon,
 )
 from runtime.daemon_state import RuntimeDaemonAlreadyRunning
@@ -93,4 +94,39 @@ def test_stop_background_daemon_handles_stopped_runtime(tmp_path: Path):
     )
 
     assert result.signaled is False
+    assert result.reason is not None
+
+
+
+def test_restart_background_daemon_starts_when_stopped(tmp_path: Path):
+    fake_popen = FakePopen()
+
+    result = restart_background_daemon_if_needed(
+        project_root=tmp_path,
+        argv=['ccb'],
+        popen_fn=fake_popen,
+    )
+
+    assert result.restarted is True
+    assert result.launch is not None
+    assert result.launch.pid == 4321
+
+
+
+def test_restart_background_daemon_skips_running_runtime(tmp_path: Path):
+    fake_popen = FakePopen()
+
+    launch_background_daemon(
+        project_root=tmp_path,
+        argv=['ccb'],
+        popen_fn=fake_popen,
+    )
+
+    result = restart_background_daemon_if_needed(
+        project_root=tmp_path,
+        argv=['ccb'],
+        popen_fn=fake_popen,
+    )
+
+    assert result.restarted is False
     assert result.reason is not None
