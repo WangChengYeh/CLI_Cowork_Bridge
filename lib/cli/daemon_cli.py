@@ -33,7 +33,6 @@ STATE_STOPPED = 'stopped'
 STATE_RUNNING = 'running'
 
 
-DEFAULT_FOREGROUND_ITERATIONS = 1
 DEFAULT_WATCHDOG_ITERATIONS = 1
 
 
@@ -43,6 +42,9 @@ def build_daemon_parser() -> argparse.ArgumentParser:
 
     start_parser = subparsers.add_parser('start')
     start_parser.add_argument('--foreground', action='store_true')
+    start_parser.add_argument('--iterations', type=int, default=None)
+    start_parser.add_argument('--imessage', action='store_true')
+    start_parser.add_argument('--recipients', nargs='+', default=[])
 
     subparsers.add_parser('stop')
     subparsers.add_parser('restart')
@@ -77,22 +79,22 @@ def run_daemon_cli(
     parser = build_daemon_parser()
     args = parser.parse_args(argv)
 
-    runtime = bootstrap_runtime(project_root=project_root)
-    supervisor = runtime.supervisor
-
     daemon_state = RuntimeDaemonStateStore(project_root=project_root)
 
     if args.command == 'start':
         try:
             if not args.foreground:
-                launch = launch_daemon_fn(project_root=project_root)
+                launch = launch_daemon_fn(
+                    project_root=project_root,
+                    argv=argv + ['--foreground'],
+                )
 
                 stdout.write(f'{STATE_RUNNING}\n')
                 stdout.write(f'pid={launch.pid}\n')
                 stdout.write(f'log_path={launch.log_path}\n')
                 return 0
 
-            state = daemon_state.mark_running()
+            state = daemon_state.mark_running(force=True)
         except RuntimeDaemonAlreadyRunning as error:
             stderr.write(f'{error}\n')
             return 1
@@ -100,13 +102,25 @@ def run_daemon_cli(
         stdout.write(f'{state.state}\n')
         stdout.write(f'pid={state.pid}\n')
 
+        runtime = bootstrap_runtime(
+            project_root=project_root,
+            enable_imessage=args.imessage,
+            imessage_allow_senders=set(args.recipients),
+        )
+
+        # If we have recipients, we probably want to actually send
+        if args.recipients:
+            runtime.delivery.policy.recipients = args.recipients
+            runtime.delivery_worker.dry_run = False
+            runtime.watch_worker.dry_run = False
+
         stop_flag = RuntimeSignalStopFlag()
         install_runtime_signal_handlers(stop_flag)
 
         result = run_runtime_forever(
             project_root=project_root,
             bootstrap=runtime,
-            max_iterations=DEFAULT_FOREGROUND_ITERATIONS,
+            max_iterations=args.iterations,
             should_stop=stop_flag.should_stop,
         )
 
@@ -184,6 +198,10 @@ def run_daemon_cli(
             stdout.write(f'log_path={result.restart.launch.log_path}\n')
 
         return 0
+
+    # These commands need a supervisor, so we bootstrap a minimal one
+    runtime = bootstrap_runtime(project_root=project_root)
+    supervisor = runtime.supervisor
 
     if args.command == 'status':
         runtime_status = supervisor.status()
