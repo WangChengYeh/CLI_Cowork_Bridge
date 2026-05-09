@@ -134,6 +134,7 @@ def test_daemon_watchdog_reports_health(tmp_path: Path):
 
     assert result == 0
     assert 'health_status=' in output
+    assert 'lifecycle_state=' in output
     assert 'restarted=' in output
 
 
@@ -154,3 +155,4 @@ def test_daemon_watchdog_loop_reports_iterations(tmp_path: Path):
     assert result == 0
     assert 'watchdog_iterations=2' in output
     assert 'watchdog_restarts=' in output
+    assert 'lifecycle_state=' in output
