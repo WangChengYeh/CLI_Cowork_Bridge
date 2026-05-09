@@ -4,7 +4,10 @@ import argparse
 from pathlib import Path
 from typing import TextIO
 
-from runtime.background import launch_background_daemon
+from runtime.background import (
+    launch_background_daemon,
+    stop_background_daemon,
+)
 from runtime.bootstrap import bootstrap_runtime
 from runtime.daemon_runner import run_runtime_forever
 from runtime.daemon_state import (
@@ -101,8 +104,17 @@ def run_daemon_cli(
         return 0
 
     if args.command == 'stop':
-        state = daemon_state.mark_stopped()
-        stdout.write(f'{state.state}\n')
+        result = stop_background_daemon(
+            project_root=project_root,
+        )
+
+        stdout.write(f'{STATE_STOPPED}\n')
+        stdout.write(f'signaled={result.signaled}\n')
+        stdout.write(f'pid={result.pid}\n')
+
+        if result.reason is not None:
+            stdout.write(f'reason={result.reason}\n')
+
         return 0
 
     if args.command == 'status':
