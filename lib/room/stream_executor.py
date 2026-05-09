@@ -3,7 +3,7 @@ from __future__ import annotations
 import subprocess
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Callable, Iterable
+from typing import Callable
 
 from .dispatcher import RoomDispatchRequest
 from .models import RoomEvent, RoomEventType, RoomSource
@@ -30,11 +30,13 @@ class RoomAskStreamExecutor:
         store: RoomEventStore | None = None,
         ccb_path: Path | None = None,
         popen_fn: Callable[..., subprocess.Popen[str]] = subprocess.Popen,
+        on_event: Callable[[RoomEvent], None] | None = None,
     ) -> None:
         self.project_root = project_root
         self.store = store or RoomEventStore(project_root / '.ccb' / 'room')
         self.ccb_path = ccb_path or self._default_ccb_path()
         self.popen_fn = popen_fn
+        self.on_event = on_event
 
     def execute(self, request: RoomDispatchRequest) -> RoomStreamExecutionResult:
         if request.is_broadcast:
@@ -89,6 +91,7 @@ class RoomAskStreamExecutor:
             },
         )
         self.store.append(event)
+        self._emit(event)
         return event
 
     def _append_terminal_event(
@@ -115,7 +118,12 @@ class RoomAskStreamExecutor:
             },
         )
         self.store.append(event)
+        self._emit(event)
         return event
+
+    def _emit(self, event: RoomEvent) -> None:
+        if self.on_event is not None:
+            self.on_event(event)
 
     def _default_ccb_path(self) -> Path:
         candidate = self.project_root / 'ccb'
