@@ -18,11 +18,12 @@ def make_event(index: int) -> RoomEvent:
 
 def test_store_creates_runtime_layout(tmp_path: Path):
     store = RoomEventStore(tmp_path / '.ccb' / 'room')
+    store.ensure_layout()
 
-    assert store.base_path.exists()
-    assert (store.base_path / 'events.jsonl').exists()
-    assert (store.base_path / 'audit.jsonl').exists()
-    assert (store.base_path / 'cursors').exists()
+    assert store.root.exists()
+    assert (store.root / 'events.jsonl').exists()
+    assert (store.root / 'audit.jsonl').exists()
+    assert (store.root / 'cursors').exists()
 
 
 def test_append_and_list_round_trip(tmp_path: Path):

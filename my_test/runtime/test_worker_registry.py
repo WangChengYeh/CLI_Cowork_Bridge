@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from room.models import RoomEvent
+from room.models import RoomEvent, RoomEventType, RoomSource
 from runtime.worker import RuntimeWorker, RuntimeWorkerRegistry
 from runtime.worker_health import (
     RuntimeWorkerHealthStore,
@@ -13,8 +13,11 @@ from runtime.worker_health import (
 def make_event() -> RoomEvent:
     return RoomEvent(
         room_id='room-1',
-        event_type='message',
-        payload={},
+        source=RoomSource.SYSTEM,
+        sender='system',
+        target='you',
+        type=RoomEventType.SYSTEM_MESSAGE,
+        body='poll',
     )
 
 

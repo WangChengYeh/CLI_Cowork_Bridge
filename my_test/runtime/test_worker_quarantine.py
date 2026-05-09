@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
-from room.models import RoomEvent
+from room.models import RoomEvent, RoomEventType, RoomSource
 from runtime.worker import RuntimeWorker, RuntimeWorkerRegistry
 from runtime.worker_quarantine import (
     RuntimeWorkerQuarantinePolicy,
@@ -16,8 +16,11 @@ NOW = datetime(2026, 1, 1, tzinfo=timezone.utc)
 def make_event() -> RoomEvent:
     return RoomEvent(
         room_id='room-1',
-        event_type='message',
-        payload={},
+        source=RoomSource.SYSTEM,
+        sender='system',
+        target='you',
+        type=RoomEventType.SYSTEM_MESSAGE,
+        body='poll',
     )
 
 

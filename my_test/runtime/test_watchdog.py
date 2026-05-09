@@ -1,4 +1,5 @@
 from pathlib import Path
+import pytest
 
 from runtime.background import launch_background_daemon
 from runtime.daemon_state import RuntimeDaemonStateStore
@@ -6,6 +7,12 @@ from runtime.watchdog import (
     run_watchdog_loop,
     run_watchdog_tick,
 )
+
+
+@pytest.fixture
+def mock_pid_exists(monkeypatch):
+    # Mock os.kill to return successfully so pid_exists returns True
+    monkeypatch.setattr('os.kill', lambda pid, signum: None)
 
 
 class FakeProcess:
@@ -29,7 +36,7 @@ class FakePopen:
 
 
 
-def test_watchdog_tick_skips_healthy_runtime(tmp_path: Path):
+def test_watchdog_tick_skips_healthy_runtime(tmp_path: Path, mock_pid_exists):
     fake_popen = FakePopen()
 
     launch_background_daemon(

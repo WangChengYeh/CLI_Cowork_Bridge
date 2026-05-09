@@ -50,6 +50,7 @@ def bootstrap_runtime(
         project_root=project_root,
         store=store,
         event_loop=RuntimeEventLoop(
+            project_root=project_root,
             store=store,
             cursor_name='runtime-supervisor',
         ),

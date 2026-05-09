@@ -42,9 +42,9 @@ def test_stream_output_is_forwarded_to_delivery_callback(tmp_path: Path):
         store=store,
         popen_fn=FakePopen(
             lines=[
-                'Analyzing issue\\n',
-                'Applying patch\\n',
-                'Tests passing\\n',
+                'Analyzing issue\n',
+                'Applying patch\n',
+                'Tests passing\n',
             ],
             returncode=0,
         ),

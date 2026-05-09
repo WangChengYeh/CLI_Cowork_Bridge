@@ -1,8 +1,8 @@
 from pathlib import Path
 
 from room.dispatcher import (
+    RoomDispatcher,
     RoomDispatchError,
-    dispatch_prepare_only,
 )
 from room.models import RoomEvent, RoomEventType, RoomSource
 from room.store import RoomEventStore
@@ -22,14 +22,12 @@ def make_user_event(target: str = 'codex') -> RoomEvent:
 
 def test_dispatch_prepare_only_creates_task_submitted(tmp_path: Path):
     store = RoomEventStore(tmp_path / '.ccb' / 'room')
+    dispatcher = RoomDispatcher(project_root=tmp_path, store=store)
 
     source_event = make_user_event()
     store.append(source_event)
 
-    result = dispatch_prepare_only(
-        source_event,
-        store=store,
-    )
+    result = dispatcher.dispatch_prepare_only(source_event)
 
     submitted = result.submitted_event
 
@@ -40,13 +38,11 @@ def test_dispatch_prepare_only_creates_task_submitted(tmp_path: Path):
 
 def test_dispatch_request_generates_ask_argv(tmp_path: Path):
     store = RoomEventStore(tmp_path / '.ccb' / 'room')
+    dispatcher = RoomDispatcher(project_root=tmp_path, store=store)
 
     source_event = make_user_event()
 
-    result = dispatch_prepare_only(
-        source_event,
-        store=store,
-    )
+    result = dispatcher.dispatch_prepare_only(source_event)
 
     argv = result.request.to_ask_argv()
 
@@ -57,13 +53,11 @@ def test_dispatch_request_generates_ask_argv(tmp_path: Path):
 
 def test_broadcast_request_rejects_single_argv(tmp_path: Path):
     store = RoomEventStore(tmp_path / '.ccb' / 'room')
+    dispatcher = RoomDispatcher(project_root=tmp_path, store=store)
 
     source_event = make_user_event(target='all')
 
-    result = dispatch_prepare_only(
-        source_event,
-        store=store,
-    )
+    result = dispatcher.dispatch_prepare_only(source_event)
 
     try:
         result.request.to_ask_argv()
@@ -75,6 +69,7 @@ def test_broadcast_request_rejects_single_argv(tmp_path: Path):
 
 def test_non_user_message_is_rejected(tmp_path: Path):
     store = RoomEventStore(tmp_path / '.ccb' / 'room')
+    dispatcher = RoomDispatcher(project_root=tmp_path, store=store)
 
     source_event = RoomEvent(
         room_id='default',
@@ -86,10 +81,7 @@ def test_non_user_message_is_rejected(tmp_path: Path):
     )
 
     try:
-        dispatch_prepare_only(
-            source_event,
-            store=store,
-        )
+        dispatcher.dispatch_prepare_only(source_event)
     except RoomDispatchError as exc:
         assert 'USER_MESSAGE' in str(exc)
     else:

@@ -4,7 +4,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Callable
 
-from room.dispatcher import dispatch_prepare_only
+from room.dispatcher import RoomDispatcher
 from room.models import RoomEvent, RoomEventType
 from room.store import RoomEventStore
 from room.stream_executor import RoomAskStreamExecutor
@@ -26,6 +26,10 @@ class DispatchWorker:
     ) -> None:
         self.project_root = Path(project_root)
         self.store = store
+        self.dispatcher = RoomDispatcher(
+            project_root=self.project_root,
+            store=self.store,
+        )
         self.stream_executor_factory = (
             stream_executor_factory or self._default_stream_executor_factory
         )
@@ -37,10 +41,7 @@ class DispatchWorker:
                 streamed_event_count=0,
             )
 
-        dispatch_result = dispatch_prepare_only(
-            event,
-            store=self.store,
-        )
+        dispatch_result = self.dispatcher.dispatch_prepare_only(event)
 
         executor = self.stream_executor_factory(
             project_root=self.project_root,

@@ -40,7 +40,7 @@ class RoomDispatcher:
 
     def build_request(self, event: RoomEvent) -> RoomDispatchRequest:
         if event.type is not RoomEventType.USER_MESSAGE:
-            raise RoomDispatchError(f'unsupported event type for dispatch: {event.type.value}')
+            raise RoomDispatchError(f'unsupported event type for dispatch: {event.type.value} (expected USER_MESSAGE)')
 
         is_broadcast = bool((event.metadata or {}).get('is_broadcast')) or event.target == 'all'
 

@@ -28,7 +28,7 @@ def run_runtime_forever(
     runtime = bootstrap or bootstrap_runtime(project_root=project_root)
     state_store = RuntimeDaemonStateStore(project_root=project_root)
 
-    state_store.mark_running()
+    state_store.mark_running(force=True)
 
     iterations = 0
     processed_events = 0

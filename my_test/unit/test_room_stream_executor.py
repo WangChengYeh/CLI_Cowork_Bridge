@@ -28,9 +28,9 @@ def test_each_stdout_line_becomes_agent_message(tmp_path: Path):
         store=store,
         popen_fn=FakePopen(
             lines=[
-                'Analyzing issue\\n',
-                'Applying patch\\n',
-                'Tests passing\\n',
+                'Analyzing issue\n',
+                'Applying patch\n',
+                'Tests passing\n',
             ],
             returncode=0,
         ),
@@ -56,9 +56,9 @@ def test_blank_stdout_lines_are_ignored(tmp_path: Path):
         store=store,
         popen_fn=FakePopen(
             lines=[
-                '\\n',
-                'Useful output\\n',
-                '   \\n',
+                '\n',
+                'Useful output\n',
+                '   \n',
             ],
             returncode=0,
         ),
@@ -99,8 +99,8 @@ def test_on_event_callback_receives_all_events(tmp_path: Path):
         store=store,
         popen_fn=FakePopen(
             lines=[
-                'step one\\n',
-                'step two\\n',
+                'step one\n',
+                'step two\n',
             ],
             returncode=0,
         ),

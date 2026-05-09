@@ -26,6 +26,7 @@ def test_runtime_polling_flow_preserves_cursor_progression(tmp_path: Path):
         project_root=tmp_path,
         store=store,
         event_loop=RuntimeEventLoop(
+            project_root=tmp_path,
             store=store,
             cursor_name='runtime-supervisor',
         ),
@@ -64,6 +65,7 @@ def test_runtime_polling_flow_processes_new_events_only(tmp_path: Path):
         project_root=tmp_path,
         store=store,
         event_loop=RuntimeEventLoop(
+            project_root=tmp_path,
             store=store,
             cursor_name='runtime-supervisor',
         ),

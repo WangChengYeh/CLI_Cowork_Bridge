@@ -10,6 +10,11 @@ from runtime.background import (
 from runtime.daemon_state import RuntimeDaemonAlreadyRunning
 
 
+@pytest.fixture(autouse=True)
+def mock_pid_exists(monkeypatch):
+    monkeypatch.setattr('os.kill', lambda pid, signum: None)
+
+
 class FakeProcess:
     def __init__(self, pid: int):
         self.pid = pid

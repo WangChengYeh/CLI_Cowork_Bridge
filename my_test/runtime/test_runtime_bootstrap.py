@@ -20,7 +20,7 @@ def test_bootstrap_registers_dispatch_worker(tmp_path: Path):
         project_root=tmp_path,
     )
 
-    workers = runtime.supervisor.worker_registry.workers
+    workers = runtime.supervisor.registry.workers
 
     assert 'dispatch-worker' in workers
 

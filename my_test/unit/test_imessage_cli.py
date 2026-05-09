@@ -19,7 +19,7 @@ def test_imessage_doctor_prints_platform_fields(tmp_path: Path):
     output = stdout.getvalue()
 
     assert result == 0
-    assert 'platform=' in output
+    assert 'platform_supported=' in output
     assert 'osascript_available=' in output
 
 
@@ -30,7 +30,7 @@ def test_imessage_send_dry_run_executes_without_failure(tmp_path: Path):
     result = run_imessage_cli(
         [
             'send',
-            '--recipient',
+            '--to',
             '+886912345678',
             '--message',
             'hello world',

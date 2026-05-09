@@ -1,0 +1,19 @@
+[project]
+name = "cli-bridge"
+version = "0.1.0"
+description = "CCB - Agent CLI Hub and Teams"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "tomli; python_version < '3.11'",
+    "watchdog",
+]
+
+[dependency-groups]
+dev = [
+    "pytest",
+]
+
+[tool.pytest.ini_options]
+pythonpath = ["lib"]
+testpaths = ["my_test", "test"]

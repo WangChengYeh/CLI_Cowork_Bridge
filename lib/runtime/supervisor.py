@@ -22,15 +22,19 @@ class RuntimeSupervisor:
         *,
         project_root: Path,
         store: RoomEventStore | None = None,
+        event_loop: RuntimeEventLoop | None = None,
     ) -> None:
         self.project_root = project_root
         self.store = store or RoomEventStore(project_root / '.ccb' / 'room')
         self.registry = RuntimeWorkerRegistry()
-        self.loop = RuntimeEventLoop(
+        self.loop = event_loop or RuntimeEventLoop(
             project_root=project_root,
             store=self.store,
             on_event=self.registry.dispatch,
         )
+
+        if self.loop.on_event is None:
+            self.loop.on_event = self.registry.dispatch
 
     def register_worker(self, worker: RuntimeWorker) -> None:
         self.registry.register(worker)

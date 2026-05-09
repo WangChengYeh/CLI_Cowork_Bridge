@@ -1,16 +1,17 @@
 import importlib.util
+from importlib.machinery import SourceFileLoader
 from pathlib import Path
 
 
 
 def load_ccb_module(repo_root: Path):
-    spec = importlib.util.spec_from_file_location(
-        'ccb_shim',
-        repo_root / 'ccb',
-    )
+    ccb_path = repo_root / 'ccb'
+    if not ccb_path.exists():
+        raise FileNotFoundError(f'ccb script not found at {ccb_path}')
+
+    loader = SourceFileLoader('ccb_shim', str(ccb_path))
+    spec = importlib.util.spec_from_file_location('ccb_shim', str(ccb_path), loader=loader)
     module = importlib.util.module_from_spec(spec)
-    assert spec is not None
-    assert spec.loader is not None
     spec.loader.exec_module(module)
     return module
 
