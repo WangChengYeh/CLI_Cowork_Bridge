@@ -2,6 +2,7 @@ from pathlib import Path
 
 from runtime.daemon_state import (
     STATE_RUNNING,
+    STATE_STALE,
     STATE_STOPPED,
     RuntimeDaemonStateStore,
 )
@@ -64,3 +65,32 @@ def test_heartbeat_updates_timestamp(tmp_path: Path):
 
     assert updated.heartbeat_at is not None
     assert updated.heartbeat_at >= first
+
+
+
+def test_read_resolved_detects_stale_pid(tmp_path: Path):
+    store = RuntimeDaemonStateStore(
+        project_root=tmp_path,
+        pid_exists_fn=lambda pid: False,
+    )
+
+    store.mark_running(pid=99999)
+
+    resolved = store.read_resolved()
+
+    assert resolved.state == STATE_STALE
+    assert resolved.pid == 99999
+
+
+
+def test_read_resolved_keeps_running_when_pid_exists(tmp_path: Path):
+    store = RuntimeDaemonStateStore(
+        project_root=tmp_path,
+        pid_exists_fn=lambda pid: True,
+    )
+
+    store.mark_running(pid=1234)
+
+    resolved = store.read_resolved()
+
+    assert resolved.state == STATE_RUNNING
