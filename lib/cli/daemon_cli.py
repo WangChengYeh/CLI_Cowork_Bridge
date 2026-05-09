@@ -6,7 +6,10 @@ from typing import TextIO
 
 from runtime.bootstrap import bootstrap_runtime
 from runtime.daemon_runner import run_runtime_forever
-from runtime.daemon_state import RuntimeDaemonStateStore
+from runtime.daemon_state import (
+    RuntimeDaemonAlreadyRunning,
+    RuntimeDaemonStateStore,
+)
 from runtime.signals import (
     RuntimeSignalStopFlag,
     install_runtime_signal_handlers,
@@ -44,8 +47,6 @@ def run_daemon_cli(
     stdout: TextIO,
     stderr: TextIO,
 ) -> int:
-    del stderr
-
     parser = build_daemon_parser()
     args = parser.parse_args(argv)
 
@@ -57,7 +58,12 @@ def run_daemon_cli(
     )
 
     if args.command == 'start':
-        state = daemon_state.mark_running()
+        try:
+            state = daemon_state.mark_running()
+        except RuntimeDaemonAlreadyRunning as error:
+            stderr.write(f'{error}\n')
+            return 1
+
         stdout.write(f'{state.state}\n')
         stdout.write(f'pid={state.pid}\n')
 
