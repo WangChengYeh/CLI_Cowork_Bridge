@@ -310,7 +310,7 @@ function Install-Native {
     # 方法3: GitHub API
     if (-not $commit) {
       try {
-        $api = "https://api.github.com/repos/bfly123/claude_code_bridge/commits/main"
+        $api = "https://api.github.com/repos/WangChengYeh/CLI_Cowork_Bridge/commits/main"
         $response = Invoke-RestMethod -Uri $api -TimeoutSec 5 -ErrorAction Stop
         $commit = $response.sha.Substring(0,7)
         $date = $response.commit.committer.date.Substring(0,10)

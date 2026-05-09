@@ -20,10 +20,10 @@ def _write_project_root(project_dir: Path, work_dir: Path) -> None:
 
 
 def test_capture_state_finds_slugified_suffix_project_hash(tmp_path: Path) -> None:
-    work_dir = tmp_path / "claude_code_bridge"
+    work_dir = tmp_path / "CLI_Cowork_Bridge"
     work_dir.mkdir()
     root = tmp_path / "gemini-root"
-    project_dir = root / "claude-code-bridge-1"
+    project_dir = root / "cli-cowork-bridge-1"
     _write_project_root(project_dir, work_dir)
     session_path = project_dir / "chats" / "session-a.json"
     _write_session(
@@ -43,10 +43,10 @@ def test_capture_state_finds_slugified_suffix_project_hash(tmp_path: Path) -> No
 
 def test_wait_for_message_reads_reply_from_slugified_suffix_project_hash(tmp_path: Path) -> None:
     req_id = "20260222-161452-539-76463-1"
-    work_dir = tmp_path / "claude_code_bridge"
+    work_dir = tmp_path / "CLI_Cowork_Bridge"
     work_dir.mkdir()
     root = tmp_path / "gemini-root"
-    project_dir = root / "claude-code-bridge-1"
+    project_dir = root / "cli-cowork-bridge-1"
     _write_project_root(project_dir, work_dir)
     session_path = project_dir / "chats" / "session-b.json"
 

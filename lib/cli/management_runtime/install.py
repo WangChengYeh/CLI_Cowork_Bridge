@@ -48,7 +48,7 @@ def _windows_install_dir_candidates() -> list[Path]:
     localappdata = os.environ.get("LOCALAPPDATA", "")
     if localappdata:
         candidates.append(Path(localappdata) / "codex-dual")
-        candidates.append(Path(localappdata) / "claude-code-bridge")
+        candidates.append(Path(localappdata) / "cli-cowork-bridge")
     candidates.append(Path.home() / "AppData/Local/codex-dual")
     return candidates
 
