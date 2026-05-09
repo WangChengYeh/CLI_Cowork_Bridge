@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import argparse
+import json
 from pathlib import Path
 from typing import TextIO
 
@@ -16,6 +17,7 @@ from runtime.daemon_state import (
     RuntimeDaemonStateStore,
 )
 from runtime.health import evaluate_runtime_health
+from runtime.metrics import collect_runtime_metrics
 from runtime.signals import (
     RuntimeSignalStopFlag,
     install_runtime_signal_handlers,
@@ -46,6 +48,7 @@ def build_daemon_parser() -> argparse.ArgumentParser:
 
     subparsers.add_parser('stop')
     subparsers.add_parser('restart')
+    subparsers.add_parser('metrics')
 
     watchdog_parser = subparsers.add_parser('watchdog')
     watchdog_parser.add_argument(
@@ -150,6 +153,22 @@ def run_daemon_cli(
 
         if result.reason is not None:
             stdout.write(f'reason={result.reason}\n')
+
+        return 0
+
+    if args.command == 'metrics':
+        metrics = collect_runtime_metrics(
+            project_root=project_root,
+        )
+
+        stdout.write(
+            json.dumps(
+                metrics.to_record(),
+                indent=2,
+                sort_keys=True,
+            )
+        )
+        stdout.write('\n')
 
         return 0
 
