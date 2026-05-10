@@ -23,6 +23,9 @@ DEFAULT_PARTICIPANTS = {
     'codex',
     'claude',
     'gemini',
+    'pm',
+    'writer',
+    'reviewer',
 }
 
 

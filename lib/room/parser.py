@@ -23,6 +23,9 @@ DEFAULT_ALIASES = {
     'code': 'codex',
     'review': 'claude',
     'research': 'gemini',
+    'claude': 'pm',
+    'codex': 'writer',
+    'gemini': 'reviewer',
 }
 
 
