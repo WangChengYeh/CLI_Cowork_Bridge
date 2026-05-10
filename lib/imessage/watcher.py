@@ -84,6 +84,18 @@ def read_inbound_messages(
     return messages
 
 
+def get_max_message_id(db_path: Path) -> int:
+    if not db_path.exists():
+        return 0
+    connection = sqlite3.connect(f'file:{db_path}?mode=ro', uri=True)
+    try:
+        cursor = connection.execute('SELECT MAX(ROWID) FROM message')
+        row = cursor.fetchone()
+        return int(row[0]) if row and row[0] is not None else 0
+    finally:
+        connection.close()
+
+
 class IMessageWatcher:
     def __init__(
         self,
@@ -107,6 +119,14 @@ class IMessageWatcher:
 
     def write_cursor(self, message_id: int) -> None:
         self.store.write_cursor('imessage', message_id)
+
+    def initialize_cursor(self) -> int:
+        existing = self.read_cursor()
+        if existing > 0:
+            return existing
+        max_id = get_max_message_id(self.db_path)
+        self.write_cursor(max_id)
+        return max_id
 
     def poll_once(self, *, limit: int = 500, dry_run: bool = False) -> list[IMessageWatchDecision]:
         after_message_id = self.read_cursor()

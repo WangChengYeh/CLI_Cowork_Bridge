@@ -40,7 +40,7 @@ def test_accept_valid_message(tmp_path: Path):
 
     assert decision.accepted is True
     assert decision.event is not None
-    assert decision.event.target == 'rd'
+    assert decision.event.target == 'codex'
 
     events = store.list_events()
 
@@ -119,3 +119,32 @@ def test_dry_run_does_not_persist(tmp_path: Path):
     events = store.list_events()
 
     assert len(events) == 0
+
+
+def test_initialize_cursor_sets_max_id(tmp_path: Path):
+    import sqlite3
+    db_path = tmp_path / 'chat.db'
+    connection = sqlite3.connect(db_path)
+    connection.execute('CREATE TABLE message (ROWID INTEGER PRIMARY KEY, text TEXT)')
+    connection.execute('INSERT INTO message (text) VALUES ("old 1")')
+    connection.execute('INSERT INTO message (text) VALUES ("old 2")')
+    connection.commit()
+    connection.close()
+
+    store = RoomEventStore(tmp_path / '.ccb' / 'room')
+    watcher = IMessageWatcher(
+        project_root=tmp_path,
+        db_path=db_path,
+        store=store,
+    )
+
+    # Initial state: cursor is 0
+    assert watcher.read_cursor() == 0
+
+    # Initialize: should set to max ID (2)
+    max_id = watcher.initialize_cursor()
+    assert max_id == 2
+    assert watcher.read_cursor() == 2
+
+    # Subsequent calls should not change it
+    assert watcher.initialize_cursor() == 2

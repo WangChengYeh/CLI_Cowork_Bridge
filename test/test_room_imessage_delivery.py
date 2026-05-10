@@ -63,7 +63,7 @@ def test_format_event_for_imessage():
 
     formatted = format_event_for_imessage(event)
 
-    assert 'task_failed' in formatted
+    assert 'Task Failed' in formatted
     assert 'build completed successfully' in formatted
 
 

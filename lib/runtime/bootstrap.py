@@ -94,6 +94,7 @@ def bootstrap_runtime(
         participants=agent_names,
         store=store,
     )
+    watcher.initialize_cursor()
 
     watch_worker = IMessageWatchWorker(
         watcher=watcher,
