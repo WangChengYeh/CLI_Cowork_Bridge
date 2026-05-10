@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import shutil
 import sys
 from pathlib import Path
 from typing import Callable, TextIO
@@ -92,7 +93,10 @@ def run_daemon_cli(
                     background_argv.append('--foreground')
 
                 ccb_path = project_root / 'ccb'
-                if ccb_path.exists():
+                if not ccb_path.exists():
+                    ccb_path = shutil.which('ccb')
+
+                if ccb_path:
                     full_argv = [str(ccb_path), 'daemon'] + background_argv
                 else:
                     full_argv = [sys.executable, '-m', 'cli.daemon_cli'] + background_argv
