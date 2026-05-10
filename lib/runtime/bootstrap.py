@@ -95,10 +95,13 @@ def bootstrap_runtime(
         )
     )
 
+    agents_config = load_project_config(project_root).config.agents
+    agent_names = set(agents_config.keys())
+
     watcher = IMessageWatcher(
         project_root=project_root,
         allow_senders=imessage_allow_senders or set(),
-        participants=DEFAULT_PARTICIPANTS,
+        participants=agent_names,
         store=store,
     )
 

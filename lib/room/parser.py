@@ -19,15 +19,6 @@ class ParsedRoomCommand:
     is_status: bool = False
 
 
-DEFAULT_ALIASES = {
-    'code': 'rd',
-    'review': 'ae',
-    'research': 'ae',
-    'claude': 'pm',
-    'codex': 'rd',
-    'gemini': 'ae',
-    'it': 'ae',
-}
 
 
 def parse_room_command(
