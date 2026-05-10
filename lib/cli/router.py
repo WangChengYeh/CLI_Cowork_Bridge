@@ -75,6 +75,8 @@ def print_start_help(*, file=None) -> None:
 
             Advanced diagnostics:
               ccb ps | ccb logs <agent> | ccb doctor
+              ccb imessage {send,doctor,watch}
+              ccb daemon {start,stop,restart,status,metrics}
               ccb version | ccb update | ccb uninstall | ccb reinstall
             """
         ).strip(),
@@ -165,6 +167,23 @@ _COMMAND_HELP = {
 
         Config validation:
           ccb config validate   Validate `.ccb/ccb.config` for the current project.
+    """,
+    "imessage": """
+        usage: ccb imessage {send,doctor,watch} ...
+
+        iMessage integration:
+          ccb imessage send --to <recipient> --message <text>
+          ccb imessage doctor   Check platform and Full Disk Access status.
+          ccb imessage watch    Manually poll for inbound messages.
+    """,
+    "daemon": """
+        usage: ccb daemon {start,stop,restart,status,metrics,watchdog} ...
+
+        Background runtime control:
+          ccb daemon start [--imessage] [--recipients +1234...]
+          ccb daemon stop      Stop the background daemon.
+          ccb daemon status    Show daemon health and PID.
+          ccb daemon metrics   Export runtime performance metrics.
     """,
 }
 

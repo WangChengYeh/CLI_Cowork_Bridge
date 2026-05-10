@@ -43,8 +43,11 @@ def _is_start_help(tokens: list[str]) -> bool:
 
 def _command_help_name(tokens: list[str]) -> Optional[str]:
     visible = _strip_global_project_tokens(tokens)
-    if len(visible) == 2 and visible[1] in {"-h", "--help"}:
-        return visible[0]
+    if len(visible) == 2:
+        if visible[1] in {"-h", "--help"}:
+            return visible[0]
+        if visible[0] == "help":
+            return visible[1]
     return None
 
 
