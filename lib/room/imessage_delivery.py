@@ -21,7 +21,6 @@ class RoomIMessageDeliveryPolicy:
     notify_on: set[RoomEventType] = field(
         default_factory=lambda: {
             RoomEventType.AGENT_MESSAGE,
-            RoomEventType.TASK_COMPLETED,
             RoomEventType.TASK_FAILED,
             RoomEventType.APPROVAL_NEEDED,
         }
@@ -56,6 +55,16 @@ def should_deliver_to_imessage(event: RoomEvent, policy: RoomIMessageDeliveryPol
 
 
 def format_event_for_imessage(event: RoomEvent) -> str:
+    if event.type is RoomEventType.AGENT_MESSAGE:
+        # Simple body for agent replies (no technical headers)
+        return event.body
+
+    if event.type is RoomEventType.TASK_FAILED:
+        return f'❌ Task Failed: {event.sender}\n{event.body}'
+
+    if event.type is RoomEventType.APPROVAL_NEEDED:
+        return f'⚠️ Approval Needed: {event.sender}\n{event.body}'
+
     return f'[{event.type.value}] {event.sender} → {event.target}\n{event.body}'
 
 
