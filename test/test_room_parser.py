@@ -1,7 +1,7 @@
 from lib.room.parser import RoomCommandError, parse_room_command
 
 
-PARTICIPANTS = {'codex', 'claude', 'gemini'}
+PARTICIPANTS = {'codex', 'claude', 'gemini', 'pm', 'writer', 'reviewer'}
 
 
 def test_parse_codex_message():
@@ -11,8 +11,24 @@ def test_parse_codex_message():
     )
 
     assert result.command == 'message'
-    assert result.target == 'codex'
+    assert result.target == 'writer'
     assert result.body == 'fix failing tests'
+
+
+def test_parse_alias_claude_to_pm():
+    result = parse_room_command(
+        '@claude summarize',
+        participants=PARTICIPANTS,
+    )
+    assert result.target == 'pm'
+
+
+def test_parse_alias_gemini_to_reviewer():
+    result = parse_room_command(
+        '@gemini audit',
+        participants=PARTICIPANTS,
+    )
+    assert result.target == 'reviewer'
 
 
 def test_parse_alias_review():
