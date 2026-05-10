@@ -22,11 +22,26 @@ def trust_claude_workspace(*, home_root: Path, workspace_path: Path) -> Path:
     layout = claude_layout_for_home(Path(home_root).expanduser())
     data = _load_settings(layout.trust_path)
     key = workspace_key(workspace_path)
+    
+    # Old-style trust record at root level
     record = data.get(key)
     if not isinstance(record, dict):
         record = {}
     record['hasTrustDialogAccepted'] = True
     data[key] = record
+
+    # New-style trust record in 'projects' section
+    projects = data.get('projects')
+    if not isinstance(projects, dict):
+        projects = {}
+    data['projects'] = projects
+    
+    project_record = projects.get(key)
+    if not isinstance(project_record, dict):
+        project_record = {}
+    project_record['hasTrustDialogAccepted'] = True
+    projects[key] = project_record
+
     save_json(layout.trust_path, data)
     return layout.trust_path
 

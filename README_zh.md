@@ -63,11 +63,19 @@
 
 <img src="assets/readme_previews/video2.gif" alt="任意终端窗口协作演示" width="900">
 
-<img src="assets/readme_previews/video1.gif" alt="融合vscode使用" width="900">
+<img src="assets/readme_previews/video1.gif" alt="VS Code 集成演示" width="900">
+
+</details>
+
+<details>
+<summary><b>iMessage Bridge (iMessage 桥接)</b></summary>
+
+<img src="assets/imessage_bridge.png" alt="iMessage Bridge 演示" width="900">
 
 </details>
 
 </div>
+
 
 ## 最新亮点
 

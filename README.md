@@ -67,6 +67,13 @@ Build project-local teams with roles, pane layout, provider state, worktree isol
 
 </details>
 
+<details>
+<summary><b>iMessage Bridge</b></summary>
+
+<img src="assets/imessage_bridge.png" alt="iMessage Bridge demo" width="900">
+
+</details>
+
 </div>
 
 ## What's New
