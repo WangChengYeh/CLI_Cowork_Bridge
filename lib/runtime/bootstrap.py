@@ -24,8 +24,8 @@ DEFAULT_PARTICIPANTS = {
     'claude',
     'gemini',
     'pm',
-    'writer',
-    'reviewer',
+    'rd',
+    'ae',
 }
 
 

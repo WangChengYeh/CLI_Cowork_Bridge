@@ -378,7 +378,7 @@ provider backend 最多只应拥有：
 - tmux / WezTerm 标题生成由 shared terminal/pane 层统一调用
 - provider backend 只提供 `display_name` 或 `agent_name`，不自己拼 provider-first title
 
-也就是说，像 `CCB-codex` 这种 provider-first 标题应彻底退出主路径，替换为基于 agent name 的标题，例如 `CCB-writer`。
+也就是说，像 `CCB-codex` 这种 provider-first 标题应彻底退出主路径，替换为基于 agent name 的标题，例如 `CCB-rd`。
 
 ## 10. 迁移顺序
 

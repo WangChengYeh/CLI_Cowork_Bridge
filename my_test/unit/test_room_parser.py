@@ -1,7 +1,7 @@
 from room.parser import RoomCommandError, parse_room_command
 
 
-PARTICIPANTS = {'codex', 'claude', 'gemini', 'pm', 'writer', 'reviewer'}
+PARTICIPANTS = {'codex', 'claude', 'gemini', 'pm', 'rd', 'ae'}
 
 
 def test_parse_codex_command():
@@ -10,7 +10,7 @@ def test_parse_codex_command():
         participants=PARTICIPANTS,
     )
 
-    assert parsed.target == 'writer'
+    assert parsed.target == 'rd'
     assert parsed.body == 'fix failing tests'
     assert parsed.command == 'message'
 
@@ -37,12 +37,12 @@ def test_parse_status_command():
 
 
 def test_aliases_are_normalized():
-    assert parse_room_command('@code fix', participants=PARTICIPANTS).target == 'writer'
-    assert parse_room_command('@review diff', participants=PARTICIPANTS).target == 'pm'
-    assert parse_room_command('@research api', participants=PARTICIPANTS).target == 'reviewer'
+    assert parse_room_command('@code fix', participants=PARTICIPANTS).target == 'rd'
+    assert parse_room_command('@review diff', participants=PARTICIPANTS).target == 'ae'
+    assert parse_room_command('@research api', participants=PARTICIPANTS).target == 'ae'
     assert parse_room_command('@claude summarize', participants=PARTICIPANTS).target == 'pm'
-    assert parse_room_command('@gemini audit', participants=PARTICIPANTS).target == 'reviewer'
-    assert parse_room_command('@codex start', participants=PARTICIPANTS).target == 'writer'
+    assert parse_room_command('@gemini audit', participants=PARTICIPANTS).target == 'ae'
+    assert parse_room_command('@codex start', participants=PARTICIPANTS).target == 'rd'
 
 
 def test_unknown_participant_raises():

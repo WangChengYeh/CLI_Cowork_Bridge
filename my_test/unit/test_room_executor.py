@@ -23,7 +23,7 @@ def make_request() -> RoomDispatchRequest:
 def test_successful_subprocess_returns_completed(tmp_path: Path):
     store = RoomEventStore(tmp_path / '.ccb' / 'room')
 
-    executor = RoomAskExecutor(
+    rd = RoomAskExecutor(
         project_root=tmp_path,
         store=store,
         run_fn=FakeRun(
@@ -32,7 +32,7 @@ def test_successful_subprocess_returns_completed(tmp_path: Path):
         ),
     )
 
-    result = executor.execute(make_request())
+    result = rd.execute(make_request())
 
     assert result.returncode == 0
     assert result.event.type is RoomEventType.TASK_COMPLETED
@@ -42,7 +42,7 @@ def test_successful_subprocess_returns_completed(tmp_path: Path):
 def test_failed_subprocess_returns_failed(tmp_path: Path):
     store = RoomEventStore(tmp_path / '.ccb' / 'room')
 
-    executor = RoomAskExecutor(
+    rd = RoomAskExecutor(
         project_root=tmp_path,
         store=store,
         run_fn=FakeRun(
@@ -51,14 +51,14 @@ def test_failed_subprocess_returns_failed(tmp_path: Path):
         ),
     )
 
-    result = executor.execute(make_request())
+    result = rd.execute(make_request())
 
     assert result.returncode == 1
     assert result.event.type is RoomEventType.TASK_FAILED
     assert 'provider crashed' in result.event.body
 
 
-def test_executor_metadata_contains_process_fields(tmp_path: Path):
+def test_rd_metadata_contains_process_fields(tmp_path: Path):
     store = RoomEventStore(tmp_path / '.ccb' / 'room')
 
     fake_run = FakeRun(
@@ -66,13 +66,13 @@ def test_executor_metadata_contains_process_fields(tmp_path: Path):
         stdout='done',
     )
 
-    executor = RoomAskExecutor(
+    rd = RoomAskExecutor(
         project_root=tmp_path,
         store=store,
         run_fn=fake_run,
     )
 
-    result = executor.execute(make_request())
+    result = rd.execute(make_request())
 
     metadata = result.event.metadata
 

@@ -309,7 +309,7 @@ v2 仍沿用项目级配置入口：
 推荐写法：
 
 ```text
-writer:codex,reviewer:claude
+rd:codex,ae:claude
 ```
 
 带 cmd pane 的示例：

@@ -134,7 +134,7 @@ init_git_repo() {
 write_mixed_config() {
   local project="$1"
   cat >"${project}/.ccb/ccb.config" <<'EOF'
-writer:codex,reviewer:claude,analyst:gemini
+rd:codex,ae:claude,analyst:gemini
 EOF
 }
 
@@ -151,7 +151,7 @@ EOF
 write_cross_project_config() {
   local project="$1"
   cat >"${project}/.ccb/ccb.config" <<'EOF'
-writer:codex,reviewer:gemini
+rd:codex,ae:gemini
 EOF
 }
 
@@ -423,12 +423,12 @@ check_reply_flow() {
 check_broadcast_excludes_sender() {
   local project="$1"
   local out
-  out="$(ask_all_jobs "${project}" "writer" "broadcast-pass")" || {
+  out="$(ask_all_jobs "${project}" "rd" "broadcast-pass")" || {
     fail "broadcast submit"
     return
   }
   printf '%s\n' "${out}" >"${project}/broadcast.out"
-  if extract_job_pairs "${out}" | awk '$2 == "writer" { found = 1 } END { exit(found ? 0 : 1) }'; then
+  if extract_job_pairs "${out}" | awk '$2 == "rd" { found = 1 } END { exit(found ? 0 : 1) }'; then
     fail "broadcast excludes sender"
     return
   fi
@@ -469,21 +469,21 @@ run_mixed_matrix() {
     fail "mixed project start"
     return
   fi
-  check_agent_binding "${project}" "writer" "codex"
-  check_agent_binding "${project}" "reviewer" "claude"
+  check_agent_binding "${project}" "rd" "codex"
+  check_agent_binding "${project}" "ae" "claude"
   check_agent_binding "${project}" "analyst" "gemini"
-  check_agent_ping "${project}" "writer" "codex"
-  check_agent_ping "${project}" "reviewer" "claude"
+  check_agent_ping "${project}" "rd" "codex"
+  check_agent_ping "${project}" "ae" "claude"
   check_agent_ping "${project}" "analyst" "gemini"
-  check_workspace_binding "${project}" "writer"
-  check_workspace_binding "${project}" "reviewer"
+  check_workspace_binding "${project}" "rd"
+  check_workspace_binding "${project}" "ae"
   check_workspace_binding "${project}" "analyst"
-  check_tmux_title "writer"
-  check_tmux_title "reviewer"
+  check_tmux_title "rd"
+  check_tmux_title "ae"
   check_tmux_title "analyst"
-  check_reply_flow "${project}" "writer" "user" "mixed-codex" "mixed writer"
-  check_reply_flow "${project}" "reviewer" "writer" "mixed-claude" "mixed reviewer"
-  check_reply_flow "${project}" "analyst" "reviewer" "mixed-gemini" "mixed analyst"
+  check_reply_flow "${project}" "rd" "user" "mixed-codex" "mixed rd"
+  check_reply_flow "${project}" "ae" "rd" "mixed-claude" "mixed ae"
+  check_reply_flow "${project}" "analyst" "ae" "mixed-gemini" "mixed analyst"
   check_broadcast_excludes_sender "${project}"
 }
 
@@ -589,18 +589,18 @@ run_cross_project_matrix() {
   fi
 
   local job_a job_b reply_a reply_b pend_a pend_b
-  job_a="$(ask_job "${project_a}" "writer" "user" "project-a")" || {
+  job_a="$(ask_job "${project_a}" "rd" "user" "project-a")" || {
     fail "cross-project ask A"
     return
   }
-  job_b="$(ask_job "${project_b}" "writer" "user" "project-b")" || {
+  job_b="$(ask_job "${project_b}" "rd" "user" "project-b")" || {
     fail "cross-project ask B"
     return
   }
   reply_a="$(watch_reply "${project_a}" "${job_a}")" || reply_a=""
   reply_b="$(watch_reply "${project_b}" "${job_b}")" || reply_b=""
-  pend_a="$(pend_reply "${project_a}" "writer")" || pend_a=""
-  pend_b="$(pend_reply "${project_b}" "writer")" || pend_b=""
+  pend_a="$(pend_reply "${project_a}" "rd")" || pend_a=""
+  pend_b="$(pend_reply "${project_b}" "rd")" || pend_b=""
   if [ -n "${reply_a}" ] && [ -n "${reply_b}" ] && [ "${reply_a}" != "${reply_b}" ]; then
     ok "cross-project distinct replies"
   else

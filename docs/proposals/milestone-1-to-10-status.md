@@ -621,7 +621,7 @@ Dispatch Layer
    ↓
 Codex / Claude / Gemini
    ↓
-Streaming Executor
+Streaming RD
    ↓
 Delivery Layer
    ↓

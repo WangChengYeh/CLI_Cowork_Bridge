@@ -3,7 +3,7 @@ name: file-op
 description: Execute FileOpsREQ protocol requests. Handles autoflow domain ops for .ccb/ state management.
 ---
 
-# FileOps Executor (Codex Side)
+# FileOps RD (Codex Side)
 
 You receive FileOpsREQ JSON from Claude and must return FileOpsRES JSON only. No markdown, no prose.
 

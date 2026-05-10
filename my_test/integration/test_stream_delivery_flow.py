@@ -37,7 +37,7 @@ def test_stream_output_is_forwarded_to_delivery_callback(tmp_path: Path):
 
     fake_delivery = FakeDelivery()
 
-    executor = RoomAskStreamExecutor(
+    rd = RoomAskStreamExecutor(
         project_root=tmp_path,
         store=store,
         popen_fn=FakePopen(
@@ -51,7 +51,7 @@ def test_stream_output_is_forwarded_to_delivery_callback(tmp_path: Path):
         on_event=fake_delivery.deliver,
     )
 
-    result = executor.execute(make_request())
+    result = rd.execute(make_request())
 
     assert result.returncode == 0
     assert len(fake_delivery.events) == 4
@@ -67,7 +67,7 @@ def test_failed_stream_produces_failed_terminal_event(tmp_path: Path):
 
     fake_delivery = FakeDelivery()
 
-    executor = RoomAskStreamExecutor(
+    rd = RoomAskStreamExecutor(
         project_root=tmp_path,
         store=store,
         popen_fn=FakePopen(
@@ -77,7 +77,7 @@ def test_failed_stream_produces_failed_terminal_event(tmp_path: Path):
         on_event=fake_delivery.deliver,
     )
 
-    result = executor.execute(make_request())
+    result = rd.execute(make_request())
 
     assert result.returncode == 1
     assert fake_delivery.events[-1].type.name == 'TASK_FAILED'

@@ -29,16 +29,16 @@ Interpret `FileOpsRES`:
 
 ### 1.5 Resolve Roles Config
 
-Goal: support `reviewer` / `designer` routing.
+Goal: support `ae` / `designer` routing.
 
 Two-layer resolution:
 
-1. **CLAUDE.md Role Assignment table** (primary): Read the Role Assignment table from CLAUDE.md context. The `reviewer` and `designer` roles map to providers.
+1. **CLAUDE.md Role Assignment table** (primary): Read the Role Assignment table from CLAUDE.md context. The `ae` and `designer` roles map to providers.
 2. **`.autoflow/roles.json`** (override): If this file exists in the repo, and `enabled == true` and `schemaVersion == 1`, use its fields to override.
 
 Default roles:
-- `executor = "codex"`
-- `reviewer = "codex"`
+- `rd = "codex"`
+- `ae = "codex"`
 - `designer = ["claude", "codex"]`
 
 Implementation detail: Claude must not read repo files directly; request reads via `/file-op` (`read_file`) and parse JSON locally.
@@ -128,11 +128,11 @@ Send the constructed FileOpsREQ via `/file-op`:
 
 (`/file-op` handles routing to Codex via `ask --async codex`)
 
-### 6. Execute (Executor Routing)
+### 6. Execute (RD Routing)
 
-- If `executor == "codex"`:
+- If `rd == "codex"`:
   - Codex directly executes FileOpsREQ operations and returns FileOpsRES.
-- If `executor == "opencode"`:
+- If `rd == "opencode"`:
   - Codex uses the canonical `ask` skill to call the configured OpenCode agent.
   - Codex acts as supervisor:
     - Translate FileOpsREQ ops into OpenCode-friendly instructions

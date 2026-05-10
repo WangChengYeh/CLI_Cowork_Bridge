@@ -28,8 +28,8 @@ def test_named_agent_load_session_does_not_fallback_to_primary() -> None:
     assert calls == ['agent1']
 
     calls.clear()
-    assert load_gemini_session(_loader, work_dir, agent_name='reviewer') is None
-    assert calls == ['reviewer']
+    assert load_gemini_session(_loader, work_dir, agent_name='ae') is None
+    assert calls == ['ae']
 
     calls.clear()
     assert load_opencode_session(work_dir, agent_name='builder', primary_agent='opencode', load_project_session_fn=_loader) is None

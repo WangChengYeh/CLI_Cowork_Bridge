@@ -1,8 +1,8 @@
 ---
 name: all-plan
-description: Collaborative planning using abstract roles (designer + inspiration + reviewer).
+description: Collaborative planning using abstract roles (designer + inspiration + ae).
 metadata:
-  short-description: designer plans + inspiration brainstorms + reviewer scores
+  short-description: designer plans + inspiration brainstorms + ae scores
 ---
 
 # All Plan (Droid Version)
@@ -13,7 +13,7 @@ Highlights:
 - 5-Dimension requirement clarification (retained)
 - `inspiration` brainstorming for creative/aesthetic ideas
 - `designer` creates the full plan independently
-- `reviewer` scores the plan using Rubric A (must pass >= 7.0)
+- `ae` scores the plan using Rubric A (must pass >= 7.0)
 - Auto-correction loop (max 3 rounds)
 
 For full instructions, see `references/flow.md`

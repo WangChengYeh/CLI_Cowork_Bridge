@@ -107,7 +107,7 @@ RoomEvent Bus
       ↓
 Runtime Supervisor
       ↓
-Dispatcher / Stream Executor
+Dispatcher / Stream RD
       ↓
 Delivery Policy
       ↓
@@ -398,7 +398,7 @@ Cases:
 
 ---
 
-## Room Executor
+## Room RD
 
 Target file:
 
@@ -421,7 +421,7 @@ Cases:
 
 ---
 
-## Room Stream Executor
+## Room Stream RD
 
 Target file:
 
@@ -1007,7 +1007,7 @@ This plan creates a focused stability layer for the newly added design:
 ```text
 RoomEvent Bus
 Dispatcher
-Streaming Executor
+Streaming RD
 iMessage Transport
 Delivery Policy
 Runtime Supervisor

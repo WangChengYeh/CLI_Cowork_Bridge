@@ -33,13 +33,13 @@ def _spec(name: str, provider: str) -> AgentSpec:
 
 def test_claude_restore_prefers_project_session_work_dir(monkeypatch, tmp_path: Path) -> None:
     project_root = tmp_path / 'repo'
-    runtime_dir = project_root / '.ccb' / 'agents' / 'reviewer' / 'provider-runtime' / 'claude'
-    workspace_path = project_root / '.ccb' / 'workspaces' / 'reviewer'
+    runtime_dir = project_root / '.ccb' / 'agents' / 'ae' / 'provider-runtime' / 'claude'
+    workspace_path = project_root / '.ccb' / 'workspaces' / 'ae'
     runtime_dir.mkdir(parents=True)
     workspace_path.mkdir(parents=True)
-    managed_home = project_root / '.ccb' / 'agents' / 'reviewer' / 'provider-state' / 'claude' / 'home'
+    managed_home = project_root / '.ccb' / 'agents' / 'ae' / 'provider-state' / 'claude' / 'home'
 
-    session_path = project_root / '.ccb' / '.claude-reviewer-session'
+    session_path = project_root / '.ccb' / '.claude-ae-session'
     session_path.parent.mkdir(parents=True, exist_ok=True)
     session_path.write_text(
         json.dumps(
@@ -64,7 +64,7 @@ def test_claude_restore_prefers_project_session_work_dir(monkeypatch, tmp_path: 
     monkeypatch.setattr(claude_launcher.Path, 'home', lambda: tmp_path / 'ignored-home')
 
     target = claude_launcher._resolve_claude_restore_target(
-        spec=_spec('reviewer', 'claude'),
+        spec=_spec('ae', 'claude'),
         runtime_dir=runtime_dir,
         workspace_path=workspace_path,
         restore=True,
@@ -76,11 +76,11 @@ def test_claude_restore_prefers_project_session_work_dir(monkeypatch, tmp_path: 
 
 def test_claude_restore_uses_runtime_managed_home_for_fresh_agent(monkeypatch, tmp_path: Path) -> None:
     project_root = tmp_path / 'repo'
-    runtime_dir = project_root / '.ccb' / 'agents' / 'reviewer' / 'provider-runtime' / 'claude'
-    workspace_path = project_root / '.ccb' / 'workspaces' / 'reviewer'
+    runtime_dir = project_root / '.ccb' / 'agents' / 'ae' / 'provider-runtime' / 'claude'
+    workspace_path = project_root / '.ccb' / 'workspaces' / 'ae'
     runtime_dir.mkdir(parents=True)
     workspace_path.mkdir(parents=True)
-    managed_home = project_root / '.ccb' / 'agents' / 'reviewer' / 'provider-state' / 'claude' / 'home'
+    managed_home = project_root / '.ccb' / 'agents' / 'ae' / 'provider-state' / 'claude' / 'home'
     project_dir = managed_home / '.claude' / 'projects' / ''.join(ch if ch.isalnum() else '-' for ch in str(workspace_path))
     session_env_root = managed_home / '.claude' / 'session-env'
     project_dir.mkdir(parents=True)
@@ -91,7 +91,7 @@ def test_claude_restore_uses_runtime_managed_home_for_fresh_agent(monkeypatch, t
     monkeypatch.setattr(claude_launcher.Path, 'home', lambda: tmp_path / 'ignored-home')
 
     target = claude_launcher._resolve_claude_restore_target(
-        spec=_spec('reviewer', 'claude'),
+        spec=_spec('ae', 'claude'),
         runtime_dir=runtime_dir,
         workspace_path=workspace_path,
         restore=True,
@@ -103,14 +103,14 @@ def test_claude_restore_uses_runtime_managed_home_for_fresh_agent(monkeypatch, t
 
 def test_gemini_restore_prefers_project_session_work_dir(monkeypatch, tmp_path: Path) -> None:
     project_root = tmp_path / 'repo'
-    runtime_dir = project_root / '.ccb' / 'agents' / 'reviewer' / 'provider-runtime' / 'gemini'
-    workspace_path = project_root / '.ccb' / 'workspaces' / 'reviewer'
+    runtime_dir = project_root / '.ccb' / 'agents' / 'ae' / 'provider-runtime' / 'gemini'
+    workspace_path = project_root / '.ccb' / 'workspaces' / 'ae'
     runtime_dir.mkdir(parents=True)
     workspace_path.mkdir(parents=True)
-    managed_home = project_root / '.ccb' / 'agents' / 'reviewer' / 'provider-state' / 'gemini' / 'home'
+    managed_home = project_root / '.ccb' / 'agents' / 'ae' / 'provider-state' / 'gemini' / 'home'
     managed_root = managed_home / '.gemini' / 'tmp'
 
-    session_path = project_root / '.ccb' / '.gemini-reviewer-session'
+    session_path = project_root / '.ccb' / '.gemini-ae-session'
     session_path.parent.mkdir(parents=True, exist_ok=True)
     session_path.write_text(
         json.dumps(
@@ -132,7 +132,7 @@ def test_gemini_restore_prefers_project_session_work_dir(monkeypatch, tmp_path: 
     monkeypatch.setenv('GEMINI_ROOT', str(tmp_path / 'ignored-root'))
 
     target = gemini_launcher._resolve_gemini_restore_target(
-        spec=_spec('reviewer', 'gemini'),
+        spec=_spec('ae', 'gemini'),
         runtime_dir=runtime_dir,
         workspace_path=workspace_path,
         restore=True,
@@ -144,11 +144,11 @@ def test_gemini_restore_prefers_project_session_work_dir(monkeypatch, tmp_path: 
 
 def test_gemini_restore_uses_runtime_managed_home_for_fresh_agent(monkeypatch, tmp_path: Path) -> None:
     project_root = tmp_path / 'repo'
-    runtime_dir = project_root / '.ccb' / 'agents' / 'reviewer' / 'provider-runtime' / 'gemini'
-    workspace_path = project_root / '.ccb' / 'workspaces' / 'reviewer'
+    runtime_dir = project_root / '.ccb' / 'agents' / 'ae' / 'provider-runtime' / 'gemini'
+    workspace_path = project_root / '.ccb' / 'workspaces' / 'ae'
     runtime_dir.mkdir(parents=True)
     workspace_path.mkdir(parents=True)
-    managed_home = project_root / '.ccb' / 'agents' / 'reviewer' / 'provider-state' / 'gemini' / 'home'
+    managed_home = project_root / '.ccb' / 'agents' / 'ae' / 'provider-state' / 'gemini' / 'home'
     managed_root = managed_home / '.gemini' / 'tmp'
     project_hash = hashlib.sha256(str(workspace_path).encode()).hexdigest()
     chats_dir = managed_root / project_hash / 'chats'
@@ -157,7 +157,7 @@ def test_gemini_restore_uses_runtime_managed_home_for_fresh_agent(monkeypatch, t
     monkeypatch.setenv('GEMINI_ROOT', str(tmp_path / 'ignored-root'))
 
     target = gemini_launcher._resolve_gemini_restore_target(
-        spec=_spec('reviewer', 'gemini'),
+        spec=_spec('ae', 'gemini'),
         runtime_dir=runtime_dir,
         workspace_path=workspace_path,
         restore=True,
@@ -169,13 +169,13 @@ def test_gemini_restore_uses_runtime_managed_home_for_fresh_agent(monkeypatch, t
 
 def test_claude_build_start_cmd_skips_continue_without_history(monkeypatch, tmp_path: Path) -> None:
     home_dir = tmp_path / 'home'
-    runtime_dir = tmp_path / 'repo' / '.ccb' / 'agents' / 'reviewer' / 'provider-runtime' / 'claude'
+    runtime_dir = tmp_path / 'repo' / '.ccb' / 'agents' / 'ae' / 'provider-runtime' / 'claude'
     runtime_dir.mkdir(parents=True)
     monkeypatch.setattr(claude_launcher.Path, 'home', lambda: home_dir)
 
     cmd = claude_launcher.build_start_cmd(
-        ParsedStartCommand(project=None, agent_names=('reviewer',), restore=True, auto_permission=False),
-        _spec('reviewer', 'claude'),
+        ParsedStartCommand(project=None, agent_names=('ae',), restore=True, auto_permission=False),
+        _spec('ae', 'claude'),
         runtime_dir,
         'launch-1',
     )
@@ -184,12 +184,12 @@ def test_claude_build_start_cmd_skips_continue_without_history(monkeypatch, tmp_
 
 
 def test_gemini_build_start_cmd_skips_resume_without_history(tmp_path: Path) -> None:
-    runtime_dir = tmp_path / 'repo' / '.ccb' / 'agents' / 'reviewer' / 'provider-runtime' / 'gemini'
+    runtime_dir = tmp_path / 'repo' / '.ccb' / 'agents' / 'ae' / 'provider-runtime' / 'gemini'
     runtime_dir.mkdir(parents=True)
 
     cmd = gemini_launcher.build_start_cmd(
-        ParsedStartCommand(project=None, agent_names=('reviewer',), restore=True, auto_permission=False),
-        _spec('reviewer', 'gemini'),
+        ParsedStartCommand(project=None, agent_names=('ae',), restore=True, auto_permission=False),
+        _spec('ae', 'gemini'),
         runtime_dir,
         'launch-1',
     )
@@ -198,9 +198,9 @@ def test_gemini_build_start_cmd_skips_resume_without_history(tmp_path: Path) -> 
 
 
 def test_gemini_build_start_cmd_ignores_ambient_global_history_for_fresh_agent(monkeypatch, tmp_path: Path) -> None:
-    runtime_dir = tmp_path / 'repo' / '.ccb' / 'agents' / 'reviewer' / 'provider-runtime' / 'gemini'
+    runtime_dir = tmp_path / 'repo' / '.ccb' / 'agents' / 'ae' / 'provider-runtime' / 'gemini'
     runtime_dir.mkdir(parents=True)
-    workspace_path = tmp_path / 'repo' / '.ccb' / 'workspaces' / 'reviewer'
+    workspace_path = tmp_path / 'repo' / '.ccb' / 'workspaces' / 'ae'
     workspace_path.mkdir(parents=True)
 
     ambient_root = tmp_path / 'ambient-gemini-root'
@@ -211,8 +211,8 @@ def test_gemini_build_start_cmd_ignores_ambient_global_history_for_fresh_agent(m
     monkeypatch.setenv('GEMINI_ROOT', str(ambient_root))
 
     cmd = gemini_launcher.build_start_cmd(
-        ParsedStartCommand(project=None, agent_names=('reviewer',), restore=True, auto_permission=False),
-        _spec('reviewer', 'gemini'),
+        ParsedStartCommand(project=None, agent_names=('ae',), restore=True, auto_permission=False),
+        _spec('ae', 'gemini'),
         runtime_dir,
         'launch-1',
     )
@@ -253,19 +253,19 @@ def test_session_file_for_runtime_dir_follows_relocated_runtime_anchor(
         ),
         encoding='utf-8',
     )
-    runtime_dir = relocated_root / 'agents' / 'reviewer' / 'provider-runtime' / provider
+    runtime_dir = relocated_root / 'agents' / 'ae' / 'provider-runtime' / provider
     runtime_dir.mkdir(parents=True, exist_ok=True)
 
-    expected = anchor / f'.{provider}-reviewer-session'
+    expected = anchor / f'.{provider}-ae-session'
 
     assert session_paths_module.find_project_ccb_dir(runtime_dir) == anchor
     assert session_paths_module.session_file_for_runtime_dir(runtime_dir) == expected
 
 
 def test_claude_build_start_cmd_ignores_non_managed_persisted_home(monkeypatch, tmp_path: Path) -> None:
-    runtime_dir = tmp_path / 'repo' / '.ccb' / 'agents' / 'reviewer' / 'provider-runtime' / 'claude'
+    runtime_dir = tmp_path / 'repo' / '.ccb' / 'agents' / 'ae' / 'provider-runtime' / 'claude'
     runtime_dir.mkdir(parents=True)
-    session_path = tmp_path / 'repo' / '.ccb' / '.claude-reviewer-session'
+    session_path = tmp_path / 'repo' / '.ccb' / '.claude-ae-session'
     legacy_home = tmp_path / 'legacy-home'
     session_path.parent.mkdir(parents=True, exist_ok=True)
     session_path.write_text(
@@ -282,25 +282,25 @@ def test_claude_build_start_cmd_ignores_non_managed_persisted_home(monkeypatch, 
     monkeypatch.setattr(claude_launcher.Path, 'home', lambda: tmp_path / 'ignored-home')
 
     cmd = claude_launcher.build_start_cmd(
-        ParsedStartCommand(project=None, agent_names=('reviewer',), restore=False, auto_permission=False),
-        _spec('reviewer', 'claude'),
+        ParsedStartCommand(project=None, agent_names=('ae',), restore=False, auto_permission=False),
+        _spec('ae', 'claude'),
         runtime_dir,
         'launch-1',
     )
 
-    expected_home = tmp_path / 'repo' / '.ccb' / 'agents' / 'reviewer' / 'provider-state' / 'claude' / 'home'
+    expected_home = tmp_path / 'repo' / '.ccb' / 'agents' / 'ae' / 'provider-state' / 'claude' / 'home'
     assert f'HOME={expected_home}' in cmd
 
 
 def test_claude_restore_ignores_non_managed_project_session_home(monkeypatch, tmp_path: Path) -> None:
     project_root = tmp_path / 'repo'
-    runtime_dir = project_root / '.ccb' / 'agents' / 'reviewer' / 'provider-runtime' / 'claude'
-    workspace_path = project_root / '.ccb' / 'workspaces' / 'reviewer'
+    runtime_dir = project_root / '.ccb' / 'agents' / 'ae' / 'provider-runtime' / 'claude'
+    workspace_path = project_root / '.ccb' / 'workspaces' / 'ae'
     runtime_dir.mkdir(parents=True)
     workspace_path.mkdir(parents=True)
     legacy_home = tmp_path / 'legacy-home'
 
-    session_path = project_root / '.ccb' / '.claude-reviewer-session'
+    session_path = project_root / '.ccb' / '.claude-ae-session'
     session_path.parent.mkdir(parents=True, exist_ok=True)
     session_path.write_text(
         json.dumps(
@@ -324,7 +324,7 @@ def test_claude_restore_ignores_non_managed_project_session_home(monkeypatch, tm
     monkeypatch.setattr(claude_launcher.Path, 'home', lambda: tmp_path / 'ignored-home')
 
     target = claude_launcher._resolve_claude_restore_target(
-        spec=_spec('reviewer', 'claude'),
+        spec=_spec('ae', 'claude'),
         runtime_dir=runtime_dir,
         workspace_path=workspace_path,
         restore=True,
@@ -336,12 +336,12 @@ def test_claude_restore_ignores_non_managed_project_session_home(monkeypatch, tm
 def test_claude_build_start_cmd_skips_continue_when_restore_disabled_even_with_history(monkeypatch, tmp_path: Path) -> None:
     home_dir = tmp_path / 'home'
     project_root = tmp_path / 'repo'
-    runtime_dir = project_root / '.ccb' / 'agents' / 'reviewer' / 'provider-runtime' / 'claude'
-    workspace_path = project_root / '.ccb' / 'workspaces' / 'reviewer'
+    runtime_dir = project_root / '.ccb' / 'agents' / 'ae' / 'provider-runtime' / 'claude'
+    workspace_path = project_root / '.ccb' / 'workspaces' / 'ae'
     runtime_dir.mkdir(parents=True)
     workspace_path.mkdir(parents=True)
 
-    session_path = project_root / '.ccb' / '.claude-reviewer-session'
+    session_path = project_root / '.ccb' / '.claude-ae-session'
     session_path.parent.mkdir(parents=True, exist_ok=True)
     session_path.write_text(
         json.dumps({'work_dir': str(workspace_path), 'claude_session_id': 'claude-sess-1'}, ensure_ascii=False),
@@ -358,8 +358,8 @@ def test_claude_build_start_cmd_skips_continue_when_restore_disabled_even_with_h
     monkeypatch.setattr(claude_launcher.Path, 'home', lambda: home_dir)
 
     cmd = claude_launcher.build_start_cmd(
-        ParsedStartCommand(project=None, agent_names=('reviewer',), restore=False, auto_permission=True, reset_context=True),
-        _spec('reviewer', 'claude'),
+        ParsedStartCommand(project=None, agent_names=('ae',), restore=False, auto_permission=True, reset_context=True),
+        _spec('ae', 'claude'),
         runtime_dir,
         'launch-1',
     )
@@ -372,8 +372,8 @@ def test_claude_restore_ignores_project_root_history_for_ccb_managed_workspace(
 ) -> None:
     home_dir = tmp_path / 'home'
     project_root = tmp_path / 'repo'
-    runtime_dir = project_root / '.ccb' / 'agents' / 'reviewer' / 'provider-runtime' / 'claude'
-    workspace_path = project_root / '.ccb' / 'workspaces' / 'reviewer'
+    runtime_dir = project_root / '.ccb' / 'agents' / 'ae' / 'provider-runtime' / 'claude'
+    workspace_path = project_root / '.ccb' / 'workspaces' / 'ae'
     runtime_dir.mkdir(parents=True)
     workspace_path.mkdir(parents=True)
     (workspace_path / '.ccb-workspace.json').write_text(
@@ -384,7 +384,7 @@ def test_claude_restore_ignores_project_root_history_for_ccb_managed_workspace(
                 'workspace_path': str(workspace_path),
                 'target_project': str(project_root),
                 'project_id': 'demo-project',
-                'agent_name': 'reviewer',
+                'agent_name': 'ae',
             },
             ensure_ascii=False,
             indent=2,
@@ -402,7 +402,7 @@ def test_claude_restore_ignores_project_root_history_for_ccb_managed_workspace(
     monkeypatch.setattr(claude_launcher.Path, 'home', lambda: home_dir)
 
     target = claude_launcher._resolve_claude_restore_target(
-        spec=_spec('reviewer', 'claude'),
+        spec=_spec('ae', 'claude'),
         runtime_dir=runtime_dir,
         workspace_path=workspace_path,
         restore=True,
@@ -415,7 +415,7 @@ def test_claude_restore_ignores_project_root_history_for_ccb_managed_workspace(
 def test_claude_history_locator_tracks_actual_pwd_fallback_directory(monkeypatch, tmp_path: Path) -> None:
     home_dir = tmp_path / 'home'
     project_root = tmp_path / 'repo'
-    workspace_path = project_root / '.ccb' / 'workspaces' / 'reviewer'
+    workspace_path = project_root / '.ccb' / 'workspaces' / 'ae'
     workspace_path.mkdir(parents=True)
 
     project_dir = home_dir / '.claude' / 'projects' / ''.join(ch if ch.isalnum() else '-' for ch in str(project_root))
@@ -443,12 +443,12 @@ def test_claude_history_locator_tracks_actual_pwd_fallback_directory(monkeypatch
 
 def test_gemini_build_start_cmd_skips_resume_when_restore_disabled_even_with_history(monkeypatch, tmp_path: Path) -> None:
     project_root = tmp_path / 'repo'
-    runtime_dir = project_root / '.ccb' / 'agents' / 'reviewer' / 'provider-runtime' / 'gemini'
-    workspace_path = project_root / '.ccb' / 'workspaces' / 'reviewer'
+    runtime_dir = project_root / '.ccb' / 'agents' / 'ae' / 'provider-runtime' / 'gemini'
+    workspace_path = project_root / '.ccb' / 'workspaces' / 'ae'
     runtime_dir.mkdir(parents=True)
     workspace_path.mkdir(parents=True)
 
-    session_path = project_root / '.ccb' / '.gemini-reviewer-session'
+    session_path = project_root / '.ccb' / '.gemini-ae-session'
     session_path.parent.mkdir(parents=True, exist_ok=True)
     session_path.write_text(
         json.dumps({'work_dir': str(workspace_path), 'gemini_session_id': 'gemini-sess-1'}, ensure_ascii=False),
@@ -463,8 +463,8 @@ def test_gemini_build_start_cmd_skips_resume_when_restore_disabled_even_with_his
     monkeypatch.setenv('GEMINI_ROOT', str(gemini_root))
 
     cmd = gemini_launcher.build_start_cmd(
-        ParsedStartCommand(project=None, agent_names=('reviewer',), restore=False, auto_permission=True, reset_context=True),
-        _spec('reviewer', 'gemini'),
+        ParsedStartCommand(project=None, agent_names=('ae',), restore=False, auto_permission=True, reset_context=True),
+        _spec('ae', 'gemini'),
         runtime_dir,
         'launch-1',
     )

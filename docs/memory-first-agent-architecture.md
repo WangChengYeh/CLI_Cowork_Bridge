@@ -27,7 +27,7 @@ A comprehensive design for AI agent systems where memory becomes the core and mo
 |------|------|----------------|-----------------|
 | **A** | Memory Keeper | Global memory maintenance | Long-term, persistent, cross-session |
 | **B** | Context Builder | Short-term memory + context assembly | Real-time, session-scoped, orchestrator |
-| **C** | Executor | Task execution | Stateless, pure function, focused execution |
+| **C** | RD | Task execution | Stateless, pure function, focused execution |
 
 ### Optional Extension: Add a Mid-Term "Task Memory" Role (T)
 
@@ -81,7 +81,7 @@ Mapping to the `tp/tr` workflow:
 │                    Input ↓   ↑ Output                               │
 │                             │                                       │
 │  ┌──────────────────────────┴───────────────────────────────────┐   │
-│  │                    C: Executor                                │   │
+│  │                    C: RD                                │   │
 │  │                                                              │   │
 │  │  Responsibilities:                                           │   │
 │  │  - Receive assembled context                                 │   │
@@ -368,7 +368,7 @@ During Idle / Session End
 |------|-------------------|
 | **A (Memory Keeper)** | Claude / Codex / Dedicated Memory Agent |
 | **B (Context Builder)** | Claude Code (current session) - natural orchestrator |
-| **C (Executor)** | Codex / Gemini / OpenCode / Claude API |
+| **C (RD)** | Codex / Gemini / OpenCode / Claude API |
 
 ## 10. Key Insights
 

@@ -46,13 +46,13 @@ def test_execute_success(tmp_path: Path):
     store = RoomEventStore(tmp_path / '.ccb' / 'room')
     fake_run = FakeRun(returncode=0, stdout='task completed')
 
-    executor = RoomAskExecutor(
+    rd = RoomAskExecutor(
         project_root=tmp_path,
         store=store,
         run_fn=fake_run,
     )
 
-    result = executor.execute(make_request())
+    result = rd.execute(make_request())
 
     assert result.returncode == 0
     assert result.event.type is RoomEventType.TASK_COMPLETED
@@ -66,13 +66,13 @@ def test_execute_failure(tmp_path: Path):
     store = RoomEventStore(tmp_path / '.ccb' / 'room')
     fake_run = FakeRun(returncode=1, stderr='provider failed')
 
-    executor = RoomAskExecutor(
+    rd = RoomAskExecutor(
         project_root=tmp_path,
         store=store,
         run_fn=fake_run,
     )
 
-    result = executor.execute(make_request())
+    result = rd.execute(make_request())
 
     assert result.returncode == 1
     assert result.event.type is RoomEventType.TASK_FAILED

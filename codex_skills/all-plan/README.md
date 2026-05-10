@@ -20,7 +20,7 @@ Example:
 1. **Requirement Clarification** - 5-Dimension readiness model, structured Q&A
 2. **Inspiration Brainstorming** - Creative ideas from `inspiration` (reference only)
 3. **Design** - `designer` creates the full plan, integrating adopted ideas
-4. **Scored Review** - `reviewer` scores using Rubric A (must pass >= 7.0)
+4. **Scored Review** - `ae` scores using Rubric A (must pass >= 7.0)
 5. **Final Output** - Actionable plan saved to `plans/` directory
 
 ## Roles Used
@@ -29,7 +29,7 @@ Example:
 |------|---------------|
 | `designer` | Primary planner, owns the plan |
 | `inspiration` | Creative consultant (unreliable, user decides) |
-| `reviewer` | Quality gate (Rubric A, per-dimension scoring) |
+| `ae` | Quality gate (Rubric A, per-dimension scoring) |
 
 Roles resolve to providers via CLAUDE.md `CCB_ROLES` table.
 

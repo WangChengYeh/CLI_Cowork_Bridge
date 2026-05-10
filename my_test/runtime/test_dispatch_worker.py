@@ -5,7 +5,7 @@ from room.store import RoomEventStore
 from runtime.workers.dispatch_worker import DispatchWorker
 
 
-class FakeStreamExecutor:
+class FakeStreamRD:
     def __init__(self, **kwargs):
         self.calls = []
 
@@ -36,7 +36,7 @@ def test_dispatch_worker_executes_user_message(tmp_path: Path):
     worker = DispatchWorker(
         project_root=tmp_path,
         store=store,
-        stream_executor_factory=FakeStreamExecutor,
+        stream_executor_factory=FakeStreamRD,
     )
 
     event = make_event()
@@ -54,7 +54,7 @@ def test_non_user_message_is_ignored(tmp_path: Path):
     worker = DispatchWorker(
         project_root=tmp_path,
         store=store,
-        stream_executor_factory=FakeStreamExecutor,
+        stream_executor_factory=FakeStreamRD,
     )
 
     event = RoomEvent(

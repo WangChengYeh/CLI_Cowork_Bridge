@@ -618,8 +618,8 @@ def test_ensure_agent_runtime_resumes_named_codex_session_by_agent_name(monkeypa
 def test_ensure_agent_runtime_launches_named_gemini_session(monkeypatch, tmp_path: Path) -> None:
     project_root = tmp_path / 'repo-gemini'
     (project_root / '.ccb').mkdir(parents=True)
-    ctx = _context(project_root, ParsedStartCommand(project=None, agent_names=('reviewer',), restore=True, auto_permission=True))
-    spec = _spec('reviewer', provider='gemini')
+    ctx = _context(project_root, ParsedStartCommand(project=None, agent_names=('ae',), restore=True, auto_permission=True))
+    spec = _spec('ae', provider='gemini')
     plan = WorkspacePlanner().plan(spec, ctx.project)
     plan.workspace_path.mkdir(parents=True, exist_ok=True)
 
@@ -654,32 +654,32 @@ def test_ensure_agent_runtime_launches_named_gemini_session(monkeypatch, tmp_pat
     assert result.launched is True
     assert result.binding is not None
     assert result.binding.runtime_ref == 'tmux:%55'
-    expected_session = project_root / '.ccb' / '.gemini-reviewer-session'
+    expected_session = project_root / '.ccb' / '.gemini-ae-session'
     assert result.binding.session_ref == str(expected_session)
     payload = json.loads(expected_session.read_text(encoding='utf-8'))
-    assert payload['agent_name'] == 'reviewer'
+    assert payload['agent_name'] == 'ae'
     assert payload['ccb_project_id'] == ctx.project.project_id
-    assert payload['completion_artifact_dir'] == str(ctx.paths.agent_dir('reviewer') / 'provider-runtime' / 'gemini' / 'completion')
-    assert payload['pane_title_marker'].startswith('CCB-reviewer-')
+    assert payload['completion_artifact_dir'] == str(ctx.paths.agent_dir('ae') / 'provider-runtime' / 'gemini' / 'completion')
+    assert payload['pane_title_marker'].startswith('CCB-ae-')
     assert payload['pane_id'] == '%55'
     assert payload['work_dir'] == str(resume_dir)
     _assert_caller_env_exports(
         payload['start_cmd'],
-        actor='reviewer',
-        runtime_dir=ctx.paths.agent_dir('reviewer') / 'provider-runtime' / 'gemini',
+        actor='ae',
+        runtime_dir=ctx.paths.agent_dir('ae') / 'provider-runtime' / 'gemini',
         session_id=payload['ccb_session_id'],
     )
     assert payload['start_cmd'].endswith('gemini --yolo --resume latest')
     assert tmux_state['cwd'] == str(resume_dir)
-    assert tmux_state['title'] == ('%55', 'reviewer')
+    assert tmux_state['title'] == ('%55', 'ae')
     assert tmux_state['user_option'] == ('%55', '@ccb_project_id', ctx.project.project_id)
 
 
 def test_ensure_agent_runtime_launches_named_claude_session(monkeypatch, tmp_path: Path) -> None:
     project_root = tmp_path / 'repo-claude'
     (project_root / '.ccb').mkdir(parents=True)
-    ctx = _context(project_root, ParsedStartCommand(project=None, agent_names=('reviewer',), restore=True, auto_permission=True))
-    spec = _spec('reviewer', provider='claude')
+    ctx = _context(project_root, ParsedStartCommand(project=None, agent_names=('ae',), restore=True, auto_permission=True))
+    spec = _spec('ae', provider='claude')
     plan = WorkspacePlanner().plan(spec, ctx.project)
     plan.workspace_path.mkdir(parents=True, exist_ok=True)
 
@@ -722,36 +722,36 @@ def test_ensure_agent_runtime_launches_named_claude_session(monkeypatch, tmp_pat
     assert result.launched is True
     assert result.binding is not None
     assert result.binding.runtime_ref == 'tmux:%44'
-    expected_session = project_root / '.ccb' / '.claude-reviewer-session'
+    expected_session = project_root / '.ccb' / '.claude-ae-session'
     assert result.binding.session_ref == str(expected_session)
     payload = json.loads(expected_session.read_text(encoding='utf-8'))
-    expected_claude_home = ctx.paths.agent_provider_state_dir('reviewer', 'claude') / 'home'
-    assert payload['agent_name'] == 'reviewer'
+    expected_claude_home = ctx.paths.agent_provider_state_dir('ae', 'claude') / 'home'
+    assert payload['agent_name'] == 'ae'
     assert payload['ccb_project_id'] == ctx.project.project_id
-    assert payload['completion_artifact_dir'] == str(ctx.paths.agent_dir('reviewer') / 'provider-runtime' / 'claude' / 'completion')
+    assert payload['completion_artifact_dir'] == str(ctx.paths.agent_dir('ae') / 'provider-runtime' / 'claude' / 'completion')
     assert payload['claude_home'] == str(expected_claude_home)
     assert payload['claude_projects_root'] == str(expected_claude_home / '.claude' / 'projects')
     assert payload['claude_session_env_root'] == str(expected_claude_home / '.claude' / 'session-env')
-    assert payload['pane_title_marker'].startswith('CCB-reviewer-')
+    assert payload['pane_title_marker'].startswith('CCB-ae-')
     assert payload['pane_id'] == '%44'
     assert payload['work_dir'] == str(resume_dir)
-    assert payload['ccb_session_id'].startswith('ccb-reviewer-')
+    assert payload['ccb_session_id'].startswith('ccb-ae-')
     assert tmux_state['cwd'] == str(resume_dir)
     assert payload['start_cmd'].startswith('unset ANTHROPIC_BASE_URL; ')
     assert f'HOME={shlex.quote(str(expected_claude_home))}' in payload['start_cmd']
     assert f'CLAUDE_PROJECTS_ROOT={shlex.quote(str(expected_claude_home / ".claude" / "projects"))}' in payload['start_cmd']
     _assert_caller_env_exports(
         payload['start_cmd'],
-        actor='reviewer',
-        runtime_dir=ctx.paths.agent_dir('reviewer') / 'provider-runtime' / 'claude',
+        actor='ae',
+        runtime_dir=ctx.paths.agent_dir('ae') / 'provider-runtime' / 'claude',
         session_id=payload['ccb_session_id'],
     )
     assert payload['start_cmd'].endswith(
         f'claude --setting-sources user,project,local --settings '
-        f'{shlex.quote(str(ctx.paths.agent_dir("reviewer") / "provider-runtime" / "claude" / "claude-settings.json"))} '
+        f'{shlex.quote(str(ctx.paths.agent_dir("ae") / "provider-runtime" / "claude" / "claude-settings.json"))} '
         '--dangerously-skip-permissions --continue'
     )
-    assert tmux_state['title'] == ('%44', 'reviewer')
+    assert tmux_state['title'] == ('%44', 'ae')
     assert tmux_state['user_option'] == ('%44', '@ccb_project_id', ctx.project.project_id)
 
 
@@ -989,8 +989,8 @@ def test_ensure_agent_runtime_refuses_detached_fallback_inside_project_namespace
 def test_ensure_agent_runtime_relaunches_when_existing_binding_pane_is_dead(monkeypatch, tmp_path: Path) -> None:
     project_root = tmp_path / 'repo-dead-binding'
     (project_root / '.ccb').mkdir(parents=True)
-    ctx = _context(project_root, ParsedStartCommand(project=None, agent_names=('reviewer',), restore=False, auto_permission=False))
-    spec = _spec('reviewer', provider='gemini')
+    ctx = _context(project_root, ParsedStartCommand(project=None, agent_names=('ae',), restore=False, auto_permission=False))
+    spec = _spec('ae', provider='gemini')
     plan = WorkspacePlanner().plan(spec, ctx.project)
     plan.workspace_path.mkdir(parents=True, exist_ok=True)
     tmux_state: dict[str, object] = {'killed': []}
@@ -1028,7 +1028,7 @@ def test_ensure_agent_runtime_relaunches_when_existing_binding_pane_is_dead(monk
         plan,
         AgentBinding(
             runtime_ref='tmux:%44',
-            session_ref=str(project_root / '.ccb' / '.gemini-reviewer-session'),
+            session_ref=str(project_root / '.ccb' / '.gemini-ae-session'),
             tmux_socket_name='sock-dead',
             pane_id='%44',
             pane_state='dead',
@@ -1506,8 +1506,8 @@ def test_claude_launcher_build_start_cmd_uses_overlay_and_drops_dead_local_user_
         ),
         encoding='utf-8',
     )
-    spec = _spec('reviewer', provider='claude')
-    command = ParsedStartCommand(project=None, agent_names=('reviewer',), restore=True, auto_permission=True)
+    spec = _spec('ae', provider='claude')
+    command = ParsedStartCommand(project=None, agent_names=('ae',), restore=True, auto_permission=True)
 
     monkeypatch.setattr('provider_backends.claude.launcher.Path.home', lambda: home_dir)
     monkeypatch.setattr('provider_backends.claude.launcher.local_tcp_listener_available', lambda host, port: False)
@@ -1524,7 +1524,7 @@ def test_claude_launcher_build_start_cmd_uses_overlay_and_drops_dead_local_user_
     assert 'CLAUDE_PROJECTS_ROOT=' in start_cmd
     _assert_caller_env_exports(
         start_cmd,
-        actor='reviewer',
+        actor='ae',
         runtime_dir=runtime_dir,
         session_id='claude-sess-1',
     )
@@ -1538,7 +1538,7 @@ def test_claude_launcher_build_start_cmd_includes_agent_model_shortcut(tmp_path:
     runtime_dir = tmp_path / 'runtime-claude-model'
     runtime_dir.mkdir(parents=True, exist_ok=True)
     spec = AgentSpec(
-        name='reviewer',
+        name='ae',
         provider='claude',
         target='.',
         workspace_mode=WorkspaceMode.GIT_WORKTREE,
@@ -1549,7 +1549,7 @@ def test_claude_launcher_build_start_cmd_includes_agent_model_shortcut(tmp_path:
         queue_policy=QueuePolicy.SERIAL_PER_AGENT,
         model='opus',
     )
-    command = ParsedStartCommand(project=None, agent_names=('reviewer',), restore=False, auto_permission=False)
+    command = ParsedStartCommand(project=None, agent_names=('ae',), restore=False, auto_permission=False)
 
     start_cmd = claude_launcher.build_start_cmd(command, spec, runtime_dir, 'claude-sess-model')
 
@@ -2003,7 +2003,7 @@ def test_claude_launcher_build_start_cmd_uses_isolated_profile_api_env(monkeypat
         runtime_dir,
         ResolvedProviderProfile(
             provider='claude',
-            agent_name='reviewer',
+            agent_name='ae',
             mode='isolated',
             profile_root=str(tmp_path / 'profile'),
             runtime_home=None,
@@ -2011,8 +2011,8 @@ def test_claude_launcher_build_start_cmd_uses_isolated_profile_api_env(monkeypat
             inherit_api=False,
         ),
     )
-    spec = _spec('reviewer', provider='claude')
-    command = ParsedStartCommand(project=None, agent_names=('reviewer',), restore=True, auto_permission=True)
+    spec = _spec('ae', provider='claude')
+    command = ParsedStartCommand(project=None, agent_names=('ae',), restore=True, auto_permission=True)
 
     monkeypatch.setattr('provider_backends.claude.launcher.Path.home', lambda: home_dir)
     monkeypatch.setattr(
@@ -2049,7 +2049,7 @@ def test_claude_launcher_build_start_cmd_uses_agent_settings_overlay_when_presen
         runtime_dir,
         ResolvedProviderProfile(
             provider='claude',
-            agent_name='reviewer',
+            agent_name='ae',
             mode='inherit',
             profile_root=str(profile_root),
             runtime_home=None,
@@ -2057,8 +2057,8 @@ def test_claude_launcher_build_start_cmd_uses_agent_settings_overlay_when_presen
             inherit_api=True,
         ),
     )
-    spec = _spec('reviewer', provider='claude')
-    command = ParsedStartCommand(project=None, agent_names=('reviewer',), restore=True, auto_permission=False)
+    spec = _spec('ae', provider='claude')
+    command = ParsedStartCommand(project=None, agent_names=('ae',), restore=True, auto_permission=False)
 
     monkeypatch.setattr('provider_backends.claude.launcher.Path.home', lambda: tmp_path / 'home')
     monkeypatch.setattr(
@@ -2072,7 +2072,7 @@ def test_claude_launcher_build_start_cmd_uses_agent_settings_overlay_when_presen
     settings_path = runtime_dir / 'claude-settings.json'
     _assert_caller_env_exports(
         start_cmd,
-        actor='reviewer',
+        actor='ae',
         runtime_dir=runtime_dir,
         session_id='claude-sess-local',
     )
@@ -2090,7 +2090,7 @@ def test_claude_launcher_build_start_cmd_uses_materialized_profile_home(monkeypa
         runtime_dir,
         ResolvedProviderProfile(
             provider='claude',
-            agent_name='reviewer',
+            agent_name='ae',
             mode='isolated',
             profile_root=str(profile_home),
             runtime_home=str(profile_home),
@@ -2105,8 +2105,8 @@ def test_claude_launcher_build_start_cmd_uses_materialized_profile_home(monkeypa
     )
 
     start_cmd = claude_launcher.build_start_cmd(
-        ParsedStartCommand(project=None, agent_names=('reviewer',), restore=False, auto_permission=False),
-        _spec('reviewer', provider='claude'),
+        ParsedStartCommand(project=None, agent_names=('ae',), restore=False, auto_permission=False),
+        _spec('ae', provider='claude'),
         runtime_dir,
         'claude-sess-home',
     )
@@ -2120,7 +2120,7 @@ def test_claude_launcher_build_start_cmd_exports_user_session_transport_without_
     tmp_path: Path,
 ) -> None:
     project_root = tmp_path / 'repo-claude-transport'
-    runtime_dir = project_root / '.ccb' / 'agents' / 'reviewer' / 'provider-runtime' / 'claude'
+    runtime_dir = project_root / '.ccb' / 'agents' / 'ae' / 'provider-runtime' / 'claude'
     runtime_dir.mkdir(parents=True, exist_ok=True)
     source_home = tmp_path / 'source-home'
     (source_home / '.claude').mkdir(parents=True, exist_ok=True)
@@ -2137,12 +2137,12 @@ def test_claude_launcher_build_start_cmd_exports_user_session_transport_without_
         '_resolve_claude_restore_target',
         lambda **kwargs: ProviderRestoreTarget(run_cwd=runtime_dir, has_history=False),
     )
-    spec = _spec('reviewer', provider='claude')
-    command = ParsedStartCommand(project=None, agent_names=('reviewer',), restore=False, auto_permission=False)
+    spec = _spec('ae', provider='claude')
+    command = ParsedStartCommand(project=None, agent_names=('ae',), restore=False, auto_permission=False)
 
     start_cmd = claude_launcher.build_start_cmd(command, spec, runtime_dir, 'claude-sess-transport')
 
-    managed_projects = project_root / '.ccb' / 'agents' / 'reviewer' / 'provider-state' / 'claude' / 'home' / '.claude' / 'projects'
+    managed_projects = project_root / '.ccb' / 'agents' / 'ae' / 'provider-state' / 'claude' / 'home' / '.claude' / 'projects'
     assert f'HTTPS_PROXY={shlex.quote("http://127.0.0.1:7890")}' in start_cmd
     assert f'NODE_EXTRA_CA_CERTS={shlex.quote("/tmp/node-ca.pem")}' in start_cmd
     assert f'WSL_INTEROP={shlex.quote("/run/WSL/1234_interop")}' in start_cmd
@@ -2153,7 +2153,7 @@ def test_claude_launcher_build_start_cmd_exports_user_session_transport_without_
 
 def test_claude_launcher_build_start_cmd_refreshes_managed_home_projection(monkeypatch, tmp_path: Path) -> None:
     project_root = tmp_path / 'repo-claude-refresh'
-    runtime_dir = project_root / '.ccb' / 'agents' / 'reviewer' / 'provider-runtime' / 'claude'
+    runtime_dir = project_root / '.ccb' / 'agents' / 'ae' / 'provider-runtime' / 'claude'
     runtime_dir.mkdir(parents=True, exist_ok=True)
     home_dir = tmp_path / 'home'
     source_claude_dir = home_dir / '.claude'
@@ -2163,8 +2163,8 @@ def test_claude_launcher_build_start_cmd_refreshes_managed_home_projection(monke
     (source_claude_dir / 'commands' / 'check.md').write_text('command-v1\n', encoding='utf-8')
     (source_claude_dir / 'CLAUDE.md').write_text('claude-md-v1\n', encoding='utf-8')
 
-    spec = _spec('reviewer', provider='claude')
-    command = ParsedStartCommand(project=None, agent_names=('reviewer',), restore=False, auto_permission=False)
+    spec = _spec('ae', provider='claude')
+    command = ParsedStartCommand(project=None, agent_names=('ae',), restore=False, auto_permission=False)
 
     monkeypatch.setattr('provider_backends.claude.launcher.Path.home', lambda: home_dir)
     monkeypatch.setattr('provider_backends.claude.launcher_runtime.home.Path.home', lambda: home_dir)
@@ -2177,7 +2177,7 @@ def test_claude_launcher_build_start_cmd_refreshes_managed_home_projection(monke
 
     claude_launcher.build_start_cmd(command, spec, runtime_dir, 'claude-sess-refresh-1')
 
-    managed_claude_dir = project_root / '.ccb' / 'agents' / 'reviewer' / 'provider-state' / 'claude' / 'home' / '.claude'
+    managed_claude_dir = project_root / '.ccb' / 'agents' / 'ae' / 'provider-state' / 'claude' / 'home' / '.claude'
     assert (managed_claude_dir / 'skills' / 'review' / 'SKILL.md').read_text(encoding='utf-8') == 'skill-v1\n'
     assert (managed_claude_dir / 'commands' / 'check.md').read_text(encoding='utf-8') == 'command-v1\n'
     assert (managed_claude_dir / 'CLAUDE.md').read_text(encoding='utf-8') == 'claude-md-v1\n'
@@ -2197,7 +2197,7 @@ def test_claude_launcher_build_start_cmd_preserves_managed_auth_when_system_home
     monkeypatch, tmp_path: Path
 ) -> None:
     project_root = tmp_path / 'repo-claude-auth-refresh'
-    runtime_dir = project_root / '.ccb' / 'agents' / 'reviewer' / 'provider-runtime' / 'claude'
+    runtime_dir = project_root / '.ccb' / 'agents' / 'ae' / 'provider-runtime' / 'claude'
     runtime_dir.mkdir(parents=True, exist_ok=True)
     home_dir = tmp_path / 'home'
     source_claude_dir = home_dir / '.claude'
@@ -2215,7 +2215,7 @@ def test_claude_launcher_build_start_cmd_preserves_managed_auth_when_system_home
         ),
         encoding='utf-8',
     )
-    managed_settings = project_root / '.ccb' / 'agents' / 'reviewer' / 'provider-state' / 'claude' / 'home' / '.claude' / 'settings.json'
+    managed_settings = project_root / '.ccb' / 'agents' / 'ae' / 'provider-state' / 'claude' / 'home' / '.claude' / 'settings.json'
     managed_settings.parent.mkdir(parents=True, exist_ok=True)
     managed_settings.write_text(
         json.dumps(
@@ -2232,8 +2232,8 @@ def test_claude_launcher_build_start_cmd_preserves_managed_auth_when_system_home
         encoding='utf-8',
     )
 
-    spec = _spec('reviewer', provider='claude')
-    command = ParsedStartCommand(project=None, agent_names=('reviewer',), restore=False, auto_permission=False)
+    spec = _spec('ae', provider='claude')
+    command = ParsedStartCommand(project=None, agent_names=('ae',), restore=False, auto_permission=False)
 
     monkeypatch.setattr('provider_backends.claude.launcher.Path.home', lambda: home_dir)
     monkeypatch.setattr('provider_backends.claude.launcher_runtime.home.Path.home', lambda: home_dir)
@@ -2251,14 +2251,14 @@ def test_claude_launcher_build_start_cmd_preserves_managed_auth_when_system_home
     assert payload['env']['ANTHROPIC_BASE_URL'] == 'https://claude.example.test'
     assert payload['theme'] == 'light'
     assert payload['hooks']['Stop'][0]['hooks'][0]['command'] == 'echo hook'
-    assert f'HOME={shlex.quote(str(project_root / ".ccb" / "agents" / "reviewer" / "provider-state" / "claude" / "home"))}' in start_cmd
+    assert f'HOME={shlex.quote(str(project_root / ".ccb" / "agents" / "ae" / "provider-state" / "claude" / "home"))}' in start_cmd
 
 
 def test_claude_launcher_build_start_cmd_projects_official_login_auth_into_managed_home(
     monkeypatch, tmp_path: Path
 ) -> None:
     project_root = tmp_path / 'repo-claude-login-auth'
-    runtime_dir = project_root / '.ccb' / 'agents' / 'reviewer' / 'provider-runtime' / 'claude'
+    runtime_dir = project_root / '.ccb' / 'agents' / 'ae' / 'provider-runtime' / 'claude'
     runtime_dir.mkdir(parents=True, exist_ok=True)
     home_dir = tmp_path / 'home'
     source_credentials = home_dir / '.claude' / '.credentials.json'
@@ -2268,8 +2268,8 @@ def test_claude_launcher_build_start_cmd_projects_official_login_auth_into_manag
         encoding='utf-8',
     )
 
-    spec = _spec('reviewer', provider='claude')
-    command = ParsedStartCommand(project=None, agent_names=('reviewer',), restore=False, auto_permission=False)
+    spec = _spec('ae', provider='claude')
+    command = ParsedStartCommand(project=None, agent_names=('ae',), restore=False, auto_permission=False)
 
     monkeypatch.setattr('provider_backends.claude.launcher.Path.home', lambda: home_dir)
     monkeypatch.setattr('provider_backends.claude.launcher_runtime.home.Path.home', lambda: home_dir)
@@ -2286,7 +2286,7 @@ def test_claude_launcher_build_start_cmd_projects_official_login_auth_into_manag
         project_root
         / '.ccb'
         / 'agents'
-        / 'reviewer'
+        / 'ae'
         / 'provider-state'
         / 'claude'
         / 'home'
@@ -2302,7 +2302,7 @@ def test_gemini_launcher_build_start_cmd_uses_isolated_profile_api_env(tmp_path:
         runtime_dir,
         ResolvedProviderProfile(
             provider='gemini',
-            agent_name='reviewer',
+            agent_name='ae',
             mode='isolated',
             profile_root=str(tmp_path / 'profile'),
             runtime_home=None,
@@ -2310,8 +2310,8 @@ def test_gemini_launcher_build_start_cmd_uses_isolated_profile_api_env(tmp_path:
             inherit_api=False,
         ),
     )
-    spec = _spec('reviewer', provider='gemini')
-    command = ParsedStartCommand(project=None, agent_names=('reviewer',), restore=False, auto_permission=False)
+    spec = _spec('ae', provider='gemini')
+    command = ParsedStartCommand(project=None, agent_names=('ae',), restore=False, auto_permission=False)
 
     start_cmd = gemini_launcher.build_start_cmd(command, spec, runtime_dir, 'gemini-sess-iso')
 
@@ -2325,7 +2325,7 @@ def test_gemini_launcher_build_start_cmd_exports_user_session_transport_without_
     tmp_path: Path,
 ) -> None:
     project_root = tmp_path / 'repo-gemini-transport'
-    runtime_dir = project_root / '.ccb' / 'agents' / 'reviewer' / 'provider-runtime' / 'gemini'
+    runtime_dir = project_root / '.ccb' / 'agents' / 'ae' / 'provider-runtime' / 'gemini'
     runtime_dir.mkdir(parents=True, exist_ok=True)
     ambient_root = tmp_path / 'ambient-gemini-root'
     monkeypatch.setenv('HTTPS_PROXY', 'http://127.0.0.1:7890')
@@ -2333,12 +2333,12 @@ def test_gemini_launcher_build_start_cmd_exports_user_session_transport_without_
     monkeypatch.setenv('WSL_INTEROP', '/run/WSL/1234_interop')
     monkeypatch.setenv('GEMINI_ROOT', str(ambient_root))
     monkeypatch.setenv('CCB_CALLER_ACTOR', 'stale-agent')
-    spec = _spec('reviewer', provider='gemini')
-    command = ParsedStartCommand(project=None, agent_names=('reviewer',), restore=False, auto_permission=False)
+    spec = _spec('ae', provider='gemini')
+    command = ParsedStartCommand(project=None, agent_names=('ae',), restore=False, auto_permission=False)
 
     start_cmd = gemini_launcher.build_start_cmd(command, spec, runtime_dir, 'gemini-sess-transport')
 
-    managed_home = project_root / '.ccb' / 'agents' / 'reviewer' / 'provider-state' / 'gemini' / 'home'
+    managed_home = project_root / '.ccb' / 'agents' / 'ae' / 'provider-state' / 'gemini' / 'home'
     managed_root = managed_home / '.gemini' / 'tmp'
     assert f'HTTPS_PROXY={shlex.quote("http://127.0.0.1:7890")}' in start_cmd
     assert f'REQUESTS_CA_BUNDLE={shlex.quote("/tmp/requests-ca.pem")}' in start_cmd

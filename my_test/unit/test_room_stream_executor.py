@@ -23,7 +23,7 @@ def make_request() -> RoomDispatchRequest:
 def test_each_stdout_line_becomes_agent_message(tmp_path: Path):
     store = RoomEventStore(tmp_path / '.ccb' / 'room')
 
-    executor = RoomAskStreamExecutor(
+    rd = RoomAskStreamExecutor(
         project_root=tmp_path,
         store=store,
         popen_fn=FakePopen(
@@ -36,7 +36,7 @@ def test_each_stdout_line_becomes_agent_message(tmp_path: Path):
         ),
     )
 
-    result = executor.execute(make_request())
+    result = rd.execute(make_request())
 
     assert result.returncode == 0
     assert len(result.output_events) == 3
@@ -51,7 +51,7 @@ def test_each_stdout_line_becomes_agent_message(tmp_path: Path):
 def test_blank_stdout_lines_are_ignored(tmp_path: Path):
     store = RoomEventStore(tmp_path / '.ccb' / 'room')
 
-    executor = RoomAskStreamExecutor(
+    rd = RoomAskStreamExecutor(
         project_root=tmp_path,
         store=store,
         popen_fn=FakePopen(
@@ -64,7 +64,7 @@ def test_blank_stdout_lines_are_ignored(tmp_path: Path):
         ),
     )
 
-    result = executor.execute(make_request())
+    result = rd.execute(make_request())
 
     assert len(result.output_events) == 1
     assert result.output_events[0].body == 'Useful output'
@@ -73,7 +73,7 @@ def test_blank_stdout_lines_are_ignored(tmp_path: Path):
 def test_failed_stream_produces_task_failed(tmp_path: Path):
     store = RoomEventStore(tmp_path / '.ccb' / 'room')
 
-    executor = RoomAskStreamExecutor(
+    rd = RoomAskStreamExecutor(
         project_root=tmp_path,
         store=store,
         popen_fn=FakePopen(
@@ -82,7 +82,7 @@ def test_failed_stream_produces_task_failed(tmp_path: Path):
         ),
     )
 
-    result = executor.execute(make_request())
+    result = rd.execute(make_request())
 
     assert result.returncode == 1
     assert result.terminal_event is not None
@@ -94,7 +94,7 @@ def test_on_event_callback_receives_all_events(tmp_path: Path):
 
     emitted = []
 
-    executor = RoomAskStreamExecutor(
+    rd = RoomAskStreamExecutor(
         project_root=tmp_path,
         store=store,
         popen_fn=FakePopen(
@@ -107,7 +107,7 @@ def test_on_event_callback_receives_all_events(tmp_path: Path):
         on_event=emitted.append,
     )
 
-    result = executor.execute(make_request())
+    result = rd.execute(make_request())
 
     assert result.returncode == 0
     assert len(emitted) == 3

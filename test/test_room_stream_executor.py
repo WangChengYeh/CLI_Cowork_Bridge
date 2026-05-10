@@ -67,14 +67,14 @@ def test_stream_executor_generates_agent_messages(tmp_path: Path):
 
     emitted_events = []
 
-    executor = RoomAskStreamExecutor(
+    rd = RoomAskStreamExecutor(
         project_root=tmp_path,
         store=store,
         popen_fn=fake_popen,
         on_event=emitted_events.append,
     )
 
-    result = executor.execute(make_request())
+    result = rd.execute(make_request())
 
     assert result.returncode == 0
     assert len(result.output_events) == 3
@@ -95,13 +95,13 @@ def test_stream_executor_handles_failure(tmp_path: Path):
         returncode=1,
     )
 
-    executor = RoomAskStreamExecutor(
+    rd = RoomAskStreamExecutor(
         project_root=tmp_path,
         store=store,
         popen_fn=fake_popen,
     )
 
-    result = executor.execute(make_request())
+    result = rd.execute(make_request())
 
     assert result.returncode == 1
     assert result.terminal_event is not None

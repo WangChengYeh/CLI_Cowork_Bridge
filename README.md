@@ -38,7 +38,7 @@ Named agents can discover each other, use `/ask`, broadcast updates, and delegat
 
 - direct agent-to-agent delegation with named targets
 - broadcast sync for all live agents when the whole team needs the same context
-- explicit handoff patterns for builder, reviewer, and QA style workflows
+- explicit handoff patterns for builder, ae, and QA style workflows
 
 </details>
 
@@ -107,13 +107,13 @@ Tmux copy/paste: drag with the left mouse button to copy, and use `Ctrl+Shift+V`
 Use the first compact line to define the team and pane layout:
 
 ```text
-cmd; writer:codex, reviewer:claude; qa:gemini(worktree)
+cmd; rd:codex, ae:claude; qa:gemini(worktree)
 ```
 
 That layout means:
 
 - `cmd` is the shell pane
-- `writer`, `reviewer`, and `qa` are agent names and pane titles
+- `rd`, `ae`, and `qa` are agent names and pane titles
 - `codex`, `claude`, and `gemini` are providers
 - `;` splits panes left-to-right; `,` stacks panes top-to-bottom
 - `qa` runs in an isolated git worktree; agents without `(worktree)` run `inplace`
@@ -126,14 +126,14 @@ That layout means:
 Keep the compact layout first, then add TOML tables only for agents that need their own API route, key, or model:
 
 ```toml
-cmd; builder:codex, reviewer:claude; research:gemini(worktree)
+cmd; builder:codex, ae:claude; research:gemini(worktree)
 
 [agents.builder]
 key = "sk-..."
 url = "https://api.example.com/v1"
 model = "gpt-5"
 
-[agents.reviewer]
+[agents.ae]
 key = "sk-ant-..."
 url = "https://api.anthropic.com"
 model = "opus"
@@ -154,8 +154,8 @@ Notes:
 Common compact examples:
 
 ```text
-writer:codex, reviewer:claude
-cmd; writer:codex, reviewer:claude; qa:gemini(worktree)
+rd:codex, ae:claude
+cmd; rd:codex, ae:claude; qa:gemini(worktree)
 cmd; fast:codex, deep:codex
 ```
 
@@ -239,9 +239,9 @@ CCB is agent-first. You can use explicit `/ask`, explicit `$ask`, or let one age
 
 | Mode | Example |
 | :--- | :--- |
-| Explicit `/ask` | `/ask reviewer review the parser changes in src/parser.ts` |
-| Explicit `$ask` | `$ask reviewer review the parser changes in src/parser.ts` |
-| Implicit delegation | `Ask reviewer to check the parser edge cases, then summarize the issues back to me.` |
+| Explicit `/ask` | `/ask ae review the parser changes in src/parser.ts` |
+| Explicit `$ask` | `$ask ae review the parser changes in src/parser.ts` |
+| Implicit delegation | `Ask ae to check the parser edge cases, then summarize the issues back to me.` |
 
 Use explicit routing when you want a specific target. Use natural language when you want the current agent to decide whether to delegate.
 
@@ -792,7 +792,7 @@ Example:
 Highlights:
 - Socratic Ladder + Superpowers Lenses + Anti-pattern analysis.
 - Availability-gated dispatch (use only mounted CLIs).
-- Two-round reviewer refinement with merged design.
+- Two-round ae refinement with merged design.
 
 </details>
 </details>

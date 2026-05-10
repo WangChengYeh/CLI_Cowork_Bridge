@@ -7,7 +7,7 @@ from imessage.watcher import (
 from room.store import RoomEventStore
 
 
-PARTICIPANTS = {'codex', 'claude', 'gemini', 'pm', 'writer', 'reviewer'}
+PARTICIPANTS = {'codex', 'claude', 'gemini', 'pm', 'rd', 'ae'}
 
 
 def make_message(
@@ -40,7 +40,7 @@ def test_accept_valid_message(tmp_path: Path):
 
     assert decision.accepted is True
     assert decision.event is not None
-    assert decision.event.target == 'writer'
+    assert decision.event.target == 'rd'
 
     events = store.list_events()
 

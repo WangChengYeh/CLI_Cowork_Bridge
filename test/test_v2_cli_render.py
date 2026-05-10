@@ -308,7 +308,7 @@ def test_render_ask_and_watch_batch_use_target_name_when_present() -> None:
         project_id='proj-1',
         submission_id=None,
         jobs=(
-            {'job_id': 'job-1', 'agent_name': 'reviewer', 'target_name': 'reviewer', 'status': 'accepted'},
+            {'job_id': 'job-1', 'agent_name': 'ae', 'target_name': 'ae', 'status': 'accepted'},
         ),
     )
     batch = SimpleNamespace(
@@ -316,30 +316,30 @@ def test_render_ask_and_watch_batch_use_target_name_when_present() -> None:
             {
                 'event_id': 'evt-1',
                 'job_id': 'job-1',
-                'agent_name': 'reviewer',
-                'target_name': 'reviewer',
+                'agent_name': 'ae',
+                'target_name': 'ae',
                 'type': 'job_started',
                 'timestamp': '2026-03-18T00:00:00Z',
             },
         ),
         terminal=True,
         job_id='job-1',
-        agent_name='reviewer',
-        target_name='reviewer',
+        agent_name='ae',
+        target_name='ae',
         status='completed',
         reply='done',
     )
 
     assert render_ask(summary) == (
-        'accepted job=job-1 target=reviewer',
-        '[CCB_ASYNC_SUBMITTED job=job-1 target=reviewer]',
+        'accepted job=job-1 target=ae',
+        '[CCB_ASYNC_SUBMITTED job=job-1 target=ae]',
     )
     assert render_watch_batch(batch) == (
-        'event: evt-1 job-1 reviewer job_started 2026-03-18T00:00:00Z',
+        'event: evt-1 job-1 ae job_started 2026-03-18T00:00:00Z',
         'watch_status: terminal',
         'job_id: job-1',
-        'agent_name: reviewer',
-        'target_name: reviewer',
+        'agent_name: ae',
+        'target_name: ae',
         'status: completed',
         'reply: done',
     )

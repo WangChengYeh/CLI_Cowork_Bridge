@@ -36,7 +36,7 @@
 - `agent1 -> codex`
 - `agent2 -> claude`
 - `agent3 -> codex`
-- `reviewer -> gemini`
+- `ae -> gemini`
 
 用户看到、输入、管理、通信的主体都应是这些名字，而不是 `codex` / `claude` / `gemini`。
 
@@ -60,7 +60,7 @@
 而是动态读取用户配置。
 
 例如：
-agent1:codex, agent2:claude, reviewer:gemini, agent4:codex, cmd
+agent1:codex, agent2:claude, ae:gemini, agent4:codex, cmd
 
 这要求：
 

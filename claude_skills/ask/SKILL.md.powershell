@@ -38,7 +38,7 @@ Use `ask --wait "$TARGET"` only when the user explicitly wants the reply now.
 
 - `/ask agent1 What is 12+12?`
 - `/ask agent2 Refactor this code`
-- `/ask reviewer Analyze this bug`
+- `/ask ae Analyze this bug`
 - `/ask worker Execute this task`
 
 ## Notes
