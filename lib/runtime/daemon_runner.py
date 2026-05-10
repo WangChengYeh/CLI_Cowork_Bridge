@@ -34,10 +34,18 @@ def run_runtime_forever(
     processed_events = 0
     stopped_by_condition = False
 
+    last_imessage_poll = 0.0
+    imessage_poll_interval = 10.0
+
     while True:
         if should_stop is not None and should_stop():
             stopped_by_condition = True
             break
+
+        now = time.time()
+        if now - last_imessage_poll >= imessage_poll_interval:
+            runtime.watcher.poll_once()
+            last_imessage_poll = now
 
         state_store.heartbeat()
         result = runtime.supervisor.poll_once()

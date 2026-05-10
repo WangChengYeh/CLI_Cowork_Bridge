@@ -75,13 +75,13 @@ def bootstrap_runtime(
         store=store,
         policy=RoomIMessageDeliveryPolicy(
             enabled=enable_imessage,
-            recipients=[],
+            recipients=list(imessage_allow_senders or []),
         ),
     )
 
     delivery_worker = DeliveryWorker(
         delivery=delivery,
-        dry_run=True,
+        dry_run=False,
     )
 
     supervisor.register_worker(
@@ -100,7 +100,7 @@ def bootstrap_runtime(
 
     watch_worker = IMessageWatchWorker(
         watcher=watcher,
-        dry_run=True,
+        dry_run=False,
     )
 
     supervisor.register_worker(
