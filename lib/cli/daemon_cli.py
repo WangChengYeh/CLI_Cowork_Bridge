@@ -86,9 +86,19 @@ def run_daemon_cli(
     if args.command == 'start':
         try:
             if not args.foreground:
+                background_argv = list(argv)
+                if '--foreground' not in background_argv:
+                    background_argv.append('--foreground')
+
+                ccb_path = project_root / 'ccb'
+                if ccb_path.exists():
+                    full_argv = [str(ccb_path), 'daemon'] + background_argv
+                else:
+                    full_argv = [sys.executable, '-m', 'cli.daemon_cli'] + background_argv
+
                 launch = launch_daemon_fn(
                     project_root=project_root,
-                    argv=argv + ['--foreground'],
+                    argv=full_argv,
                 )
 
                 stdout.write(f'{STATE_RUNNING}\n')
