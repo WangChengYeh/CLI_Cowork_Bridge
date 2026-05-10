@@ -23,10 +23,10 @@ Abstract roles map to concrete AI providers. Skills reference roles, not provide
 
 | Role | Provider | Description |
 |------|----------|-------------|
-| `designer` | `claude` | Primary planner and architect — owns plans and designs |
+| `pm` | `claude` | Product manager |
 | `inspiration` | `gemini` | Creative brainstorming — provides ideas as reference only (unreliable, never blindly follow) |
-| `ae` | `codex` | Scored quality gate — evaluates plans/code using Rubrics |
-| `rd` | `claude` | Code implementation — writes and modifies code |
+| `ae` | `codex` | Application engineer |
+| `rd` | `claude` | Research and development |
 
 To change a role assignment, edit the Provider column above.
 When a skill references a role (e.g. `ae`), resolve it to the configured agent that owns that role.
@@ -35,7 +35,7 @@ When a skill references a role (e.g. `ae`), resolve it to the configured agent t
 <!-- CODEX_REVIEW_START -->
 ## Peer Review Framework
 
-The `designer` MUST send to `ae` (via `/ask`) at two checkpoints:
+The `pm` MUST send to `ae` (via `/ask`) at two checkpoints:
 1. **Plan Review** — after finalizing a plan, BEFORE writing code. Tag: `[PLAN REVIEW REQUEST]`.
 2. **Code Review** — after completing code changes, BEFORE reporting done. Tag: `[CODE REVIEW REQUEST]`.
 
@@ -50,7 +50,7 @@ The `ae` scores using Rubrics defined in `AGENTS.md` and returns JSON.
 <!-- GEMINI_INSPIRATION_START -->
 ## Inspiration Consultation
 
-For creative tasks (UI/UX design, copywriting, naming, brainstorming), the `designer` SHOULD consult `inspiration` (via `/ask`) for reference ideas.
+For creative tasks (UI/UX design, copywriting, naming, brainstorming), the `pm` SHOULD consult `inspiration` (via `/ask`) for reference ideas.
 The `inspiration` provider is often unreliable — never blindly follow. Exercise independent judgment and present suggestions to the user for decision.
 <!-- GEMINI_INSPIRATION_END -->
 

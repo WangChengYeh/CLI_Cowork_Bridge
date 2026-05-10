@@ -29,17 +29,17 @@ Interpret `FileOpsRES`:
 
 ### 1.5 Resolve Roles Config
 
-Goal: support `ae` / `designer` routing.
+Goal: support `ae` / `pm` routing.
 
 Two-layer resolution:
 
-1. **CLAUDE.md Role Assignment table** (primary): Read the Role Assignment table from CLAUDE.md context. The `ae` and `designer` roles map to providers.
+1. **CLAUDE.md Role Assignment table** (primary): Read the Role Assignment table from CLAUDE.md context. The `ae` and `pm` roles map to providers.
 2. **`.autoflow/roles.json`** (override): If this file exists in the repo, and `enabled == true` and `schemaVersion == 1`, use its fields to override.
 
 Default roles:
 - `rd = "codex"`
 - `ae = "codex"`
-- `designer = ["claude", "codex"]`
+- `pm = ["claude", "codex"]`
 
 Implementation detail: Claude must not read repo files directly; request reads via `/file-op` (`read_file`) and parse JSON locally.
 

@@ -33,7 +33,7 @@ Invoke the `/all-plan` skill with the requirement:
 The `/all-plan` skill provides a complete collaborative design flow including:
 1. Requirement clarification
 2. Inspiration consultation (if applicable)
-3. Designer planning
+3. PM planning
 4. AE scoring
 
 Extract from the `/all-plan` output:

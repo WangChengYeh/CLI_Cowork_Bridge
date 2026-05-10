@@ -19,7 +19,7 @@ Example:
 
 1. **Requirement Clarification** - 5-Dimension readiness model, structured Q&A
 2. **Inspiration Brainstorming** - Creative ideas from `inspiration` (reference only)
-3. **Design** - `designer` creates the full plan, integrating adopted ideas
+3. **Design** - `pm` creates the full plan, integrating adopted ideas
 4. **Scored Review** - `ae` scores using Rubric A (must pass >= 7.0)
 5. **Final Output** - Actionable plan saved to `plans/` directory
 
@@ -27,7 +27,7 @@ Example:
 
 | Role | Responsibility |
 |------|---------------|
-| `designer` | Primary planner, owns the plan |
+| `pm` | Product manager |
 | `inspiration` | Creative consultant (unreliable, user decides) |
 | `ae` | Quality gate (Rubric A, per-dimension scoring) |
 

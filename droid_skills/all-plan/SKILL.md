@@ -1,8 +1,8 @@
 ---
 name: all-plan
-description: Collaborative planning using abstract roles (designer + inspiration + ae).
+description: Collaborative planning using abstract roles (pm + inspiration + ae).
 metadata:
-  short-description: designer plans + inspiration brainstorms + ae scores
+  short-description: pm plans + inspiration brainstorms + ae scores
 ---
 
 # All Plan (Droid Version)
@@ -12,7 +12,7 @@ Collaborative planning using abstract roles defined in CLAUDE.md Role Assignment
 Highlights:
 - 5-Dimension requirement clarification (retained)
 - `inspiration` brainstorming for creative/aesthetic ideas
-- `designer` creates the full plan independently
+- `pm` creates the full plan independently
 - `ae` scores the plan using Rubric A (must pass >= 7.0)
 - Auto-correction loop (max 3 rounds)
 
