@@ -26,7 +26,7 @@ class RoomDispatchRequest:
     def to_ask_argv(self) -> list[str]:
         if self.is_broadcast:
             raise RoomDispatchError('broadcast events cannot be converted to a single ask argv')
-        return ['ask', self.target, self.body]
+        return ['ask', '--wait', self.target, self.body]
 
 
 @dataclass

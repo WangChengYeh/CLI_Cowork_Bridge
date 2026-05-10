@@ -21,6 +21,7 @@ class RoomIMessageDeliveryPolicy:
     notify_on: set[RoomEventType] = field(
         default_factory=lambda: {
             RoomEventType.AGENT_MESSAGE,
+            RoomEventType.TASK_COMPLETED,
             RoomEventType.TASK_FAILED,
             RoomEventType.APPROVAL_NEEDED,
         }
