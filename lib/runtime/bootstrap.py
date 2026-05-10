@@ -26,6 +26,7 @@ DEFAULT_PARTICIPANTS = {
     'pm',
     'rd',
     'ae',
+    'it',
 }
 
 

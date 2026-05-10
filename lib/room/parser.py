@@ -26,6 +26,7 @@ DEFAULT_ALIASES = {
     'claude': 'pm',
     'codex': 'rd',
     'gemini': 'ae',
+    'it': 'ae',
 }
 
 
