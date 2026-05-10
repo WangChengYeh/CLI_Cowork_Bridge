@@ -5,6 +5,7 @@ from typing import Optional
 from dataclasses import dataclass
 from pathlib import Path
 
+from agents.config_loader import load_project_config
 from imessage.watcher import IMessageWatcher
 from room.imessage_delivery import (
     RoomIMessageDelivery,
@@ -17,17 +18,6 @@ from runtime.worker import RuntimeWorker
 from runtime.workers.delivery_worker import DeliveryWorker
 from runtime.workers.dispatch_worker import DispatchWorker
 from runtime.workers.imessage_watch_worker import IMessageWatchWorker
-
-
-DEFAULT_PARTICIPANTS = {
-    'codex',
-    'claude',
-    'gemini',
-    'pm',
-    'rd',
-    'ae',
-    'it',
-}
 
 
 @dataclass

@@ -31,9 +31,6 @@ class IMessageWatchDecision:
     event: Optional[RoomEvent] = None
 
 
-DEFAULT_PARTICIPANTS = {'codex', 'claude', 'gemini'}
-
-
 def default_messages_db_path() -> Path:
     return Path.home() / 'Library' / 'Messages' / 'chat.db'
 
@@ -102,7 +99,7 @@ class IMessageWatcher:
         self.db_path = db_path or default_messages_db_path()
         self.allow_senders = allow_senders or set()
         self.prefix = prefix
-        self.participants = participants or DEFAULT_PARTICIPANTS
+        self.participants = participants or set()
         self.store = store or RoomEventStore(project_root / '.ccb' / 'room')
 
     def read_cursor(self) -> int:

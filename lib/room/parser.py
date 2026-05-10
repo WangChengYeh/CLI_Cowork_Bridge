@@ -19,8 +19,6 @@ class ParsedRoomCommand:
     is_status: bool = False
 
 
-
-
 def parse_room_command(
     text: str,
     participants: set[str],
@@ -35,10 +33,6 @@ def parse_room_command(
     if not raw.startswith(prefix):
         raise RoomCommandError(f'command must start with {prefix}')
 
-    aliases_map = dict(DEFAULT_ALIASES)
-    if aliases:
-        aliases_map.update(aliases)
-
     without_prefix = raw[len(prefix):].strip()
 
     if not without_prefix:
@@ -48,7 +42,8 @@ def parse_room_command(
     target = parts[0].strip().lower()
     body = parts[1].strip() if len(parts) > 1 else ''
 
-    target = aliases_map.get(target, target)
+    if aliases:
+        target = aliases.get(target, target)
 
     if target == 'status':
         return ParsedRoomCommand(
