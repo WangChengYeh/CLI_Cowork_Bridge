@@ -20,9 +20,9 @@ class ParsedRoomCommand:
 
 
 DEFAULT_ALIASES = {
-    'code': 'codex',
-    'review': 'claude',
-    'research': 'gemini',
+    'code': 'writer',
+    'review': 'pm',
+    'research': 'reviewer',
     'claude': 'pm',
     'codex': 'writer',
     'gemini': 'reviewer',
