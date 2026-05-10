@@ -111,7 +111,7 @@ class IMessageWatcher:
     def write_cursor(self, message_id: int) -> None:
         self.store.write_cursor('imessage', message_id)
 
-    def poll_once(self, *, limit: int = 50, dry_run: bool = False) -> list[IMessageWatchDecision]:
+    def poll_once(self, *, limit: int = 500, dry_run: bool = False) -> list[IMessageWatchDecision]:
         after_message_id = self.read_cursor()
         messages = read_inbound_messages(
             self.db_path,
