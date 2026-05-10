@@ -56,8 +56,14 @@ class RoomAskStreamExecutor:
         if process.stdout is not None:
             for line in process.stdout:
                 body = line.rstrip('\n')
-                if not body.strip():
+                trimmed = body.strip()
+                if not trimmed:
                     continue
+
+                # Filter out internal protocol events from the wait stream
+                if trimmed.startswith(('event:', 'watch_status:', 'job_id:', 'agent_name:', 'target_name:', 'status:')):
+                    continue
+
                 event = self._append_agent_message(request, body=body)
                 output_events.append(event)
 
@@ -76,13 +82,17 @@ class RoomAskStreamExecutor:
         )
 
     def _append_agent_message(self, request: RoomDispatchRequest, *, body: str) -> RoomEvent:
+        clean_body = body.strip()
+        if clean_body.startswith('reply: '):
+            clean_body = clean_body[len('reply: '):].strip()
+
         event = RoomEvent(
             room_id=request.room_id,
             source=RoomSource.AGENT,
             sender=request.target,
             target=request.sender,
             type=RoomEventType.AGENT_MESSAGE,
-            body=body,
+            body=clean_body,
             parent_event_id=request.source_event_id,
             correlation_id=request.source_event_id,
             metadata={
